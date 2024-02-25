@@ -11,4 +11,5 @@ struct InputCommands
 	int mouse_x;
 	int mouse_y;
 	bool mouse_LB_Down;
+	bool CTRL_Down;
 };

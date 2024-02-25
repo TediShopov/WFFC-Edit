@@ -8,7 +8,8 @@
 ToolMain::ToolMain()
 {
 	m_currentChunk = 0;		//default value
-	m_selectedObject = 0;	//initial selection ID
+	m_selectedObject.push_back(-1);
+
 	m_sceneGraph.clear();	//clear the vector for the scenegraph
 	m_databaseConnection = NULL;
 
@@ -20,6 +21,7 @@ ToolMain::ToolMain()
 	m_toolInputCommands.mouse_x = 0;
 	m_toolInputCommands.mouse_y = 0;
 	m_toolInputCommands.mouse_LB_Down = false;
+	m_toolInputCommands.CTRL_Down = false;
 }
 
 ToolMain::~ToolMain()
@@ -28,6 +30,10 @@ ToolMain::~ToolMain()
 }
 
 int ToolMain::getCurrentSelectionID()
+{
+	return m_selectedObject[0];
+}
+std::vector<int> ToolMain::getCurrentSelectionIDs()
 {
 	return m_selectedObject;
 }
@@ -273,10 +279,25 @@ void ToolMain::onActionSaveTerrain()
 void ToolMain::Tick(MSG* msg)
 {
 	//do we have a selection
+	int newSelectedId = -1;
 	if (m_toolInputCommands.mouse_LB_Down)
 	{
-		m_selectedObject = m_d3dRenderer.MousePicking();
+		newSelectedId = m_d3dRenderer.MousePicking();
 		m_toolInputCommands.mouse_LB_Down = false;
+		if (m_toolInputCommands.CTRL_Down == true)
+		{
+			//Add selection to the list of selections
+			//only if it is unique
+			if (std::find(m_selectedObject.begin(), m_selectedObject.end(), newSelectedId) == m_selectedObject.end()) {
+				m_selectedObject.push_back(newSelectedId);
+			}
+		}
+		else
+		{
+			//Reset selection and add newly selected
+			m_selectedObject.clear();
+			m_selectedObject.push_back(newSelectedId);
+		}
 	}
 	//do we have a mode
 	//are we clicking / dragging /releasing
@@ -319,6 +340,11 @@ void ToolMain::UpdateInput(MSG* msg)
 		m_toolInputCommands.forward = true;
 	}
 	else m_toolInputCommands.forward = false;
+	if (m_keyArray[VK_CONTROL])
+	{
+		m_toolInputCommands.CTRL_Down = true;
+	}
+	else m_toolInputCommands.CTRL_Down = false;
 
 	if (m_keyArray['S'])
 	{

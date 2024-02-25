@@ -1,23 +1,4 @@
 ﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (Win32SimpleSample.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  Game.cpp
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Game.cpp(27,16): warning C4305: '=': truncation from 'double' to 'float'
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Game.cpp(157,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Game.cpp(158,28): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Game.cpp(260,46): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Game.cpp(259,46): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Game.cpp(258,98): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Game.cpp(244,10): warning C4101: 'Buffer': unreferenced local variable
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Game.cpp(609,82): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Game.cpp(609,57): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Game.cpp(610,81): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Game.cpp(610,56): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Game.cpp(613,20): warning C4018: '<': signed/unsigned mismatch
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Game.cpp(621,46): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Game.cpp(620,147): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Game.cpp(620,98): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Game.cpp(627,111): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Game.cpp(627,85): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Game.cpp(629,109): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Game.cpp(629,83): warning C4244: 'argument': conversion from 'LONG' to 'float', possible loss of data
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Game.cpp(636,21): warning C4018: '<': signed/unsigned mismatch
+  MFCMain.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
   Win32SimpleSample.vcxproj -> D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Debug\WoFEdit.exe
