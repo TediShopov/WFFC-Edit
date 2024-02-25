@@ -179,6 +179,7 @@
     <ClCompile Include="SelectDialogue.cpp" />
     <ClCompile Include="sqlite3.c" />
     <ClCompile Include="ToolMain.cpp" />
+    <ClCompile Include="TransformHirarchyTree.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChunkObject.h" />
@@ -198,6 +199,7 @@
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="MFCMain.h" />
     <ClInclude Include="ToolMain.h" />
+    <ClInclude Include="TransformHirarchyTree.h" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="database\data\Scene1.fbx">
