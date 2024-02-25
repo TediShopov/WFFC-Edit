@@ -280,6 +280,7 @@ void ToolMain::Tick(MSG* msg)
 {
 	//do we have a selection
 	int newSelectedId = -1;
+	//if mouse is over this window
 	if (m_toolInputCommands.mouse_LB_Down)
 	{
 		newSelectedId = m_d3dRenderer.MousePicking();
@@ -333,6 +334,7 @@ void ToolMain::UpdateInput(MSG* msg)
 		m_toolInputCommands.mouse_LB_Down = true;
 		break;
 	}
+
 	//here we update all the actual app functionality that we want.  This information will either be used int toolmain, or sent down to the renderer (Camera movement etc
 	//WASD movement
 	if (m_keyArray['W'])

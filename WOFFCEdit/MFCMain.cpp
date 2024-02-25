@@ -63,7 +63,13 @@ int MFCMain::Run()
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 
-			m_ToolSystem.UpdateInput(&msg);
+			POINT p;
+			GetCursorPos(&p);
+			HWND overWindow = WindowFromPoint(p);
+			if (this->m_toolHandle == overWindow)
+			{
+				m_ToolSystem.UpdateInput(&msg);
+			}
 		}
 		else
 		{
@@ -106,10 +112,9 @@ void MFCMain::MenuEditSelect()
 
 	//modeless dialogue must be declared in the class.   If we do local it will go out of scope instantly and destroy itself
 //	m_ToolSelectDialogue.Create(IDD_DIALOG1);	//Start up modeless
-//	m_ToolSelectDialogue.ShowWindow(SW_SHOW);	//show modeless
 	m_ToolSelectDialogue.Create(IDD_DIALOG2);
 	m_ToolSelectDialogue.ShowWindow(SW_SHOW);
-	m_ToolSelectDialogue.SetObjectData(&m_ToolSystem.m_sceneGraph, m_ToolSystem.m_selectedObject);
+	m_ToolSelectDialogue.SetObjectData(&m_ToolSystem.m_sceneGraph, &m_ToolSystem.m_selectedObject);
 }
 
 void MFCMain::ToolBarButton1()

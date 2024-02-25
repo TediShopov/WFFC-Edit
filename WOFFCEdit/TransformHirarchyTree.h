@@ -15,7 +15,9 @@ public:
 	TransformHirarchyTree(CWnd* pParent, SceneGraph);   // standard constructor
 	TransformHirarchyTree(CWnd* pParent = NULL);   // standard constructor
 	virtual ~TransformHirarchyTree();
-	void SetObjectData(SceneGraph scene, std::vector<int> selections);	//passing in pointers to the data the class will operate on.
+	void SetObjectData(SceneGraph scene, std::vector<int>* selections);	//passing in pointers to the data the class will operate on.
+	void OnClickTree(NMHDR* pNMHDR, LRESULT* pResult);
+	BOOL OnInitDialog() override;
 
 	// Dialog Data
 #ifdef AFX_DESIGN_TIME
@@ -30,5 +32,5 @@ protected:
 public:
 	SceneGraph m_sceneGraph;
 	CTreeCtrl m_transformHierarchy;
-	std::vector<int> m_currentSelections;
+	std::vector<int>* m_currentSelections;
 };
