@@ -602,6 +602,7 @@ int Game::MousePicking()
 {
 	int selectedID = -1;
 	float pickedDistance = 0;
+	float closestPickedDistance = D3D11_FLOAT32_MAX;
 
 	//setup near and far planes of frustum with mouse X and mouse y passed down from Toolmain.
 		//they may look the same but note, the difference in Z
@@ -637,7 +638,11 @@ int Game::MousePicking()
 			//checking for ray intersection
 			if (m_displayList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance))
 			{
-				selectedID = i;
+				if (pickedDistance < closestPickedDistance)
+				{
+					closestPickedDistance = pickedDistance;
+					selectedID = i;
+				}
 			}
 		}
 	}
