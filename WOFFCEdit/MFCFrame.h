@@ -1,33 +1,34 @@
 #pragma once
-#include <afxwin.h> 
+#include <afxwin.h>
 #include <afxext.h>
 #include "MFCRenderFrame.h"
 #include "ToolMain.h"
-
-
+#include "TransformHirarchyTree.h"
 
 class CMyFrame : public CFrameWnd
 {
 protected:
-//	DECLARE_DYNAMIC(CMainFrame)
+	//	DECLARE_DYNAMIC(CMainFrame)
 
 public:
 
 	CMenu			m_menu1;	//menu bar
 	CStatusBar		m_wndStatusBar;
 	CToolBar		m_toolBar;
-	CChildRender	m_DirXView;
+	CChildRender* m_DirXView;
+	CDialogBar		m_transformDlgBar;
+	CSplitterWnd	m_splitterWnd;
 
 public:
 	CMyFrame();
 	void SetCurrentSelectionID(int ID);
-	afx_msg void OnUpdatePage(CCmdUI *pCmdUI);
-
+	afx_msg void OnUpdatePage(CCmdUI* pCmdUI);
 
 private:	//overrides
 	int		m_selectionID;	//
 
 	//note the afx_message keyword is linking this method to message map access.
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-	DECLARE_MESSAGE_MAP()	// required macro for message map functionality  One per class
+	afx_msg int OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext) override;
+	DECLARE_MESSAGE_MAP() // required macro for message map functionality  One per class
 };

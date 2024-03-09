@@ -30,8 +30,8 @@ BOOL MFCMain::InitInstance()
 	m_frame->UpdateWindow();
 
 	//get the rect from the MFC window so we can get its dimensions
-	m_toolHandle = m_frame->m_DirXView.GetSafeHwnd();				//handle of directX child window
-	m_frame->m_DirXView.GetClientRect(&WindowRECT);
+	m_toolHandle = m_frame->m_DirXView->GetSafeHwnd();				//handle of directX child window
+	m_frame->m_DirXView->GetClientRect(&WindowRECT);
 	m_width = WindowRECT.Width();
 	m_height = WindowRECT.Height();
 

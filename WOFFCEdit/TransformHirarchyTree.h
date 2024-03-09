@@ -14,6 +14,7 @@ class TransformHirarchyTree : public CDialogEx
 public:
 	TransformHirarchyTree(CWnd* pParent, SceneGraph);   // standard constructor
 	TransformHirarchyTree(CWnd* pParent = NULL);   // standard constructor
+
 	virtual ~TransformHirarchyTree();
 	void SetObjectData(SceneGraph scene, std::vector<int>* selections);	//passing in pointers to the data the class will operate on.
 	void OnClickTree(NMHDR* pNMHDR, LRESULT* pResult);

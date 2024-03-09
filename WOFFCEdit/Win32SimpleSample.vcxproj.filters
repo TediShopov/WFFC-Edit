@@ -60,6 +60,7 @@
       <Filter>MFC</Filter>
     </ClCompile>
     <ClCompile Include="TransformHirarchyTree.cpp" />
+    <ClCompile Include="CSplitFrame.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -110,6 +111,7 @@
       <Filter>MFC</Filter>
     </ClInclude>
     <ClInclude Include="TransformHirarchyTree.h" />
+    <ClInclude Include="CSplitFrame.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
