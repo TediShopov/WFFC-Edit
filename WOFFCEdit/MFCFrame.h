@@ -3,7 +3,7 @@
 #include <afxext.h>
 #include "MFCRenderFrame.h"
 #include "ToolMain.h"
-#include "TransformHirarchyTree.h"
+class MFCTransformView;
 
 class CMyFrame : public CFrameWnd
 {
@@ -16,7 +16,7 @@ public:
 	CStatusBar		m_wndStatusBar;
 	CToolBar		m_toolBar;
 	CChildRender* m_DirXView;
-	CDialogBar		m_transformDlgBar;
+	MFCTransformView* m_sceneGraphTree;
 	CSplitterWnd	m_splitterWnd;
 
 public:

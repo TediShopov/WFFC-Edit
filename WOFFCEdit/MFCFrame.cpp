@@ -1,6 +1,7 @@
 #include "MFCFrame.h"
 
 #include "CSplitFrame.h"
+#include "MFCTransformView.h"
 #include "resource.h"
 
 BEGIN_MESSAGE_MAP(CMyFrame, CFrameWnd)
@@ -49,8 +50,6 @@ int CMyFrame::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	m_menu1.LoadMenuW(IDR_MENU1);
 	SetMenu(&m_menu1);
-	m_transformDlgBar.Create(this, IDD_DIALOGBAR,
-		WS_CHILD, 156);
 
 	if (!m_toolBar.CreateEx(this, TBSTYLE_TRANSPARENT, WS_CHILD | WS_VISIBLE | CBRS_TOP | CBRS_GRIPPER | CBRS_TOOLTIPS | CBRS_FLYBY | CBRS_SIZE_DYNAMIC) ||
 		!m_toolBar.LoadToolBar(IDR_TOOLBAR1))
@@ -96,10 +95,12 @@ int CMyFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 //		return -1;
 //	}
 	m_splitterWnd.CreateStatic(this, 1, 2);
-	bool s = m_splitterWnd.CreateView(0, 0, RUNTIME_CLASS(CSplitFrame), SIZE{ 175,500 }, pContext);
+	bool s = m_splitterWnd.CreateView(0, 0, RUNTIME_CLASS(MFCTransformView), SIZE{ 175,500 }, pContext);
 	bool stwo = m_splitterWnd.CreateView(0, 1, RUNTIME_CLASS(CChildRender), SIZE{ 175,500 }, pContext);
-	//	auto tht = (CTreeCtrl*)m_splitterWnd.GetPane(0, 0);
+	auto tht = (MFCTransformView*)m_splitterWnd.GetPane(0, 0);
 	auto thtTwo = (CChildRender*)m_splitterWnd.GetPane(0, 1);
+
+	m_sceneGraphTree = tht;
 	m_DirXView = thtTwo;
 
 	//	m_splitterWnd.CreateView(0, 0, m_DirXView->GetRuntimeClass(), SIZE{ 10,10 }, pContext);

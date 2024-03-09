@@ -32,6 +32,7 @@ BOOL MFCMain::InitInstance()
 	//get the rect from the MFC window so we can get its dimensions
 	m_toolHandle = m_frame->m_DirXView->GetSafeHwnd();				//handle of directX child window
 	m_frame->m_DirXView->GetClientRect(&WindowRECT);
+	//m_frame->m_sceneGraphTree->SetObjectData(&m_ToolSystem.m_sceneGraph, &m_ToolSystem.m_selectedObject);
 	m_width = WindowRECT.Width();
 	m_height = WindowRECT.Height();
 
@@ -112,9 +113,9 @@ void MFCMain::MenuEditSelect()
 
 	//modeless dialogue must be declared in the class.   If we do local it will go out of scope instantly and destroy itself
 //	m_ToolSelectDialogue.Create(IDD_DIALOG1);	//Start up modeless
-	m_ToolSelectDialogue.Create(IDD_DIALOG2);
-	m_ToolSelectDialogue.ShowWindow(SW_SHOW);
-	m_ToolSelectDialogue.SetObjectData(&m_ToolSystem.m_sceneGraph, &m_ToolSystem.m_selectedObject);
+//	m_ToolSelectDialogue.Create(IDD_DIALOG2);
+//	m_ToolSelectDialogue.ShowWindow(SW_SHOW);
+//	m_ToolSelectDialogue.SetObjectData(&m_ToolSystem.m_sceneGraph, &m_ToolSystem.m_selectedObject);
 }
 
 void MFCMain::ToolBarButton1()
