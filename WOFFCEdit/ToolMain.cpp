@@ -299,6 +299,7 @@ void ToolMain::Tick(MSG* msg)
 			m_selectedObject.clear();
 			m_selectedObject.push_back(newSelectedId);
 		}
+		this->Notify(*this);
 	}
 	//do we have a mode
 	//are we clicking / dragging /releasing
@@ -377,4 +378,12 @@ void ToolMain::UpdateInput(MSG* msg)
 	else m_toolInputCommands.rotLeft = false;
 
 	//WASD
+}
+
+void ToolMain::Notify(const ToolMain& data)
+{
+	for (Observer<ToolMain>* observer : observers_)
+	{
+		observer->Update(this, data);
+	}
 }

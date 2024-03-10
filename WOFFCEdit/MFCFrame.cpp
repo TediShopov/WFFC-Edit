@@ -1,6 +1,5 @@
 #include "MFCFrame.h"
 
-#include "CSplitFrame.h"
 #include "MFCTransformView.h"
 #include "resource.h"
 
@@ -100,7 +99,7 @@ int CMyFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 	auto tht = (MFCTransformView*)m_splitterWnd.GetPane(0, 0);
 	auto thtTwo = (CChildRender*)m_splitterWnd.GetPane(0, 1);
 
-	m_sceneGraphTree = tht;
+	m_transformTreeView = tht;
 	m_DirXView = thtTwo;
 
 	//	m_splitterWnd.CreateView(0, 0, m_DirXView->GetRuntimeClass(), SIZE{ 10,10 }, pContext);

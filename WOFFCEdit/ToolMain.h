@@ -8,7 +8,9 @@
 #include "InputCommands.h"
 #include <vector>
 
-class ToolMain
+#include "Observer.h"
+
+class ToolMain : public Subject<ToolMain>
 {
 public: //methods
 	ToolMain();
@@ -33,6 +35,7 @@ public:	//variables
 
 private:	//methods
 	void	onContentAdded();
+	void Notify(const ToolMain& data) override;
 
 private:	//variables
 	HWND	m_toolHandle;		//Handle to the  window

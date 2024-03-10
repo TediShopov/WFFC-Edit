@@ -16,7 +16,7 @@ public:
 	CStatusBar		m_wndStatusBar;
 	CToolBar		m_toolBar;
 	CChildRender* m_DirXView;
-	MFCTransformView* m_sceneGraphTree;
+	MFCTransformView* m_transformTreeView;
 	CSplitterWnd	m_splitterWnd;
 
 public:

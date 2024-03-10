@@ -17,6 +17,9 @@
     <Filter Include="SQLITE">
       <UniqueIdentifier>{a006b0b6-46b2-4c4f-808a-ec8fe3e790eb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Utility">
+      <UniqueIdentifier>{015b5248-97d7-4860-bb0f-3345de52e173}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -59,9 +62,8 @@
     <ClCompile Include="SelectDialogue.cpp">
       <Filter>MFC</Filter>
     </ClCompile>
-    <ClCompile Include="TransformHirarchyTree.cpp" />
-    <ClCompile Include="CSplitFrame.cpp" />
     <ClCompile Include="MFCTransformView.cpp" />
+    <ClCompile Include="Observer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -111,9 +113,8 @@
     <ClInclude Include="SelectDialogue.h">
       <Filter>MFC</Filter>
     </ClInclude>
-    <ClInclude Include="TransformHirarchyTree.h" />
-    <ClInclude Include="CSplitFrame.h" />
     <ClInclude Include="MFCTransformView.h" />
+    <ClInclude Include="Observer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

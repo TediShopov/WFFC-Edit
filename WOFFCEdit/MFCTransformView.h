@@ -1,13 +1,19 @@
 #pragma once
 #include <afxcmn.h>
 #include <afxext.h>
+#include <map>
 #include <vector>
+
+#include "Observer.h"
+
+//#include "TransformHirarchyTree.h"
+class ToolMain;
 
 class SceneObject;
 // MFCTransformView form view
-typedef std::vector<SceneObject>* SceneGraph;
+typedef std::vector<SceneObject> SceneGraph;
 
-class MFCTransformView : public CFormView
+class MFCTransformView : public CFormView, public Observer<ToolMain>
 {
 	DECLARE_DYNCREATE(MFCTransformView)
 
@@ -16,9 +22,9 @@ protected:
 	virtual ~MFCTransformView();
 
 public:
-	SceneGraph m_sceneGraph;
-	CTreeCtrl m_transformHierarchy;
-	std::vector<int>* m_currentSelections;
+	std::map<int, HTREEITEM> objectsTreeItems;
+	ToolMain* m_toolPtr;
+	void VisualizeSelectionOnTreeCtrl(const ToolMain& tool);
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_FORMVIEW };
 #endif
@@ -31,6 +37,17 @@ public:
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	void Update(const Subject<ToolMain>* subject, const ToolMain& data) override;
 
 	DECLARE_MESSAGE_MAP()
+
+public:
+	void OnClickTree(NMHDR* pNMHDR, LRESULT* pResult);
+	void UncheckTreeItemAndChildren(CTreeCtrl& treeCtrl, HTREEITEM item);
+
+	// Function to traverse the entire tree and uncheck all items
+	void UncheckAllTreeItems(CTreeCtrl& treeCtrl);
+
+	CTreeCtrl m_treeCtrl;
+	afx_msg void OnBnClickedButton1();
 };

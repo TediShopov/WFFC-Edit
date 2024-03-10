@@ -1,4 +1,6 @@
 #include "MFCMain.h"
+
+#include "MFCTransformView.h"
 #include "resource.h"
 
 BEGIN_MESSAGE_MAP(MFCMain, CWinApp)
@@ -32,11 +34,19 @@ BOOL MFCMain::InitInstance()
 	//get the rect from the MFC window so we can get its dimensions
 	m_toolHandle = m_frame->m_DirXView->GetSafeHwnd();				//handle of directX child window
 	m_frame->m_DirXView->GetClientRect(&WindowRECT);
-	//m_frame->m_sceneGraphTree->SetObjectData(&m_ToolSystem.m_sceneGraph, &m_ToolSystem.m_selectedObject);
+
+	//Assign window dimensions
 	m_width = WindowRECT.Width();
 	m_height = WindowRECT.Height();
 
+	//Initialize tools
 	m_ToolSystem.onActionInitialise(m_toolHandle, m_width, m_height);
+	//Give tools as a reference to other classes/views
+	m_frame->m_transformTreeView->m_toolPtr = &m_ToolSystem;
+	m_frame->m_transformTreeView->VisualizeSelectionOnTreeCtrl(m_ToolSystem);
+
+	//Register all observers of ToolMain
+	m_ToolSystem.RegisterObserver(m_frame->m_transformTreeView);
 
 	return TRUE;
 }
@@ -89,6 +99,7 @@ int MFCMain::Run()
 
 			//send current object ID to status bar in The main frame
 			m_frame->m_wndStatusBar.SetPaneText(1, statusString.c_str(), 1);
+			//m_frame->m_transformTreeView->UpdateTreeVisuals();
 		}
 	}
 

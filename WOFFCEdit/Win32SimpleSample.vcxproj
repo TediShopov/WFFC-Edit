@@ -166,7 +166,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ChunkObject.cpp" />
-    <ClCompile Include="CSplitFrame.cpp" />
     <ClCompile Include="DeviceResources.cpp" />
     <ClCompile Include="DisplayChunk.cpp" />
     <ClCompile Include="DisplayObject.cpp" />
@@ -175,17 +174,16 @@
     <ClCompile Include="MFCFrame.cpp" />
     <ClCompile Include="MFCRenderFrame.cpp" />
     <ClCompile Include="MFCTransformView.cpp" />
+    <ClCompile Include="Observer.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="MFCMain.cpp" />
     <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="SelectDialogue.cpp" />
     <ClCompile Include="sqlite3.c" />
     <ClCompile Include="ToolMain.cpp" />
-    <ClCompile Include="TransformHirarchyTree.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChunkObject.h" />
-    <ClInclude Include="CSplitFrame.h" />
     <ClInclude Include="DeviceResources.h" />
     <ClInclude Include="DisplayChunk.h" />
     <ClInclude Include="DisplayObject.h" />
@@ -194,6 +192,7 @@
     <ClInclude Include="MFCFrame.h" />
     <ClInclude Include="MFCRenderFrame.h" />
     <ClInclude Include="MFCTransformView.h" />
+    <ClInclude Include="Observer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SceneObject.h" />
@@ -203,7 +202,6 @@
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="MFCMain.h" />
     <ClInclude Include="ToolMain.h" />
-    <ClInclude Include="TransformHirarchyTree.h" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="database\data\Scene1.fbx">
