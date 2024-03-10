@@ -297,7 +297,8 @@ void ToolMain::Tick(MSG* msg)
 		{
 			//Reset selection and add newly selected
 			m_selectedObject.clear();
-			m_selectedObject.push_back(newSelectedId);
+			if (newSelectedId != -1)
+				m_selectedObject.push_back(newSelectedId);
 		}
 		this->Notify(*this);
 	}

@@ -6,8 +6,6 @@
 
 #include <map>
 
-#include "ToolMain.h"
-
 // MFCTransformView
 
 IMPLEMENT_DYNCREATE(MFCTransformView, CFormView)
@@ -17,9 +15,18 @@ MFCTransformView::MFCTransformView()
 {
 	auto transform = new CMFCPropertyGridProperty("Transform");
 	auto globalPosGroup = new CMFCPropertyGridProperty("Position");
-	globalPosGroup->AddSubItem(new CMFCPropertyGridProperty("X", COleVariant(0.0)));
-	globalPosGroup->AddSubItem(new CMFCPropertyGridProperty("Y", COleVariant(0.0)));
-	globalPosGroup->AddSubItem(new CMFCPropertyGridProperty("Z", COleVariant(0.0)));
+	globalPosGroup->AddSubItem(
+		new CMFCPropertyGridProperty("X",
+			COleVariant(sceneObjectCopy.posX),
+			NULL, reinterpret_cast<DWORD_PTR>(&sceneObjectCopy.posX)));
+	globalPosGroup->AddSubItem(
+		new CMFCPropertyGridProperty("Y",
+			COleVariant(sceneObjectCopy.posY),
+			NULL, reinterpret_cast<DWORD_PTR>(&sceneObjectCopy.posY)));
+	globalPosGroup->AddSubItem(
+		new CMFCPropertyGridProperty("Z",
+			COleVariant(sceneObjectCopy.posY),
+			NULL, reinterpret_cast<DWORD_PTR>(&sceneObjectCopy.posZ)));
 	auto localScaleGroup = new CMFCPropertyGridProperty("Scale");
 	localScaleGroup->AddSubItem(new CMFCPropertyGridProperty("X", COleVariant(0.0)));
 	localScaleGroup->AddSubItem(new CMFCPropertyGridProperty("Y", COleVariant(0.0)));
@@ -44,6 +51,7 @@ void MFCTransformView::DoDataExchange(CDataExchange* pDX)
 void MFCTransformView::Update(const Subject<ToolMain>* subject, const ToolMain& data)
 {
 	VisualizeSelectionOnTreeCtrl(data);
+	UpdatePropertyGridSelection(&data.m_selectedObject);
 }
 
 BEGIN_MESSAGE_MAP(MFCTransformView, CFormView)
@@ -52,6 +60,21 @@ BEGIN_MESSAGE_MAP(MFCTransformView, CFormView)
 END_MESSAGE_MAP()
 
 // MFCTransformView diagnostics
+
+void MFCTransformView::UpdatePropertyGridSelection(const std::vector<int>* selection)
+{
+	SceneObject* foundObj = nullptr;
+	if (selection->size() == 1)
+	{
+		m_propertyGrid.ShowWindow(SW_SHOW);
+		foundObj = FindSceneObject((*selection)[0]);
+		UpdatePropertyGrid(foundObj);
+	}
+	else
+	{
+		m_propertyGrid.ShowWindow(SW_HIDE);
+	}
+}
 
 void MFCTransformView::OnClickTree(NMHDR* pNMHDR, LRESULT* pResult)
 {
@@ -69,9 +92,9 @@ void MFCTransformView::OnClickTree(NMHDR* pNMHDR, LRESULT* pResult)
 	//MapWindowPoints(pWnd, &ht.pt, 1);
 	m_treeCtrl.ScreenToClient(&ht.pt);
 	m_treeCtrl.HitTest(&ht);
+	auto selection = &m_toolPtr->m_selectedObject;
 	if (TVHT_ONITEMSTATEICON & ht.flags)
 	{
-		auto selection = &m_toolPtr->m_selectedObject;
 		CString id = m_treeCtrl.GetItemText(ht.hItem);
 
 		//Reverse as this event is called before actual update happens
@@ -89,6 +112,8 @@ void MFCTransformView::OnClickTree(NMHDR* pNMHDR, LRESULT* pResult)
 			selection->erase(iter);
 		}
 	}
+
+	UpdatePropertyGridSelection(selection);
 
 	// Handle multi-selection logic here
 	*pResult = 0;
@@ -120,6 +145,49 @@ void MFCTransformView::UncheckAllTreeItems(CTreeCtrl& treeCtrl)
 		UncheckTreeItemAndChildren(treeCtrl, treeItem);
 		treeItem = treeCtrl.GetNextSiblingItem(treeItem);
 	}
+}
+
+SceneObject* MFCTransformView::FindSceneObject(int selectedItemId)
+{
+	SceneObject* obj = nullptr;
+	std::vector<SceneObject>* objects = &m_toolPtr->m_sceneGraph;
+	for (SceneObject& scene_object : *objects)
+	{
+		if (scene_object.ID == selectedItemId)
+		{
+			obj = &scene_object;
+			break;
+		}
+	}
+	return obj;
+}
+
+void MFCTransformView::UpdatePropertyGrid(SceneObject* obj)
+{
+	//sceneObjectCopy = *obj TODO fix object not copiable;
+	if (obj != nullptr)
+	{
+		//		sceneObjectCopy.posX = obj->posX;
+		//		sceneObjectCopy.posY = obj->posY;
+		//		sceneObjectCopy.posZ = obj->posZ;
+		sceneObjectCopy = *obj;
+	}
+	else
+	{
+		sceneObjectCopy = SceneObject();
+	}
+
+	//Update transform
+	CMFCPropertyGridProperty* posX = m_propertyGrid
+		.FindItemByData(reinterpret_cast<DWORD_PTR>(&sceneObjectCopy.posX));
+	posX->SetValue(sceneObjectCopy.posX);
+	CMFCPropertyGridProperty* posY = m_propertyGrid
+		.FindItemByData(reinterpret_cast<DWORD_PTR>(&sceneObjectCopy.posY));
+	posY->SetValue(sceneObjectCopy.posY);
+	CMFCPropertyGridProperty* posZ = m_propertyGrid
+		.FindItemByData(reinterpret_cast<DWORD_PTR>(&sceneObjectCopy.posZ));
+	posZ->SetValue(sceneObjectCopy.posZ);
+	m_propertyGrid.MarkModifiedProperties(1, 1);
 }
 
 #ifdef _DEBUG
@@ -189,6 +257,10 @@ void MFCTransformView::Dump(CDumpContext& dc) const
 void MFCTransformView::OnBnClickedButton1()
 {
 	this->m_toolPtr->m_selectedObject.clear();
+	UpdatePropertyGridSelection(&m_toolPtr->m_selectedObject);
 	// TODO: Add your control notification handler code here
 	UncheckAllTreeItems(m_treeCtrl);
+	//	CMFCPropertyGridProperty* prop = m_propertyGrid.FindItemByData(reinterpret_cast<DWORD_PTR>(&testData));
+	//	prop->SetValue(testData);
+	m_propertyGrid.MarkModifiedProperties(1, 1);
 }

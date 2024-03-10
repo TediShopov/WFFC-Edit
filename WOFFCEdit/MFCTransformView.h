@@ -5,6 +5,7 @@
 #include <map>
 #include <vector>
 
+#include "ToolMain.h"
 #include "Observer.h"
 
 //#include "TransformHirarchyTree.h"
@@ -48,9 +49,14 @@ public:
 
 	// Function to traverse the entire tree and uncheck all items
 	void UncheckAllTreeItems(CTreeCtrl& treeCtrl);
+	SceneObject* FindSceneObject(int selectedItemId);
+	void UpdatePropertyGridSelection(const std::vector<int>* selection);
+	void UpdatePropertyGrid(SceneObject* obj);
 
 	CTreeCtrl m_treeCtrl;
 	CMFCPropertyGridCtrl m_propertyGrid;
-	CMFCPropertyGridProperty* testProp;
 	afx_msg void OnBnClickedButton1();
+private:
+	//Poistion Controls
+	SceneObject sceneObjectCopy;
 };
