@@ -1,6 +1,7 @@
 #pragma once
 #include <afxcmn.h>
 #include <afxext.h>
+#include <afxpropertygridctrl.h>
 #include <map>
 #include <vector>
 
@@ -49,5 +50,7 @@ public:
 	void UncheckAllTreeItems(CTreeCtrl& treeCtrl);
 
 	CTreeCtrl m_treeCtrl;
+	CMFCPropertyGridCtrl m_propertyGrid;
+	CMFCPropertyGridProperty* testProp;
 	afx_msg void OnBnClickedButton1();
 };

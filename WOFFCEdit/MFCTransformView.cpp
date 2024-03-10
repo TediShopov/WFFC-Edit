@@ -15,6 +15,19 @@ IMPLEMENT_DYNCREATE(MFCTransformView, CFormView)
 MFCTransformView::MFCTransformView()
 	: CFormView(IDD_FORMVIEW)
 {
+	auto transform = new CMFCPropertyGridProperty("Transform");
+	auto globalPosGroup = new CMFCPropertyGridProperty("Position");
+	globalPosGroup->AddSubItem(new CMFCPropertyGridProperty("X", COleVariant(0.0)));
+	globalPosGroup->AddSubItem(new CMFCPropertyGridProperty("Y", COleVariant(0.0)));
+	globalPosGroup->AddSubItem(new CMFCPropertyGridProperty("Z", COleVariant(0.0)));
+	auto localScaleGroup = new CMFCPropertyGridProperty("Scale");
+	localScaleGroup->AddSubItem(new CMFCPropertyGridProperty("X", COleVariant(0.0)));
+	localScaleGroup->AddSubItem(new CMFCPropertyGridProperty("Y", COleVariant(0.0)));
+	localScaleGroup->AddSubItem(new CMFCPropertyGridProperty("Z", COleVariant(0.0)));
+	transform->AddSubItem(globalPosGroup);
+	transform->AddSubItem(localScaleGroup);
+
+	m_propertyGrid.AddProperty(transform, 1, 1);
 }
 
 MFCTransformView::~MFCTransformView()
@@ -25,6 +38,7 @@ void MFCTransformView::DoDataExchange(CDataExchange* pDX)
 {
 	CFormView::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_TREE1, m_treeCtrl);
+	DDX_Control(pDX, IDC_MFCPROPERTYGRID2, m_propertyGrid);
 }
 
 void MFCTransformView::Update(const Subject<ToolMain>* subject, const ToolMain& data)
