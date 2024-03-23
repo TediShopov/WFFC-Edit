@@ -15,26 +15,38 @@ MFCTransformView::MFCTransformView()
 {
 	auto transform = new CMFCPropertyGridProperty("Transform");
 	auto globalPosGroup = new CMFCPropertyGridProperty("Position");
-	globalPosGroup->AddSubItem(
-		new CMFCPropertyGridProperty("X",
-			COleVariant(sceneObjectCopy.posX),
-			NULL, reinterpret_cast<DWORD_PTR>(&sceneObjectCopy.posX)));
-	globalPosGroup->AddSubItem(
-		new CMFCPropertyGridProperty("Y",
-			COleVariant(sceneObjectCopy.posY),
-			NULL, reinterpret_cast<DWORD_PTR>(&sceneObjectCopy.posY)));
-	globalPosGroup->AddSubItem(
-		new CMFCPropertyGridProperty("Z",
-			COleVariant(sceneObjectCopy.posY),
-			NULL, reinterpret_cast<DWORD_PTR>(&sceneObjectCopy.posZ)));
+	globalPosGroup->AddSubItem(CreateFloatProp("X", &sceneObjectCopy.posX));
+	globalPosGroup->AddSubItem(CreateFloatProp("Y", &sceneObjectCopy.posY));
+	globalPosGroup->AddSubItem(CreateFloatProp("Z", &sceneObjectCopy.posZ));
+
+	//Var scale group
 	auto localScaleGroup = new CMFCPropertyGridProperty("Scale");
-	localScaleGroup->AddSubItem(new CMFCPropertyGridProperty("X", COleVariant(0.0)));
-	localScaleGroup->AddSubItem(new CMFCPropertyGridProperty("Y", COleVariant(0.0)));
-	localScaleGroup->AddSubItem(new CMFCPropertyGridProperty("Z", COleVariant(0.0)));
+	localScaleGroup->AddSubItem(CreateFloatProp("X", &sceneObjectCopy.scaX));
+	localScaleGroup->AddSubItem(CreateFloatProp("Y", &sceneObjectCopy.scaY));
+	localScaleGroup->AddSubItem(CreateFloatProp("Z", &sceneObjectCopy.scaZ));
+
+	auto localOrientationGroup = new CMFCPropertyGridProperty("Rotation");
+	localOrientationGroup->AddSubItem(CreateFloatProp("X", &sceneObjectCopy.rotX));
+	localOrientationGroup->AddSubItem(CreateFloatProp("Y", &sceneObjectCopy.rotY));
+	localOrientationGroup->AddSubItem(CreateFloatProp("Z", &sceneObjectCopy.rotZ));
 	transform->AddSubItem(globalPosGroup);
 	transform->AddSubItem(localScaleGroup);
+	transform->AddSubItem(localOrientationGroup);
 
 	m_propertyGrid.AddProperty(transform, 1, 1);
+}
+CMFCPropertyGridProperty* MFCTransformView::CreateFloatProp(
+	const CString name, float* data)
+{
+	return new CMFCPropertyGridProperty(name, COleVariant(*data),
+		NULL, reinterpret_cast<DWORD_PTR>(data));
+}
+
+void MFCTransformView::UpdateFloatProp(float* data)
+{
+	CMFCPropertyGridProperty* prop = m_propertyGrid.FindItemByData(
+		reinterpret_cast<DWORD_PTR>(data), TRUE);
+	prop->SetValue(*data);
 }
 
 MFCTransformView::~MFCTransformView()
@@ -167,27 +179,21 @@ void MFCTransformView::UpdatePropertyGrid(SceneObject* obj)
 {
 	//sceneObjectCopy = *obj TODO fix object not copiable;
 	if (obj != nullptr)
-	{
-		//		sceneObjectCopy.posX = obj->posX;
-		//		sceneObjectCopy.posY = obj->posY;
-		//		sceneObjectCopy.posZ = obj->posZ;
 		sceneObjectCopy = *obj;
-	}
 	else
-	{
 		sceneObjectCopy = SceneObject();
-	}
 
 	//Update transform
-	CMFCPropertyGridProperty* posX = m_propertyGrid
-		.FindItemByData(reinterpret_cast<DWORD_PTR>(&sceneObjectCopy.posX));
-	posX->SetValue(sceneObjectCopy.posX);
-	CMFCPropertyGridProperty* posY = m_propertyGrid
-		.FindItemByData(reinterpret_cast<DWORD_PTR>(&sceneObjectCopy.posY));
-	posY->SetValue(sceneObjectCopy.posY);
-	CMFCPropertyGridProperty* posZ = m_propertyGrid
-		.FindItemByData(reinterpret_cast<DWORD_PTR>(&sceneObjectCopy.posZ));
-	posZ->SetValue(sceneObjectCopy.posZ);
+	UpdateFloatProp(&sceneObjectCopy.posX);
+	UpdateFloatProp(&sceneObjectCopy.posY);
+	UpdateFloatProp(&sceneObjectCopy.posZ);
+	UpdateFloatProp(&sceneObjectCopy.scaX);
+	UpdateFloatProp(&sceneObjectCopy.scaY);
+	UpdateFloatProp(&sceneObjectCopy.scaZ);
+	UpdateFloatProp(&sceneObjectCopy.rotX);
+	UpdateFloatProp(&sceneObjectCopy.rotY);
+	UpdateFloatProp(&sceneObjectCopy.rotZ);
+
 	m_propertyGrid.MarkModifiedProperties(1, 1);
 }
 

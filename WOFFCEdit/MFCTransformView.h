@@ -57,6 +57,10 @@ public:
 	CTreeCtrl m_treeCtrl;
 	CMFCPropertyGridCtrl m_propertyGrid;
 	afx_msg void OnBnClickedButton1();
+	CMFCPropertyGridProperty* CreateFloatProp(
+		const CString name, float* data);
+	void UpdateFloatProp(float* data);
+
 private:
 	//Poistion Controls
 	SceneObject sceneObjectCopy;
