@@ -57,6 +57,7 @@ void MFCTransformView::Update(const Subject<ToolMain>* subject, const ToolMain& 
 BEGIN_MESSAGE_MAP(MFCTransformView, CFormView)
 	ON_NOTIFY(NM_CLICK, IDC_TREE1, &MFCTransformView::OnClickTree)
 	ON_BN_CLICKED(IDC_BUTTON1, &MFCTransformView::OnBnClickedButton1)
+	ON_REGISTERED_MESSAGE(AFX_WM_PROPERTY_CHANGED, &MFCTransformView::OnTransformPropertyChanged)
 END_MESSAGE_MAP()
 
 // MFCTransformView diagnostics
@@ -153,7 +154,7 @@ SceneObject* MFCTransformView::FindSceneObject(int selectedItemId)
 	std::vector<SceneObject>* objects = &m_toolPtr->m_sceneGraph;
 	for (SceneObject& scene_object : *objects)
 	{
-		if (scene_object.ID == selectedItemId)
+		if (scene_object.ID == selectedItemId + 1)
 		{
 			obj = &scene_object;
 			break;
@@ -188,6 +189,23 @@ void MFCTransformView::UpdatePropertyGrid(SceneObject* obj)
 		.FindItemByData(reinterpret_cast<DWORD_PTR>(&sceneObjectCopy.posZ));
 	posZ->SetValue(sceneObjectCopy.posZ);
 	m_propertyGrid.MarkModifiedProperties(1, 1);
+}
+
+LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lparam)
+{
+	CMFCPropertyGridProperty* propChanged = (CMFCPropertyGridProperty*)lparam;
+	SceneObject* foundObj = nullptr;
+	if (m_toolPtr->m_selectedObject.size() == 1)
+	{
+		m_propertyGrid.MarkModifiedProperties(1, 1);
+		m_propertyGrid.ShowWindow(SW_SHOW);
+		foundObj = FindSceneObject((m_toolPtr->m_selectedObject)[0]);
+		float* d = reinterpret_cast<float*>(propChanged->GetData());
+		auto test = propChanged->GetValue();
+		(*d) = test.fltVal;
+		(*foundObj) = sceneObjectCopy;
+	}
+	return TRUE;
 }
 
 #ifdef _DEBUG

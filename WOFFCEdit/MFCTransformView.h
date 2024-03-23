@@ -52,6 +52,7 @@ public:
 	SceneObject* FindSceneObject(int selectedItemId);
 	void UpdatePropertyGridSelection(const std::vector<int>* selection);
 	void UpdatePropertyGrid(SceneObject* obj);
+	afx_msg LRESULT OnTransformPropertyChanged(__in WPARAM wparam, __in LPARAM lparam);
 
 	CTreeCtrl m_treeCtrl;
 	CMFCPropertyGridCtrl m_propertyGrid;

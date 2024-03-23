@@ -109,21 +109,6 @@ int CMyFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 
 void CMyFrame::OnSize(UINT nType, int cx, int cy)
 {
-	//	bool d = this->SetWindowPos(
-	//		&CWnd::wndNoTopMost,
-	//		0,
-	//		0,
-	//		cx,
-	//		cy,
-	//		SWP_SHOWWINDOW);
-	//m_splitterWnd.MoveWindow(0, 0, cx, cy, 0);
-	//	bool suc = this->m_splitterWnd.SetWindowPos(
-	//		this,
-	//		50,
-	//		50,
-	//		cx,
-	//		cy,
-	//		SWP_DRAWFRAME);
 	CFrameWnd::OnSize(nType, cx, cy);
 	if (m_splitterWnd.GetAccessibleChildCount() > 0)
 	{
@@ -135,26 +120,7 @@ void CMyFrame::OnSize(UINT nType, int cx, int cy)
 			m_splitterWnd.GetColumnInfo(1, XDim, i);
 			m_splitterWnd.GetRowInfo(0, YDim, i);
 			dx_renderer->OnWindowSizeChanged(XDim, YDim);
-
 			m_DirXView->GetClientRect(&dx_renderer->m_ScreenDimensions);
-			int a = 3;
 		}
-		//		this->m_splitterWnd.GetPane(0, 1)->
-		//			MoveWindow(150, 150, 150, 150);
 	}
-
-	//	this->m_splitterWnd.GetPane(0, 1)->SetWindowPos(
-	//		&CWnd::wndTopMost,
-	//		0,
-	//		0,
-	//		cx,
-	//		cy,
-	//		SWP_SHOWWINDOW);
-	//	this->m_splitterWnd.GetPane(0, 2)->SetWindowPos(
-	//		&CWnd::wndTopMost,
-	//		0,
-	//		0,
-	//		cx,
-	//		cy,
-	//		SWP_SHOWWINDOW);
 }
