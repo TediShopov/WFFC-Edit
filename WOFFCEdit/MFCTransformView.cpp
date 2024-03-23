@@ -204,6 +204,10 @@ LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpara
 		auto test = propChanged->GetValue();
 		(*d) = test.fltVal;
 		(*foundObj) = sceneObjectCopy;
+		m_toolPtr->m_d3dRenderer.
+			UpdateDisplayElementTransform(
+				foundObj->ID - 1, &m_toolPtr->m_sceneGraph
+			);
 	}
 	return TRUE;
 }

@@ -382,6 +382,40 @@ void Game::OnWindowSizeChanged(int width, int height)
 	CreateWindowSizeDependentResources();
 }
 
+void Game::UpdateDisplayElementTransform(int i, std::vector<SceneObject>* SceneGraph)
+{
+	DisplayObject& newDisplayObject = this->m_displayList[i];
+	newDisplayObject.m_position.x = SceneGraph->at(i).posX;
+	newDisplayObject.m_position.y = SceneGraph->at(i).posY;
+	newDisplayObject.m_position.z = SceneGraph->at(i).posZ;
+
+	//setorientation
+	newDisplayObject.m_orientation.x = SceneGraph->at(i).rotX;
+	newDisplayObject.m_orientation.y = SceneGraph->at(i).rotY;
+	newDisplayObject.m_orientation.z = SceneGraph->at(i).rotZ;
+
+	//set scale
+	newDisplayObject.m_scale.x = SceneGraph->at(i).scaX;
+	newDisplayObject.m_scale.y = SceneGraph->at(i).scaY;
+	newDisplayObject.m_scale.z = SceneGraph->at(i).scaZ;
+
+	//set wireframe / render flags
+	newDisplayObject.m_render = SceneGraph->at(i).editor_render;
+	newDisplayObject.m_wireframe = SceneGraph->at(i).editor_wireframe;
+
+	newDisplayObject.m_light_type = SceneGraph->at(i).light_type;
+	newDisplayObject.m_light_diffuse_r = SceneGraph->at(i).light_diffuse_r;
+	newDisplayObject.m_light_diffuse_g = SceneGraph->at(i).light_diffuse_g;
+	newDisplayObject.m_light_diffuse_b = SceneGraph->at(i).light_diffuse_b;
+	newDisplayObject.m_light_specular_r = SceneGraph->at(i).light_specular_r;
+	newDisplayObject.m_light_specular_g = SceneGraph->at(i).light_specular_g;
+	newDisplayObject.m_light_specular_b = SceneGraph->at(i).light_specular_b;
+	newDisplayObject.m_light_spot_cutoff = SceneGraph->at(i).light_spot_cutoff;
+	newDisplayObject.m_light_constant = SceneGraph->at(i).light_constant;
+	newDisplayObject.m_light_linear = SceneGraph->at(i).light_linear;
+	newDisplayObject.m_light_quadratic = SceneGraph->at(i).light_quadratic;
+}
+
 void Game::BuildDisplayList(std::vector<SceneObject>* SceneGraph)
 {
 	auto device = m_deviceResources->GetD3DDevice();

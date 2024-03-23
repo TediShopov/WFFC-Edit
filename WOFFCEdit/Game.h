@@ -44,6 +44,7 @@ public:
 	void OnResuming();
 	void OnWindowSizeChanged(int width, int height);
 
+	void UpdateDisplayElementTransform(int index, std::vector<SceneObject>* SceneGraph);
 	//tool specific
 	void BuildDisplayList(std::vector<SceneObject>* SceneGraph); //note vector passed by reference
 	void BuildDisplayChunk(ChunkObject* SceneChunk);

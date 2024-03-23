@@ -278,7 +278,6 @@ void ToolMain::onActionSaveTerrain()
 
 void ToolMain::Tick(MSG* msg)
 {
-	m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
 	//do we have a selection
 	int newSelectedId = -1;
 	//if mouse is over this window
