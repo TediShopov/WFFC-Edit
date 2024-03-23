@@ -9,6 +9,7 @@ BEGIN_MESSAGE_MAP(MFCMain, CWinApp)
 	ON_COMMAND(ID_EDIT_SELECT, &MFCMain::MenuEditSelect)
 	ON_COMMAND(ID_BUTTON40001, &MFCMain::ToolBarButton1)
 	ON_UPDATE_COMMAND_UI(ID_INDICATOR_TOOL, &CMyFrame::OnUpdatePage)
+
 END_MESSAGE_MAP()
 
 BOOL MFCMain::InitInstance()
@@ -44,6 +45,10 @@ BOOL MFCMain::InitInstance()
 	//Give tools as a reference to other classes/views
 	m_frame->m_transformTreeView->m_toolPtr = &m_ToolSystem;
 	m_frame->m_transformTreeView->VisualizeSelectionOnTreeCtrl(m_ToolSystem);
+
+	//Add reference to from view to the actual render so it
+	//updated on window restore
+	m_frame->dx_renderer = &m_ToolSystem.m_d3dRenderer;
 
 	//Register all observers of ToolMain
 	m_ToolSystem.RegisterObserver(m_frame->m_transformTreeView);

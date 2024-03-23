@@ -19,6 +19,8 @@ public:
 	MFCTransformView* m_transformTreeView;
 	CSplitterWnd	m_splitterWnd;
 
+	Game* dx_renderer = nullptr;
+
 public:
 	CMyFrame();
 	void SetCurrentSelectionID(int ID);
@@ -30,5 +32,7 @@ private:	//overrides
 	//note the afx_message keyword is linking this method to message map access.
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg int OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext) override;
+	// So put your resize code here:
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 	DECLARE_MESSAGE_MAP() // required macro for message map functionality  One per class
 };
