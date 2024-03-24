@@ -432,3 +432,16 @@ FodyWeavers.xsd
 *.exe
 *.out
 *.app
+WOFFCEdit/Debug/WoFEdit.exe
+WOFFCEdit/Debug/WoFEdit.exe
+WOFFCEdit/Debug/WoFEdit.ilk
+WOFFCEdit/Debug/WoFEdit.exe
+WOFFCEdit/Debug/WoFEdit.ilk
+/WOFFCEdit
+*.pdb
+*.ilk
+*.exe
+*.exe
+*.ilk
+*.pdb
+*.tlog

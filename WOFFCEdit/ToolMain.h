@@ -42,11 +42,17 @@ private:	//methods
 	void GetLocalVectors(int objectIndex, DirectX::XMVECTOR[4]);
 	void GetLocalPlanes(int objectIndex, DirectX::XMVECTOR[3]);
 
-	void MoveOnAxis(float x, float y, float z);
-	void MoveOnPlane(float x, float y, float z, float d);
+	XMVECTOR MoveOnAxis(
+		XMVECTOR mouseWorldRay,
+		XMVECTOR plane,
+		XMVECTOR rayOnPlane);
+	XMVECTOR MoveOnPlane(
+		XMVECTOR mouseWorldRay,
+		XMVECTOR plane);
 
 private:	//variables
 
+	XMVECTOR selected_object_axes[4];
 	XMVECTOR selected_object_planes[3];
 	InputCommands on_selection_commands;
 	bool is_select_draggin = false;

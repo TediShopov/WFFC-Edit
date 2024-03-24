@@ -316,20 +316,20 @@ void ToolMain::Tick(MSG* msg)
 		}
 		this->Notify(*this);
 	}
-	if (m_toolInputCommands.plane_x
-		|| m_toolInputCommands.plane_y
-		|| m_toolInputCommands.plane_z)
-	{
-		StartSelectionDrag();
-	}
-	//do we have a mode
-	//are we clicking / dragging /releasing
-	//has something changed
-		//update Scenegraph
-		//add to scenegraph
-		//resend scenegraph to Direct X renderer
+	//	if (m_toolInputCommands.plane_x
+	//		|| m_toolInputCommands.plane_y
+	//		|| m_toolInputCommands.plane_z)
+	//	{
+	//		StartSelectionDrag();
+	//	}
+		//do we have a mode
+		//are we clicking / dragging /releasing
+		//has something changed
+			//update Scenegraph
+			//add to scenegraph
+			//resend scenegraph to Direct X renderer
 
-	//Renderer Update Call
+		//Renderer Update Call
 	m_d3dRenderer.Tick(&m_toolInputCommands);
 }
 
@@ -435,30 +435,52 @@ void ToolMain::GetLocalVectors(int objectIndex,
 	}
 }
 
-void ToolMain::GetLocalPlanes(int objectIndex, XMVECTOR planes[3])
+void ToolMain::GetLocalPlanes(
+	int objectIndex,
+	XMVECTOR planes[3])
 {
-	XMVECTOR vecs[4];
-	GetLocalVectors(objectIndex, vecs);
+	//GetLocalVectors(objectIndex, selected_object_axes);
 
 	//Local vector are in Origin, X, Y, Z order
 
 	//Pressing x key --> YZ plane
 	planes[0] =
-		XMPlaneFromPoints(vecs[0], vecs[2], vecs[3]);
+		XMPlaneFromPoints(selected_object_axes[0], selected_object_axes[2], selected_object_axes[3]);
 	//Pressing y key --> XZ plane
 	planes[1] =
-		XMPlaneFromPoints(vecs[0], vecs[1], vecs[3]);
+		XMPlaneFromPoints(selected_object_axes[0], selected_object_axes[1], selected_object_axes[3]);
 	//Pressing z key --> XY plane
 	planes[2] =
-		XMPlaneFromPoints(vecs[0], vecs[1], vecs[2]);
+		XMPlaneFromPoints(selected_object_axes[0], selected_object_axes[1], selected_object_axes[2]);
 }
 
-void ToolMain::MoveOnAxis(float x, float y, float z)
+XMVECTOR ToolMain::MoveOnAxis(
+	XMVECTOR mouseWorldRay,
+	XMVECTOR plane,
+	XMVECTOR rayOnPlane)
 {
+	XMVECTOR origin = selected_object_axes[0];
+
+	XMVECTOR globalPlaneIntersection = MoveOnPlane(mouseWorldRay, plane);
+	XMVECTOR localVectorToPoint = globalPlaneIntersection - origin;
+	XMVECTOR localUnitAxis = XMVector3Normalize(rayOnPlane - origin);
+	XMVECTOR dot = XMVector3Dot(localUnitAxis, localVectorToPoint);
+	XMVECTOR res = localUnitAxis * dot.m128_f32[0] + origin;
+
+	return res;
+	//	return XMVector3Dot(originToPoint, rayOnPlane * 1000);
 }
 
-void ToolMain::MoveOnPlane(float x, float y, float z, float d)
+XMVECTOR ToolMain::MoveOnPlane(
+	XMVECTOR mouseWorldRay,
+	XMVECTOR plane)
 {
+	XMVECTOR intersectionPos = XMPlaneIntersectLine(
+		plane,
+		m_d3dRenderer.m_camPosition,
+		mouseWorldRay
+	);
+	return intersectionPos;
 }
 
 void ToolMain::StartSelectionDrag()
@@ -466,6 +488,7 @@ void ToolMain::StartSelectionDrag()
 	if (m_selectedObject.size() == 1)
 	{
 		on_selection_commands = m_toolInputCommands;
+		GetLocalVectors(0, selected_object_axes);
 		GetLocalPlanes(
 			m_selectedObject[0],
 			selected_object_planes);
@@ -476,42 +499,58 @@ void ToolMain::StartSelectionDrag()
 void ToolMain::DoSelectionDrag()
 {
 	XMVECTOR plane;
-	if (on_selection_commands.plane_x == true)
-		plane = selected_object_planes[0];
-	else if (on_selection_commands.plane_y == true)
-		plane = selected_object_planes[1];
-	else
-		plane = selected_object_planes[2];
+	XMVECTOR axis;
 
+	XMVECTOR newPosition;
 	if (m_selectedObject.size() == 1)
 	{
+		SceneObject& obj = m_sceneGraph[m_selectedObject[0]];
+
 		POINT p;
 		GetCursorPos(&p);
-		//ScreenToClient(m_toolHandle, &p);
-		//ClientToScreen(m_toolHandle, &p);
-		//World ray from mouse screen coord
 		XMVECTOR mouseWorldPos =
 			m_d3dRenderer.GetWorldRay(
 				this->m_toolInputCommands.mouse_x,
 				this->m_toolInputCommands.mouse_y,
 				1000);
+		if (m_toolInputCommands.CTRL_Down)
+		{
+			if (m_toolInputCommands.plane_x)
+			{
+				axis = selected_object_axes[1];
+				plane = selected_object_planes[2];
+			}
+			else if (m_toolInputCommands.plane_y)
+			{
+				axis = selected_object_axes[2];
+				plane = selected_object_planes[2];
+			}
+			else
+			{
+				axis = selected_object_axes[3];
+				plane = selected_object_planes[1];
+			}
 
-		XMVECTOR intersectionPos = XMPlaneIntersectLine(
-			plane,
-			m_d3dRenderer.m_camPosition,
-			mouseWorldPos
-		);
+			newPosition = MoveOnAxis(
+				mouseWorldPos, plane, axis);
+		}
+		else
+		{
+			if (on_selection_commands.plane_x == true)
+				plane = selected_object_planes[0];
+			else if (on_selection_commands.plane_y == true)
+				plane = selected_object_planes[1];
+			else
+				plane = selected_object_planes[2];
+			newPosition = MoveOnPlane(
+				mouseWorldPos, plane);
+		}
 
-		SceneObject& obj = m_sceneGraph[m_selectedObject[0]];
-		float* wCoord = intersectionPos.m128_f32;
-
-		//		obj.posX = wCoord[0] / wCoord[3];
-		//		obj.posY = wCoord[1] / wCoord[3];
-		//		obj.posZ = wCoord[2] / wCoord[3];
-		obj.posX = wCoord[0];
-		obj.posY = wCoord[1];
-		obj.posZ = wCoord[2];
+		obj.posX = newPosition.m128_f32[0];
+		obj.posY = newPosition.m128_f32[1];
+		obj.posZ = newPosition.m128_f32[2];
 	}
+
 	this->m_d3dRenderer.UpdateDisplayElementTransform(
 		m_selectedObject[0], &m_sceneGraph);
 

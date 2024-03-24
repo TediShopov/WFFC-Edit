@@ -28,6 +28,6 @@ D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(145,59): warning C
 D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(146,56): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(147,54): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(148,57): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(496,30): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(495,30): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(514,30): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(513,30): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
   Win32SimpleSample.vcxproj -> D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Debug\WoFEdit.exe
