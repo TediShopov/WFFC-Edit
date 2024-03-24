@@ -174,6 +174,8 @@
     <ClCompile Include="MFCFrame.cpp" />
     <ClCompile Include="MFCRenderFrame.cpp" />
     <ClCompile Include="MFCTransformView.cpp" />
+    <ClCompile Include="ObjectSelectionState.cpp" />
+    <ClCompile Include="ObjectTransformState.cpp" />
     <ClCompile Include="Observer.cpp" />
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="MFCMain.cpp" />
@@ -181,6 +183,7 @@
     <ClCompile Include="SelectDialogue.cpp" />
     <ClCompile Include="sqlite3.c" />
     <ClCompile Include="ToolMain.cpp" />
+    <ClCompile Include="ToolStateBase.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ChunkObject.h" />
@@ -192,6 +195,8 @@
     <ClInclude Include="MFCFrame.h" />
     <ClInclude Include="MFCRenderFrame.h" />
     <ClInclude Include="MFCTransformView.h" />
+    <ClInclude Include="ObjectSelectionState.h" />
+    <ClInclude Include="ObjectTransformState.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="resource.h" />
@@ -202,6 +207,7 @@
     <ClInclude Include="StepTimer.h" />
     <ClInclude Include="MFCMain.h" />
     <ClInclude Include="ToolMain.h" />
+    <ClInclude Include="ToolStateBase.h" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="database\data\Scene1.fbx">

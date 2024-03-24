@@ -3,6 +3,8 @@
 #include <vector>
 #include <sstream>
 
+#include "ObjectSelectionState.h"
+
 //
 //ToolMain Class
 ToolMain::ToolMain()
@@ -22,6 +24,8 @@ ToolMain::ToolMain()
 	m_toolInputCommands.mouse_y = 0;
 	m_toolInputCommands.mouse_LB_Down = false;
 	m_toolInputCommands.CTRL_Down = false;
+	ToolState = new ObjectSelectionState();
+	ToolState->Init(this, m_toolInputCommands);
 }
 
 ToolMain::~ToolMain()
@@ -279,57 +283,58 @@ void ToolMain::onActionSaveTerrain()
 
 void ToolMain::Tick(MSG* msg)
 {
-	if (ShouldStartSelectDragging()
-		!= is_select_draggin)
-	{
-		is_select_draggin = ShouldStartSelectDragging();
-		if (is_select_draggin)
-			StartSelectionDrag();
-	}
-
-	if (is_select_draggin)
-	{
-		DoSelectionDrag();
-	}
-
-	//do we have a selection
-	int newSelectedId = -1;
-	//if mouse is over this window
-	if (m_toolInputCommands.mouse_LB_Down)
-	{
-		newSelectedId = m_d3dRenderer.MousePicking();
-		m_toolInputCommands.mouse_LB_Down = false;
-		if (m_toolInputCommands.CTRL_Down == true)
-		{
-			//Add selection to the list of selections
-			//only if it is unique
-			if (std::find(m_selectedObject.begin(), m_selectedObject.end(), newSelectedId) == m_selectedObject.end()) {
-				m_selectedObject.push_back(newSelectedId);
-			}
-		}
-		else
-		{
-			//Reset selection and add newly selected
-			m_selectedObject.clear();
-			if (newSelectedId != -1)
-				m_selectedObject.push_back(newSelectedId);
-		}
-		this->Notify(*this);
-	}
-	//	if (m_toolInputCommands.plane_x
-	//		|| m_toolInputCommands.plane_y
-	//		|| m_toolInputCommands.plane_z)
+	ToolState->Update(m_toolInputCommands);
+	//	if (ShouldStartSelectDragging()
+	//		!= is_select_draggin)
 	//	{
-	//		StartSelectionDrag();
+	//		is_select_draggin = ShouldStartSelectDragging();
+	//		if (is_select_draggin)
+	//			StartSelectionDrag();
 	//	}
-		//do we have a mode
-		//are we clicking / dragging /releasing
-		//has something changed
-			//update Scenegraph
-			//add to scenegraph
-			//resend scenegraph to Direct X renderer
+	//
+	//	if (is_select_draggin)
+	//	{
+	//		DoSelectionDrag();
+	//	}
+	//
+	//	//do we have a selection
+	//	int newSelectedId = -1;
+	//	//if mouse is over this window
+	//	if (m_toolInputCommands.mouse_LB_Down)
+	//	{
+	//		newSelectedId = m_d3dRenderer.MousePicking();
+	//		m_toolInputCommands.mouse_LB_Down = false;
+	//		if (m_toolInputCommands.CTRL_Down == true)
+	//		{
+	//			//Add selection to the list of selections
+	//			//only if it is unique
+	//			if (std::find(m_selectedObject.begin(), m_selectedObject.end(), newSelectedId) == m_selectedObject.end()) {
+	//				m_selectedObject.push_back(newSelectedId);
+	//			}
+	//		}
+	//		else
+	//		{
+	//			//Reset selection and add newly selected
+	//			m_selectedObject.clear();
+	//			if (newSelectedId != -1)
+	//				m_selectedObject.push_back(newSelectedId);
+	//		}
+	//		this->Notify(*this);
+	//	}
+		//	if (m_toolInputCommands.plane_x
+		//		|| m_toolInputCommands.plane_y
+		//		|| m_toolInputCommands.plane_z)
+		//	{
+		//		StartSelectionDrag();
+		//	}
+			//do we have a mode
+			//are we clicking / dragging /releasing
+			//has something changed
+				//update Scenegraph
+				//add to scenegraph
+				//resend scenegraph to Direct X renderer
 
-		//Renderer Update Call
+			//Renderer Update Call
 	m_d3dRenderer.Tick(&m_toolInputCommands);
 }
 
@@ -354,6 +359,9 @@ void ToolMain::UpdateInput(MSG* msg)
 
 	case WM_LBUTTONDOWN:	//mouse button down,  you will probably need to check when its up too
 		m_toolInputCommands.mouse_LB_Down = true;
+		break;
+	case WM_LBUTTONUP:	//mouse button down,  you will probably need to check when its up too
+		m_toolInputCommands.mouse_LB_Down = false;
 		break;
 	}
 
@@ -413,158 +421,20 @@ void ToolMain::Notify(const ToolMain& data)
 	}
 }
 
-void ToolMain::GetLocalVectors(int objectIndex,
-	XMVECTOR vecs[4])
+void ToolMain::ChangeState(ToolStateBase* newState)
 {
-	XMMATRIX local = this->m_d3dRenderer
-		.GetObjectLocalMatrix(objectIndex);
-
-	vecs[0] =
-		XMVECTOR{ 0,0,0,1 };
-	vecs[1] =
-		XMVECTOR{ 1,0,0,1 };
-	vecs[2] =
-		XMVECTOR{ 0,1,0,1 };
-	vecs[3] =
-		XMVECTOR{ 0,0,1,1 };
-	for (int i = 0; i < 4; ++i)
+	if (newState == nullptr) return;
+	if (ToolState != nullptr)
 	{
-		//Transform to local coordinates
-		vecs[i] =
-			XMVector3Transform(vecs[i], local);
+		//Do on state end;
 	}
+	ToolState = newState;
+	ToolState->Init(this, m_toolInputCommands);
 }
 
-void ToolMain::GetLocalPlanes(
-	int objectIndex,
-	XMVECTOR planes[3])
-{
-	//GetLocalVectors(objectIndex, selected_object_axes);
-
-	//Local vector are in Origin, X, Y, Z order
-
-	//Pressing x key --> YZ plane
-	planes[0] =
-		XMPlaneFromPoints(selected_object_axes[0], selected_object_axes[2], selected_object_axes[3]);
-	//Pressing y key --> XZ plane
-	planes[1] =
-		XMPlaneFromPoints(selected_object_axes[0], selected_object_axes[1], selected_object_axes[3]);
-	//Pressing z key --> XY plane
-	planes[2] =
-		XMPlaneFromPoints(selected_object_axes[0], selected_object_axes[1], selected_object_axes[2]);
-}
-
-XMVECTOR ToolMain::MoveOnAxis(
-	XMVECTOR mouseWorldRay,
-	XMVECTOR plane,
-	XMVECTOR rayOnPlane)
-{
-	XMVECTOR origin = selected_object_axes[0];
-
-	XMVECTOR globalPlaneIntersection = MoveOnPlane(mouseWorldRay, plane);
-	XMVECTOR localVectorToPoint = globalPlaneIntersection - origin;
-	XMVECTOR localUnitAxis = XMVector3Normalize(rayOnPlane - origin);
-	XMVECTOR dot = XMVector3Dot(localUnitAxis, localVectorToPoint);
-	XMVECTOR res = localUnitAxis * dot.m128_f32[0] + origin;
-
-	return res;
-	//	return XMVector3Dot(originToPoint, rayOnPlane * 1000);
-}
-
-XMVECTOR ToolMain::MoveOnPlane(
-	XMVECTOR mouseWorldRay,
-	XMVECTOR plane)
-{
-	XMVECTOR intersectionPos = XMPlaneIntersectLine(
-		plane,
-		m_d3dRenderer.m_camPosition,
-		mouseWorldRay
-	);
-	return intersectionPos;
-}
-
-void ToolMain::StartSelectionDrag()
-{
-	if (m_selectedObject.size() == 1)
-	{
-		on_selection_commands = m_toolInputCommands;
-		GetLocalVectors(0, selected_object_axes);
-		GetLocalPlanes(
-			m_selectedObject[0],
-			selected_object_planes);
-		is_select_draggin = true;
-	}
-}
-
-void ToolMain::DoSelectionDrag()
-{
-	XMVECTOR plane;
-	XMVECTOR axis;
-
-	XMVECTOR newPosition;
-	if (m_selectedObject.size() == 1)
-	{
-		SceneObject& obj = m_sceneGraph[m_selectedObject[0]];
-
-		POINT p;
-		GetCursorPos(&p);
-		XMVECTOR mouseWorldPos =
-			m_d3dRenderer.GetWorldRay(
-				this->m_toolInputCommands.mouse_x,
-				this->m_toolInputCommands.mouse_y,
-				1000);
-		if (m_toolInputCommands.CTRL_Down)
-		{
-			if (m_toolInputCommands.plane_x)
-			{
-				axis = selected_object_axes[1];
-				plane = selected_object_planes[2];
-			}
-			else if (m_toolInputCommands.plane_y)
-			{
-				axis = selected_object_axes[2];
-				plane = selected_object_planes[2];
-			}
-			else
-			{
-				axis = selected_object_axes[3];
-				plane = selected_object_planes[1];
-			}
-
-			newPosition = MoveOnAxis(
-				mouseWorldPos, plane, axis);
-		}
-		else
-		{
-			if (on_selection_commands.plane_x == true)
-				plane = selected_object_planes[0];
-			else if (on_selection_commands.plane_y == true)
-				plane = selected_object_planes[1];
-			else
-				plane = selected_object_planes[2];
-			newPosition = MoveOnPlane(
-				mouseWorldPos, plane);
-		}
-
-		obj.posX = newPosition.m128_f32[0];
-		obj.posY = newPosition.m128_f32[1];
-		obj.posZ = newPosition.m128_f32[2];
-	}
-
-	this->m_d3dRenderer.UpdateDisplayElementTransform(
-		m_selectedObject[0], &m_sceneGraph);
-
-	Notify(*this);
-}
-
-bool ToolMain::ShouldStartSelectDragging()
+bool ToolMain::ShouldStartSelectDragging() const
 {
 	return (m_toolInputCommands.plane_x ||
 		m_toolInputCommands.plane_y
 		|| m_toolInputCommands.plane_z) && m_selectedObject.size() == 1;
-}
-
-void ToolMain::StopSelectionDrag()
-{
-	is_select_draggin = false;
 }

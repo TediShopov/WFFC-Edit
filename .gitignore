@@ -445,3 +445,5 @@ WOFFCEdit/Debug/WoFEdit.ilk
 *.ilk
 *.pdb
 *.tlog
+*.obj
+/WOFFCEdit
