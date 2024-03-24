@@ -45,6 +45,7 @@ void ToolMain::onActionInitialise(HWND handle, int width, int height)
 	m_height = height;
 
 	m_d3dRenderer.Initialize(handle, m_width, m_height);
+	m_toolHandle = handle;
 
 	//database connection establish
 	int rc;
@@ -278,6 +279,19 @@ void ToolMain::onActionSaveTerrain()
 
 void ToolMain::Tick(MSG* msg)
 {
+	if (ShouldStartSelectDragging()
+		!= is_select_draggin)
+	{
+		is_select_draggin = ShouldStartSelectDragging();
+		if (is_select_draggin)
+			StartSelectionDrag();
+	}
+
+	if (is_select_draggin)
+	{
+		DoSelectionDrag();
+	}
+
 	//do we have a selection
 	int newSelectedId = -1;
 	//if mouse is over this window
@@ -301,6 +315,12 @@ void ToolMain::Tick(MSG* msg)
 				m_selectedObject.push_back(newSelectedId);
 		}
 		this->Notify(*this);
+	}
+	if (m_toolInputCommands.plane_x
+		|| m_toolInputCommands.plane_y
+		|| m_toolInputCommands.plane_z)
+	{
+		StartSelectionDrag();
 	}
 	//do we have a mode
 	//are we clicking / dragging /releasing
@@ -378,6 +398,10 @@ void ToolMain::UpdateInput(MSG* msg)
 	}
 	else m_toolInputCommands.rotLeft = false;
 
+	//Plane and axis movement keys
+	m_toolInputCommands.plane_x = m_keyArray['Z'];
+	m_toolInputCommands.plane_y = m_keyArray['X'];
+	m_toolInputCommands.plane_z = m_keyArray['C'];
 	//WASD
 }
 
@@ -387,4 +411,121 @@ void ToolMain::Notify(const ToolMain& data)
 	{
 		observer->Update(this, data);
 	}
+}
+
+void ToolMain::GetLocalVectors(int objectIndex,
+	XMVECTOR vecs[4])
+{
+	XMMATRIX local = this->m_d3dRenderer
+		.GetObjectLocalMatrix(objectIndex);
+
+	vecs[0] =
+		XMVECTOR{ 0,0,0,1 };
+	vecs[1] =
+		XMVECTOR{ 1,0,0,1 };
+	vecs[2] =
+		XMVECTOR{ 0,1,0,1 };
+	vecs[3] =
+		XMVECTOR{ 0,0,1,1 };
+	for (int i = 0; i < 4; ++i)
+	{
+		//Transform to local coordinates
+		vecs[i] =
+			XMVector3Transform(vecs[i], local);
+	}
+}
+
+void ToolMain::GetLocalPlanes(int objectIndex, XMVECTOR planes[3])
+{
+	XMVECTOR vecs[4];
+	GetLocalVectors(objectIndex, vecs);
+
+	//Local vector are in Origin, X, Y, Z order
+
+	//Pressing x key --> YZ plane
+	planes[0] =
+		XMPlaneFromPoints(vecs[0], vecs[2], vecs[3]);
+	//Pressing y key --> XZ plane
+	planes[1] =
+		XMPlaneFromPoints(vecs[0], vecs[1], vecs[3]);
+	//Pressing z key --> XY plane
+	planes[2] =
+		XMPlaneFromPoints(vecs[0], vecs[1], vecs[2]);
+}
+
+void ToolMain::MoveOnAxis(float x, float y, float z)
+{
+}
+
+void ToolMain::MoveOnPlane(float x, float y, float z, float d)
+{
+}
+
+void ToolMain::StartSelectionDrag()
+{
+	if (m_selectedObject.size() == 1)
+	{
+		on_selection_commands = m_toolInputCommands;
+		GetLocalPlanes(
+			m_selectedObject[0],
+			selected_object_planes);
+		is_select_draggin = true;
+	}
+}
+
+void ToolMain::DoSelectionDrag()
+{
+	XMVECTOR plane;
+	if (on_selection_commands.plane_x == true)
+		plane = selected_object_planes[0];
+	else if (on_selection_commands.plane_y == true)
+		plane = selected_object_planes[1];
+	else
+		plane = selected_object_planes[2];
+
+	if (m_selectedObject.size() == 1)
+	{
+		POINT p;
+		GetCursorPos(&p);
+		//ScreenToClient(m_toolHandle, &p);
+		//ClientToScreen(m_toolHandle, &p);
+		//World ray from mouse screen coord
+		XMVECTOR mouseWorldPos =
+			m_d3dRenderer.GetWorldRay(
+				this->m_toolInputCommands.mouse_x,
+				this->m_toolInputCommands.mouse_y,
+				1000);
+
+		XMVECTOR intersectionPos = XMPlaneIntersectLine(
+			plane,
+			m_d3dRenderer.m_camPosition,
+			mouseWorldPos
+		);
+
+		SceneObject& obj = m_sceneGraph[m_selectedObject[0]];
+		float* wCoord = intersectionPos.m128_f32;
+
+		//		obj.posX = wCoord[0] / wCoord[3];
+		//		obj.posY = wCoord[1] / wCoord[3];
+		//		obj.posZ = wCoord[2] / wCoord[3];
+		obj.posX = wCoord[0];
+		obj.posY = wCoord[1];
+		obj.posZ = wCoord[2];
+	}
+	this->m_d3dRenderer.UpdateDisplayElementTransform(
+		m_selectedObject[0], &m_sceneGraph);
+
+	Notify(*this);
+}
+
+bool ToolMain::ShouldStartSelectDragging()
+{
+	return (m_toolInputCommands.plane_x ||
+		m_toolInputCommands.plane_y
+		|| m_toolInputCommands.plane_z) && m_selectedObject.size() == 1;
+}
+
+void ToolMain::StopSelectionDrag()
+{
+	is_select_draggin = false;
 }

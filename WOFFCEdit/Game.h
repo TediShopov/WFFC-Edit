@@ -53,7 +53,15 @@ public:
 
 	//Mouse Selection Methods
 	int MousePicking();
+	DirectX::XMVECTOR GetWorldRay(float screen_x, float screen_y, float distance);
+	DirectX::XMMATRIX GetObjectLocalMatrix(int i) const;
 	RECT m_ScreenDimensions;
+	//camera
+	DirectX::SimpleMath::Vector3		m_camPosition;
+	DirectX::SimpleMath::Vector3		m_camOrientation;
+	DirectX::SimpleMath::Vector3		m_camLookAt;
+	DirectX::SimpleMath::Vector3		m_camLookDirection;
+	DirectX::SimpleMath::Vector3		m_camRight;
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();
@@ -76,12 +84,6 @@ private:
 	//functionality
 	float								m_movespeed;
 
-	//camera
-	DirectX::SimpleMath::Vector3		m_camPosition;
-	DirectX::SimpleMath::Vector3		m_camOrientation;
-	DirectX::SimpleMath::Vector3		m_camLookAt;
-	DirectX::SimpleMath::Vector3		m_camLookDirection;
-	DirectX::SimpleMath::Vector3		m_camRight;
 	float m_camRotRate;
 
 	//control variables

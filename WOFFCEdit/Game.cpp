@@ -143,7 +143,6 @@ void Game::Update(DX::StepTimer const& timer)
 	//camera motion is on a plane, so kill the 7 component of the look direction
 	Vector3 planarMotionVector = m_camLookDirection;
 	planarMotionVector.y = 0.0;
-
 	if (m_InputCommands.rotRight)
 	{
 		m_camOrientation.y -= m_camRotRate;
@@ -598,6 +597,18 @@ void Game::CreateWindowSizeDependentResources()
 	m_batchEffect->SetProjection(m_projection);
 }
 
+XMMATRIX Game::GetObjectLocalMatrix(int i) const
+{
+	const XMVECTORF32 scale = { m_displayList[i].m_scale.x, m_displayList[i].m_scale.y, m_displayList[i].m_scale.z };
+	const XMVECTORF32 translate = { m_displayList[i].m_position.x, m_displayList[i].m_position.y, m_displayList[i].m_position.z };
+	//convert degrees into radians for rotation matrix
+	XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(m_displayList[i].m_orientation.y * 3.1415 / 180,
+		m_displayList[i].m_orientation.x * 3.1415 / 180,
+		m_displayList[i].m_orientation.z * 3.1415 / 180);
+	XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
+	return local;
+}
+
 void Game::OnDeviceLost()
 {
 	m_states.reset();
@@ -685,4 +696,36 @@ int Game::MousePicking()
 	return selectedID;
 
 	return 0;
+}
+
+DirectX::XMVECTOR Game::GetWorldRay(float mouseX, float mouseY, float distance)
+{
+	//Define screen dimensions
+	float screenWidth = m_ScreenDimensions.right - m_ScreenDimensions.left;
+	float screenHeight = m_ScreenDimensions.bottom - m_ScreenDimensions.top;
+
+	//Inverse view projection to return from
+	//clip space to world space
+	DirectX::XMMATRIX invProjectionView =
+		DirectX::XMMatrixInverse(
+			&DirectX::XMMatrixDeterminant(
+				m_view * m_projection),
+			(m_view * m_projection));
+
+	//get NDC
+	float x = (((2.0f * mouseX) / screenWidth) - 1);
+	float y = -(((2.0f * mouseY) / screenHeight) - 1);
+
+	DirectX::XMVECTOR mousePosition =
+		DirectX::XMVectorSet(x, y, 0.0f, 1.0f);
+
+	XMVECTOR mouseInWorldSpace =
+		DirectX::XMVector3Transform(mousePosition, invProjectionView);
+
+	mouseInWorldSpace.m128_f32[0] /= mouseInWorldSpace.m128_f32[3];
+	mouseInWorldSpace.m128_f32[1] /= mouseInWorldSpace.m128_f32[3];
+	mouseInWorldSpace.m128_f32[2] /= mouseInWorldSpace.m128_f32[3];
+	mouseInWorldSpace.m128_f32[3] = 0;;
+
+	return mouseInWorldSpace;
 }

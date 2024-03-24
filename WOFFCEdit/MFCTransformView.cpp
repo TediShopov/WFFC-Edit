@@ -177,7 +177,6 @@ SceneObject* MFCTransformView::FindSceneObject(int selectedItemId)
 
 void MFCTransformView::UpdatePropertyGrid(SceneObject* obj)
 {
-	//sceneObjectCopy = *obj TODO fix object not copiable;
 	if (obj != nullptr)
 		sceneObjectCopy = *obj;
 	else

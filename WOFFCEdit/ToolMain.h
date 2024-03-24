@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "Observer.h"
+using namespace DirectX;
 
 class ToolMain : public Subject<ToolMain>
 {
@@ -38,7 +39,22 @@ private:	//methods
 	void	onContentAdded();
 	void Notify(const ToolMain& data) override;
 
+	void GetLocalVectors(int objectIndex, DirectX::XMVECTOR[4]);
+	void GetLocalPlanes(int objectIndex, DirectX::XMVECTOR[3]);
+
+	void MoveOnAxis(float x, float y, float z);
+	void MoveOnPlane(float x, float y, float z, float d);
+
 private:	//variables
+
+	XMVECTOR selected_object_planes[3];
+	InputCommands on_selection_commands;
+	bool is_select_draggin = false;
+	void StartSelectionDrag();
+	void DoSelectionDrag();
+	bool ShouldStartSelectDragging();
+	void StopSelectionDrag();
+
 	HWND	m_toolHandle;		//Handle to the  window
 	InputCommands m_toolInputCommands;		//input commands that we want to use and possibly pass over to the renderer
 	CRect	WindowRECT;		//Window area rectangle.
