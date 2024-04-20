@@ -487,17 +487,8 @@ void Game::RenderDisplayObject(const DisplayObject& obj) const
 {
 	auto context = m_deviceResources->GetD3DDeviceContext();
 	m_deviceResources->PIXBeginEvent(L"Draw model");
-	const XMVECTORF32 scale = { obj.m_scale.x, obj.m_scale.y, obj.m_scale.z };
-	const XMVECTORF32 translate = { obj.m_position.x, obj.m_position.y, obj.m_position.z };
-
-	//convert degrees into radians for rotation matrix
-	XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(obj.m_orientation.y * 3.1415 / 180,
-		obj.m_orientation.x * 3.1415 / 180,
-		obj.m_orientation.z * 3.1415 / 180);
-
 	XMMATRIX world =
-		m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
-
+		m_world * obj.GetWorldMatrix();
 	obj.m_model->Draw(context, *m_states, world, m_view, m_projection, false);	//last variable in draw,  make TRUE for wireframe
 
 	m_deviceResources->PIXEndEvent();
@@ -546,12 +537,17 @@ void Game::BuildDisplayHierarchy(std::vector<SceneObject>* SceneGraph)
 					DisplayObject* parent = idToTreeItems.at(element.parent_id);
 					DisplayObject* object = CreateDisplayObject(&element);
 					m_displayList.push_back(object);
+					if (element.parent_id == 9)
+					{
+						int c = 3;
+					}
 					object->parentObject = parent;
 					idToTreeItems.insert({ element.ID, object });
 				}
 			}
 		}
 	}
+	int a = 3;
 }
 
 void Game::BuildDisplayChunk(ChunkObject* SceneChunk)
@@ -586,7 +582,7 @@ void Game::NewAudioDevice()
 		// Setup a retry in 1 second
 		m_audioTimerAcc = 1.f;
 		m_retryDefault = true;
-	}
+}
 }
 #endif
 
@@ -670,14 +666,14 @@ void Game::CreateWindowSizeDependentResources()
 
 XMMATRIX Game::GetObjectLocalMatrix(int i) const
 {
-	const XMVECTORF32 scale = { m_displayList[i]->m_scale.x, m_displayList[i]->m_scale.y, m_displayList[i]->m_scale.z };
-	const XMVECTORF32 translate = { m_displayList[i]->m_position.x, m_displayList[i]->m_position.y, m_displayList[i]->m_position.z };
-	//convert degrees into radians for rotation matrix
-	XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(m_displayList[i]->m_orientation.y * 3.1415 / 180,
-		m_displayList[i]->m_orientation.x * 3.1415 / 180,
-		m_displayList[i]->m_orientation.z * 3.1415 / 180);
-	XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
-	return local;
+	//	const XMVECTORF32 scale = { m_displayList[i]->m_scale.x, m_displayList[i]->m_scale.y, m_displayList[i]->m_scale.z };
+	//	const XMVECTORF32 translate = { m_displayList[i]->m_position.x, m_displayList[i]->m_position.y, m_displayList[i]->m_position.z };
+	//	//convert degrees into radians for rotation matrix
+	//	XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(m_displayList[i]->m_orientation.y * 3.1415 / 180,
+	//		m_displayList[i]->m_orientation.x * 3.1415 / 180,
+	//		m_displayList[i]->m_orientation.z * 3.1415 / 180);
+	//	XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
+	return m_world * m_displayList[i]->GetWorldMatrix();
 }
 
 void Game::OnDeviceLost()
@@ -750,16 +746,16 @@ int Game::MousePicking(const std::vector<DisplayObject*>& objectList) const
 	//Loop through entire display list of objects and pick with each in turn.
 	for (int i = 0; i < objectList.size(); i++)
 	{
-		//Get the scale factor and translation of the object
-		const XMVECTORF32 scale = { objectList[i]->m_scale.x,		objectList[i]->m_scale.y,		objectList[i]->m_scale.z };
-		const XMVECTORF32 translate = { objectList[i]->m_position.x,		objectList[i]->m_position.y,	objectList[i]->m_position.z };
-
-		//convert euler angles into a quaternion for the rotation of the object
-		XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(objectList[i]->m_orientation.y * 3.1415 / 180, objectList[i]->m_orientation.x * 3.1415 / 180,
-			objectList[i]->m_orientation.z * 3.1415 / 180);
-
-		//create set the matrix of the selected object in the world based on the translation, scale and rotation.
-		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
+		//		//Get the scale factor and translation of the object
+		//		const XMVECTORF32 scale = { objectList[i]->m_scale.x,		objectList[i]->m_scale.y,		objectList[i]->m_scale.z };
+		//		const XMVECTORF32 translate = { objectList[i]->m_position.x,		objectList[i]->m_position.y,	objectList[i]->m_position.z };
+		//
+		//		//convert euler angles into a quaternion for the rotation of the object
+		//		XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(objectList[i]->m_orientation.y * 3.1415 / 180, objectList[i]->m_orientation.x * 3.1415 / 180,
+		//			objectList[i]->m_orientation.z * 3.1415 / 180);
+		//
+		//		//create set the matrix of the selected object in the world based on the translation, scale and rotation.
+		XMMATRIX local = m_world * objectList[i]->GetWorldMatrix();
 
 		//Unproject the points on the near and far plane, with respect to the matrix we just created.
 		XMVECTOR nearPoint = XMVector3Unproject(nearSource, 0.0f, 0.0f, m_ScreenDimensions.right, m_ScreenDimensions.bottom, m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, local);

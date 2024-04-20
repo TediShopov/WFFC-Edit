@@ -57,6 +57,7 @@ void ToolMain::onActionInitialise(HWND handle, int width, int height)
 	rc = sqlite3_open_v2("database/test.db", &m_databaseConnection, SQLITE_OPEN_READWRITE, NULL);
 
 	if (rc)
+
 	{
 		TRACE("Can't open database");
 		//if the database cant open. Perhaps a more catastrophic error would be better here
