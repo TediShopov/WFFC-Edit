@@ -45,14 +45,23 @@ public:
 	void OnWindowSizeChanged(int width, int height);
 
 	void UpdateDisplayElementTransform(int index, std::vector<SceneObject>* SceneGraph);
+	DisplayObject CreateDisplayObject(const SceneObject* object) const;
 	//tool specific
 	void BuildDisplayList(std::vector<SceneObject>* SceneGraph); //note vector passed by reference
 	void BuildDisplayChunk(ChunkObject* SceneChunk);
 	void SaveDisplayChunk(ChunkObject* SceneChunk);	//saves geometry et al
+
+	//Adds a certain prototype of a display object and returns
+	// the pointer of the object actually added
+	int AddDisplayObject(const DisplayObject& display_object);
+	DisplayObject& GetDisplayObject(int index);
 	void ClearDisplayList();
 
 	//Mouse Selection Methods
-	int MousePicking();
+	int MousePicking() const;
+	int MousePicking(std::vector<int> handleList) const;
+	int MousePicking(const std::vector<DisplayObject>& objectList) const;
+
 	DirectX::XMVECTOR GetWorldRay(float screen_x, float screen_y, float distance);
 	DirectX::XMMATRIX GetObjectLocalMatrix(int i) const;
 	RECT m_ScreenDimensions;

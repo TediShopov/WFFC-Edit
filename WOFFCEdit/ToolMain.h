@@ -41,6 +41,8 @@ public:	//variables
 	bool ShouldStartSelectDragging() const;
 
 private:	//methods
+	void InitHandlesDefaults();
+	std::vector<int> PositionHandles;
 	void	onContentAdded();
 
 private:	//variables

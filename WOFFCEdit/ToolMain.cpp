@@ -5,6 +5,8 @@
 
 #include "ObjectSelectionState.h"
 
+const std::string DefaultArrowModel = "database/data/placeholder.cmo";
+const std::string DefaultArrowTexture = "database/data/placeholder.dds";
 //
 //ToolMain Class
 ToolMain::ToolMain()
@@ -66,6 +68,9 @@ void ToolMain::onActionInitialise(HWND handle, int width, int height)
 	}
 
 	onActionLoad();
+
+	//After build list has been initialized from scene
+	InitHandlesDefaults();
 }
 
 void ToolMain::onActionLoad()
@@ -283,6 +288,15 @@ void ToolMain::onActionSaveTerrain()
 
 void ToolMain::Tick(MSG* msg)
 {
+	//If hanle is picked by mouse
+	if (m_toolInputCommands.mouse_LB_Down && m_selectedObject.size() == 1)
+	{
+		if (m_d3dRenderer.MousePicking(this->PositionHandles) != -1)
+		{
+			m_toolInputCommands.plane_x = true;
+		}
+	}
+
 	ToolState->Update(m_toolInputCommands);
 	//	if (ShouldStartSelectDragging()
 	//		!= is_select_draggin)
@@ -437,4 +451,57 @@ bool ToolMain::ShouldStartSelectDragging() const
 	return (m_toolInputCommands.plane_x ||
 		m_toolInputCommands.plane_y
 		|| m_toolInputCommands.plane_z) && m_selectedObject.size() == 1;
+}
+
+void ToolMain::InitHandlesDefaults()
+{
+	//Defines a scene object that is to converted to display object
+	SceneObject tempPositionHandle;
+	tempPositionHandle.model_path = DefaultArrowModel;
+	tempPositionHandle.tex_diffuse_path = DefaultArrowTexture;
+
+	float relevantScale = 5.0f;
+	float notRelevantScale = 0.1f;
+	float handleRelevantOffset = relevantScale / 2.0f;
+
+	tempPositionHandle.posY = 5;
+
+	//Add the objects to all objects being visualized
+	// and get its handle/pointer
+
+	//auto testDisplayObject = m_d3dRenderer.CreateDisplayObject(&tempPositionHandle);
+
+	//Add x position handle
+	tempPositionHandle.scaX = relevantScale;
+	tempPositionHandle.scaY = notRelevantScale;
+	tempPositionHandle.scaZ = notRelevantScale;
+	int xHandle = m_d3dRenderer.AddDisplayObject(
+		m_d3dRenderer.CreateDisplayObject(&tempPositionHandle));
+
+	tempPositionHandle.scaX = notRelevantScale;
+	tempPositionHandle.scaY = relevantScale;
+	tempPositionHandle.scaZ = notRelevantScale;
+	int yHandle = m_d3dRenderer.AddDisplayObject(
+		m_d3dRenderer.CreateDisplayObject(&tempPositionHandle));
+
+	tempPositionHandle.scaX = notRelevantScale;
+	tempPositionHandle.scaY = notRelevantScale;
+	tempPositionHandle.scaZ = relevantScale;
+	int zHandle = m_d3dRenderer.AddDisplayObject(
+		m_d3dRenderer.CreateDisplayObject(&tempPositionHandle));
+
+	this->PositionHandles.push_back(xHandle);
+	this->PositionHandles.push_back(yHandle);
+	this->PositionHandles.push_back(zHandle);
+
+	//	auto yHandle = m_d3dRenderer.AddDisplayObject(
+	//		m_d3dRenderer.CreateDisplayObject(&tempPositionHandle));
+	//	auto zHandle = m_d3dRenderer.AddDisplayObject(
+	//		m_d3dRenderer.CreateDisplayObject(&tempPositionHandle));
+
+	//	this->PositionHandles.push_back(m_d3dRenderer.);
+	//	this->PositionHandles.push_back(yHandle);
+	//	this->PositionHandles.push_back(zHandle);
+
+		//Push back all the handles display objects
 }
