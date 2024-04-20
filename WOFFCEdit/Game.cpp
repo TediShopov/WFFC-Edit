@@ -4,6 +4,9 @@
 
 #include "pch.h"
 #include "Game.h"
+
+#include <map>
+
 #include "DisplayObject.h"
 #include <string>
 
@@ -249,13 +252,13 @@ void Game::Render()
 	int numRenderObjects = m_displayList.size();
 	for (int i = 0; i < numRenderObjects; i++)
 	{
-		RenderDisplayObject(m_displayList[i]);
+		RenderDisplayObject(*m_displayList[i]);
 	}
 
 	//RENDER DISPLAY HANDLES
-	for (const DisplayObject& handle : m_displayHandlesList)
+	for (const DisplayObject* handle : m_displayHandlesList)
 	{
-		RenderDisplayObject(handle);
+		RenderDisplayObject(*handle);
 	}
 
 	for (int i = 0; i < m_displayHandlesList.size(); ++i)
@@ -381,7 +384,7 @@ void Game::OnWindowSizeChanged(int width, int height)
 
 void Game::UpdateDisplayElementTransform(int i, std::vector<SceneObject>* SceneGraph)
 {
-	DisplayObject& newDisplayObject = this->m_displayList[i];
+	DisplayObject& newDisplayObject = *this->m_displayList[i];
 	newDisplayObject.m_position.x = SceneGraph->at(i).posX;
 	newDisplayObject.m_position.y = SceneGraph->at(i).posY;
 	newDisplayObject.m_position.z = SceneGraph->at(i).posZ;
@@ -413,67 +416,70 @@ void Game::UpdateDisplayElementTransform(int i, std::vector<SceneObject>* SceneG
 	newDisplayObject.m_light_quadratic = SceneGraph->at(i).light_quadratic;
 }
 
-DisplayObject Game::CreateDisplayObject(const SceneObject* object) const
+DisplayObject* Game::CreateDisplayObject(const SceneObject* object) const
 {
 	//create a temp display object that we will populate then append to the display list.
-	DisplayObject newDisplayObject;
+	DisplayObject* newDisplayObject = new DisplayObject();
 	auto device = m_deviceResources->GetD3DDevice();
 
 	//load model
 	std::wstring modelwstr = StringToWCHART(object->model_path);							//convect string to Wchar
-	newDisplayObject.m_model = Model::CreateFromCMO(device, modelwstr.c_str(), *m_fxFactory, true);	//get DXSDK to load model "False" for LH coordinate system (maya)
+	newDisplayObject->m_model = Model::CreateFromCMO(device, modelwstr.c_str(), *m_fxFactory, true);	//get DXSDK to load model "False" for LH coordinate system (maya)
 
 	//Load Texture
 	std::wstring texturewstr = StringToWCHART(object->tex_diffuse_path);								//convect string to Wchar
 	HRESULT rs;
-	rs = CreateDDSTextureFromFile(device, texturewstr.c_str(), nullptr, &newDisplayObject.m_texture_diffuse);	//load tex into Shader resource
+	rs = CreateDDSTextureFromFile(device, texturewstr.c_str(), nullptr, &newDisplayObject->m_texture_diffuse);	//load tex into Shader resource
 
 	//if texture fails.  load error default
 	if (rs)
 	{
-		CreateDDSTextureFromFile(device, L"database/data/Error.dds", nullptr, &newDisplayObject.m_texture_diffuse);	//load tex into Shader resource
+		CreateDDSTextureFromFile(device, L"database/data/Error.dds", nullptr, &newDisplayObject->m_texture_diffuse);	//load tex into Shader resource
 	}
 
 	//apply new texture to models effect
-	newDisplayObject.m_model->UpdateEffects([&](IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
+	newDisplayObject->m_model->UpdateEffects([&](IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
 		{
 			auto lights = dynamic_cast<BasicEffect*>(effect);
 			if (lights)
 			{
-				lights->SetTexture(newDisplayObject.m_texture_diffuse);
+				lights->SetTexture(newDisplayObject->m_texture_diffuse);
 			}
 		});
 
+	newDisplayObject->m_ID = object->ID;
+
 	//set position
-	newDisplayObject.m_position.x = object->posX;
-	newDisplayObject.m_position.y = object->posY;
-	newDisplayObject.m_position.z = object->posZ;
+	newDisplayObject->m_position.x = object->posX;
+	newDisplayObject->m_position.y = object->posY;
+	newDisplayObject->m_position.z = object->posZ;
 
 	//setorientation
-	newDisplayObject.m_orientation.x = object->rotX;
-	newDisplayObject.m_orientation.y = object->rotY;
-	newDisplayObject.m_orientation.z = object->rotZ;
+	newDisplayObject->m_orientation.x = object->rotX;
+	newDisplayObject->m_orientation.y = object->rotY;
+	newDisplayObject->m_orientation.z = object->rotZ;
 
 	//set scale
-	newDisplayObject.m_scale.x = object->scaX;
-	newDisplayObject.m_scale.y = object->scaY;
-	newDisplayObject.m_scale.z = object->scaZ;
+	newDisplayObject->m_scale.x = object->scaX;
+	newDisplayObject->m_scale.y = object->scaY;
+	newDisplayObject->m_scale.z = object->scaZ;
 
 	//set wireframe / render flags
-	newDisplayObject.m_render = object->editor_render;
-	newDisplayObject.m_wireframe = object->editor_wireframe;
+	newDisplayObject->m_render = object->editor_render;
+	newDisplayObject->m_wireframe = object->editor_wireframe;
 
-	newDisplayObject.m_light_type = object->light_type;
-	newDisplayObject.m_light_diffuse_r = object->light_diffuse_r;
-	newDisplayObject.m_light_diffuse_g = object->light_diffuse_g;
-	newDisplayObject.m_light_diffuse_b = object->light_diffuse_b;
-	newDisplayObject.m_light_specular_r = object->light_specular_r;
-	newDisplayObject.m_light_specular_g = object->light_specular_g;
-	newDisplayObject.m_light_specular_b = object->light_specular_b;
-	newDisplayObject.m_light_spot_cutoff = object->light_spot_cutoff;
-	newDisplayObject.m_light_constant = object->light_constant;
-	newDisplayObject.m_light_linear = object->light_linear;
-	newDisplayObject.m_light_quadratic = object->light_quadratic;
+	newDisplayObject->m_light_type = object->light_type;
+	newDisplayObject->m_light_diffuse_r = object->light_diffuse_r;
+	newDisplayObject->m_light_diffuse_g = object->light_diffuse_g;
+	newDisplayObject->m_light_diffuse_b = object->light_diffuse_b;
+	newDisplayObject->m_light_specular_r = object->light_specular_r;
+	newDisplayObject->m_light_specular_g = object->light_specular_g;
+	newDisplayObject->m_light_specular_b = object->light_specular_b;
+	newDisplayObject->m_light_spot_cutoff = object->light_spot_cutoff;
+	newDisplayObject->m_light_constant = object->light_constant;
+	newDisplayObject->m_light_linear = object->light_linear;
+	newDisplayObject->m_light_quadratic = object->light_quadratic;
+
 	return newDisplayObject;
 }
 
@@ -489,9 +495,10 @@ void Game::RenderDisplayObject(const DisplayObject& obj) const
 		obj.m_orientation.x * 3.1415 / 180,
 		obj.m_orientation.z * 3.1415 / 180);
 
-	XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
+	XMMATRIX world =
+		m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
 
-	obj.m_model->Draw(context, *m_states, local, m_view, m_projection, false);	//last variable in draw,  make TRUE for wireframe
+	obj.m_model->Draw(context, *m_states, world, m_view, m_projection, false);	//last variable in draw,  make TRUE for wireframe
 
 	m_deviceResources->PIXEndEvent();
 }
@@ -514,6 +521,39 @@ void Game::BuildDisplayList(std::vector<SceneObject>* SceneGraph)
 	}
 }
 
+void Game::BuildDisplayHierarchy(std::vector<SceneObject>* SceneGraph)
+{
+	std::map<int, DisplayObject*> idToTreeItems;
+	std::vector<SceneObject> sceneCopy = *SceneGraph;
+	while (sceneCopy.size() != 0)
+	{
+		//Remove items which id's are already presented in object to tree map
+		auto removed = std::remove_if(sceneCopy.begin(), sceneCopy.end(),
+			[idToTreeItems](SceneObject v) { return idToTreeItems.find(v.ID) != idToTreeItems.end(); });
+		sceneCopy.erase(removed, sceneCopy.end());
+		for (const SceneObject& element : sceneCopy)
+		{
+			if (element.parent_id == 0)
+			{
+				DisplayObject* object = CreateDisplayObject(&element);
+				m_displayList.push_back(object);
+				idToTreeItems.insert({ element.ID, object });
+			}
+			else
+			{
+				if (idToTreeItems.find(element.parent_id) != idToTreeItems.end())
+				{
+					DisplayObject* parent = idToTreeItems.at(element.parent_id);
+					DisplayObject* object = CreateDisplayObject(&element);
+					m_displayList.push_back(object);
+					object->parentObject = parent;
+					idToTreeItems.insert({ element.ID, object });
+				}
+			}
+		}
+	}
+}
+
 void Game::BuildDisplayChunk(ChunkObject* SceneChunk)
 {
 	//populate our local DISPLAYCHUNK with all the chunk info we need from the object stored in toolmain
@@ -529,7 +569,7 @@ void Game::SaveDisplayChunk(ChunkObject* SceneChunk)
 	m_displayChunk.SaveHeightMap();			//save heightmap to file.
 }
 
-int Game::AddVisualHandle(const DisplayObject& display_object)
+int Game::AddVisualHandle(DisplayObject* display_object)
 {
 	this->m_displayHandlesList.push_back(display_object);
 	//Returns local object
@@ -630,12 +670,12 @@ void Game::CreateWindowSizeDependentResources()
 
 XMMATRIX Game::GetObjectLocalMatrix(int i) const
 {
-	const XMVECTORF32 scale = { m_displayList[i].m_scale.x, m_displayList[i].m_scale.y, m_displayList[i].m_scale.z };
-	const XMVECTORF32 translate = { m_displayList[i].m_position.x, m_displayList[i].m_position.y, m_displayList[i].m_position.z };
+	const XMVECTORF32 scale = { m_displayList[i]->m_scale.x, m_displayList[i]->m_scale.y, m_displayList[i]->m_scale.z };
+	const XMVECTORF32 translate = { m_displayList[i]->m_position.x, m_displayList[i]->m_position.y, m_displayList[i]->m_position.z };
 	//convert degrees into radians for rotation matrix
-	XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(m_displayList[i].m_orientation.y * 3.1415 / 180,
-		m_displayList[i].m_orientation.x * 3.1415 / 180,
-		m_displayList[i].m_orientation.z * 3.1415 / 180);
+	XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(m_displayList[i]->m_orientation.y * 3.1415 / 180,
+		m_displayList[i]->m_orientation.x * 3.1415 / 180,
+		m_displayList[i]->m_orientation.z * 3.1415 / 180);
 	XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
 	return local;
 }
@@ -684,19 +724,19 @@ int Game::MouseHandlePicking() const
 	return this->MousePicking(m_displayHandlesList);
 }
 
-int Game::MousePicking(std::vector<int> handleList) const
-{
-	std::vector<DisplayObject> objectsFromHandles;
-	for (int i = 0; i < handleList.size(); ++i)
-	{
-		//For each index in the handle list get the corresponding object
-		objectsFromHandles.push_back(m_displayList[handleList[i]]);
-	}
-	//Loop through gathered object to check selection;
-	return this->MousePicking(objectsFromHandles);
-}
+//int Game::MousePicking(std::vector<int> handleList) const
+//{
+//	std::vector<DisplayObject> objectsFromHandles;
+//	for (int i = 0; i < handleList.size(); ++i)
+//	{
+//		//For each index in the handle list get the corresponding object
+//		objectsFromHandles.push_back(m_displayList[handleList[i]]);
+//	}
+//	//Loop through gathered object to check selection;
+//	return this->MousePicking(objectsFromHandles);
+//}
 
-int Game::MousePicking(const std::vector<DisplayObject>& objectList) const
+int Game::MousePicking(const std::vector<DisplayObject*>& objectList) const
 {
 	int selectedID = -1;
 	float pickedDistance = 0;
@@ -711,12 +751,12 @@ int Game::MousePicking(const std::vector<DisplayObject>& objectList) const
 	for (int i = 0; i < objectList.size(); i++)
 	{
 		//Get the scale factor and translation of the object
-		const XMVECTORF32 scale = { objectList[i].m_scale.x,		objectList[i].m_scale.y,		objectList[i].m_scale.z };
-		const XMVECTORF32 translate = { objectList[i].m_position.x,		objectList[i].m_position.y,	objectList[i].m_position.z };
+		const XMVECTORF32 scale = { objectList[i]->m_scale.x,		objectList[i]->m_scale.y,		objectList[i]->m_scale.z };
+		const XMVECTORF32 translate = { objectList[i]->m_position.x,		objectList[i]->m_position.y,	objectList[i]->m_position.z };
 
 		//convert euler angles into a quaternion for the rotation of the object
-		XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(objectList[i].m_orientation.y * 3.1415 / 180, objectList[i].m_orientation.x * 3.1415 / 180,
-			objectList[i].m_orientation.z * 3.1415 / 180);
+		XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(objectList[i]->m_orientation.y * 3.1415 / 180, objectList[i]->m_orientation.x * 3.1415 / 180,
+			objectList[i]->m_orientation.z * 3.1415 / 180);
 
 		//create set the matrix of the selected object in the world based on the translation, scale and rotation.
 		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
@@ -731,10 +771,10 @@ int Game::MousePicking(const std::vector<DisplayObject>& objectList) const
 		pickingVector = XMVector3Normalize(pickingVector);
 
 		//loop through mesh list for object
-		for (int y = 0; y < objectList[i].m_model.get()->meshes.size(); y++)
+		for (int y = 0; y < objectList[i]->m_model.get()->meshes.size(); y++)
 		{
 			//checking for ray intersection
-			if (objectList[i].m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance))
+			if (objectList[i]->m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance))
 			{
 				if (pickedDistance < closestPickedDistance)
 				{

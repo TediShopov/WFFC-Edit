@@ -45,24 +45,25 @@ public:
 	void OnWindowSizeChanged(int width, int height);
 
 	void UpdateDisplayElementTransform(int index, std::vector<SceneObject>* SceneGraph);
-	DisplayObject CreateDisplayObject(const SceneObject* object) const;
+	DisplayObject* CreateDisplayObject(const SceneObject* object) const;
 	//tool specific
 	void RenderDisplayObject(const DisplayObject& obj) const;
 	void BuildDisplayList(std::vector<SceneObject>* SceneGraph); //note vector passed by reference
+	void BuildDisplayHierarchy(std::vector < SceneObject >* SceneGraph);
 	void BuildDisplayChunk(ChunkObject* SceneChunk);
 	void SaveDisplayChunk(ChunkObject* SceneChunk);	//saves geometry et al
 
 	//Adds a certain prototype of a display object and returns
 	// the pointer of the object actually added
-	int AddVisualHandle(const DisplayObject& display_object);
+	int AddVisualHandle(DisplayObject* display_object);
 	DisplayObject& GetDisplayObject(int index);
 	void ClearDisplayList();
 
 	//Mouse Selection Methods
 	int MousePicking() const;
 	int MouseHandlePicking() const;
-	int MousePicking(std::vector<int> handleList) const;
-	int MousePicking(const std::vector<DisplayObject>& objectList) const;
+	//int MousePicking(std::vector<int> handleList) const;
+	int MousePicking(const std::vector<DisplayObject*>& objectList) const;
 
 	DirectX::XMVECTOR GetWorldRay(float screen_x, float screen_y, float distance);
 	DirectX::XMMATRIX GetObjectLocalMatrix(int i) const;
@@ -88,8 +89,8 @@ private:
 	void XM_CALLCONV DrawGrid(DirectX::FXMVECTOR xAxis, DirectX::FXMVECTOR yAxis, DirectX::FXMVECTOR origin, size_t xdivs, size_t ydivs, DirectX::GXMVECTOR color);
 
 	//tool specific
-	std::vector<DisplayObject>			m_displayHandlesList;
-	std::vector<DisplayObject>			m_displayList;
+	std::vector<DisplayObject*>			m_displayHandlesList;
+	std::vector<DisplayObject*>			m_displayList;
 	DisplayChunk						m_displayChunk;
 	InputCommands						m_InputCommands;
 

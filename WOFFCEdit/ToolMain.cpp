@@ -187,7 +187,8 @@ void ToolMain::onActionLoad()
 	m_chunk.tex_splat_4_tiling = sqlite3_column_int(pResultsChunk, 18);
 
 	//Process REsults into renderable
-	m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+	//m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
+	m_d3dRenderer.BuildDisplayHierarchy(&m_sceneGraph);
 	//build the renderable chunk
 	m_d3dRenderer.BuildDisplayChunk(&m_chunk);
 }
