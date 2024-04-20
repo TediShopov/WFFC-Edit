@@ -96,7 +96,7 @@ int MFCMain::Run()
 			{
 				if (id != -1)
 				{
-					statusString.append(std::to_wstring(id));
+					statusString.append(std::to_wstring(id + 1));
 					statusString.append(L", ");
 				}
 			}

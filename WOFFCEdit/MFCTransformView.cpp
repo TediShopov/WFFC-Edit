@@ -114,14 +114,14 @@ void MFCTransformView::OnClickTree(NMHDR* pNMHDR, LRESULT* pResult)
 		bool nextState = !m_treeCtrl.GetCheck(ht.hItem);
 		if (nextState == true)
 		{
-			selection->push_back(_wtoi(id));
+			selection->push_back(_wtoi(id) - 1);
 		}
 		else
 		{
 			auto iter = std::find(
 				selection->begin()
 				, selection->end(),
-				_wtoi(id));
+				_wtoi(id) - 1);
 			selection->erase(iter);
 		}
 	}
@@ -256,7 +256,7 @@ void MFCTransformView::VisualizeSelectionOnTreeCtrl(const ToolMain& tool)
 	//Update selection state of the tree ctrl
 	for (int selectionId : tool.m_selectedObject)
 	{
-		auto objectTreeMap = idToTreeItems->find(selectionId);
+		auto objectTreeMap = idToTreeItems->find(selectionId + 1);
 		if (objectTreeMap != idToTreeItems->end())
 		{
 			HTREEITEM& treeitem = objectTreeMap->second;
