@@ -64,6 +64,9 @@
     </ClCompile>
     <ClCompile Include="MFCTransformView.cpp" />
     <ClCompile Include="Observer.cpp" />
+    <ClCompile Include="ObjectSelectionState.cpp" />
+    <ClCompile Include="ToolStateBase.cpp" />
+    <ClCompile Include="ObjectTransformState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -115,6 +118,8 @@
     </ClInclude>
     <ClInclude Include="MFCTransformView.h" />
     <ClInclude Include="Observer.h" />
+    <ClInclude Include="ToolStateBase.h" />
+    <ClInclude Include="ObjectTransformState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

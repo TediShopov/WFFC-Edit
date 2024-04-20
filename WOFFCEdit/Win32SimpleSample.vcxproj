@@ -195,7 +195,6 @@
     <ClInclude Include="MFCFrame.h" />
     <ClInclude Include="MFCRenderFrame.h" />
     <ClInclude Include="MFCTransformView.h" />
-    <ClInclude Include="ObjectSelectionState.h" />
     <ClInclude Include="ObjectTransformState.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="pch.h" />
