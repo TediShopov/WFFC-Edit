@@ -8,6 +8,13 @@ void ObjectTransformState::Init(ToolMain* tool, const InputCommands& comms)
 	this->MainTool = tool;
 	if (this->MainTool->m_selectedObject.size() == 1)
 	{
+		if (comms.handleHit == true)
+		{
+			//Mouse button should be releases as well as any other transform realted button
+			//to exit this state
+			release_mouse_needed = true;
+		}
+
 		on_selection_commands = comms;
 		GetLocalVectors(this->MainTool->m_selectedObject[0], selected_object_axes);
 		GetLocalPlanes(
@@ -25,7 +32,17 @@ void ObjectTransformState::Update(const InputCommands& input)
 
 	if (MainTool->ShouldStartSelectDragging() == false)
 	{
-		this->MainTool->ChangeState(new ObjectSelectionState());
+		if (release_mouse_needed)
+		{
+			if (input.mouse_LB_Down == false)
+			{
+				this->MainTool->ChangeState(new ObjectSelectionState());
+			}
+		}
+		else
+		{
+			this->MainTool->ChangeState(new ObjectSelectionState());
+		}
 	}
 
 	if (this->MainTool->m_selectedObject.size() == 1)

@@ -12,7 +12,6 @@ const std::string DefaultArrowTexture = "database/data/placeholder.dds";
 ToolMain::ToolMain()
 {
 	m_currentChunk = 0;		//default value
-	m_selectedObject.push_back(-1);
 
 	m_sceneGraph.clear();	//clear the vector for the scenegraph
 	m_databaseConnection = NULL;
@@ -288,12 +287,30 @@ void ToolMain::onActionSaveTerrain()
 
 void ToolMain::Tick(MSG* msg)
 {
+	m_toolInputCommands.handleHit = false;
 	//If hanle is picked by mouse
 	if (m_toolInputCommands.mouse_LB_Down && m_selectedObject.size() == 1)
 	{
-		if (m_d3dRenderer.MousePicking(this->PositionHandles) != -1)
+		int handlePickResult = m_d3dRenderer.MouseHandlePicking();
+
+		if (handlePickResult != -1)
+		{
+			m_toolInputCommands.handleHit = true;
+		}
+		if (handlePickResult == 0)
 		{
 			m_toolInputCommands.plane_x = true;
+			m_toolInputCommands.CTRL_Down = true;
+		}
+		if (handlePickResult == 1)
+		{
+			m_toolInputCommands.plane_y = true;
+			m_toolInputCommands.CTRL_Down = true;
+		}
+		if (handlePickResult == 2)
+		{
+			m_toolInputCommands.plane_z = true;
+			m_toolInputCommands.CTRL_Down = true;
 		}
 	}
 
@@ -475,19 +492,19 @@ void ToolMain::InitHandlesDefaults()
 	tempPositionHandle.scaX = relevantScale;
 	tempPositionHandle.scaY = notRelevantScale;
 	tempPositionHandle.scaZ = notRelevantScale;
-	int xHandle = m_d3dRenderer.AddDisplayObject(
+	int xHandle = m_d3dRenderer.AddVisualHandle(
 		m_d3dRenderer.CreateDisplayObject(&tempPositionHandle));
 
 	tempPositionHandle.scaX = notRelevantScale;
 	tempPositionHandle.scaY = relevantScale;
 	tempPositionHandle.scaZ = notRelevantScale;
-	int yHandle = m_d3dRenderer.AddDisplayObject(
+	int yHandle = m_d3dRenderer.AddVisualHandle(
 		m_d3dRenderer.CreateDisplayObject(&tempPositionHandle));
 
 	tempPositionHandle.scaX = notRelevantScale;
 	tempPositionHandle.scaY = notRelevantScale;
 	tempPositionHandle.scaZ = relevantScale;
-	int zHandle = m_d3dRenderer.AddDisplayObject(
+	int zHandle = m_d3dRenderer.AddVisualHandle(
 		m_d3dRenderer.CreateDisplayObject(&tempPositionHandle));
 
 	this->PositionHandles.push_back(xHandle);

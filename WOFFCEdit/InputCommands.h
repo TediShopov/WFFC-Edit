@@ -15,4 +15,5 @@ struct InputCommands
 	bool plane_x;
 	bool plane_y;
 	bool plane_z;
+	bool handleHit;
 };

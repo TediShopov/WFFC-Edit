@@ -29,4 +29,6 @@ public:
 	XMVECTOR MoveOnPlane(
 		XMVECTOR mouseWorldRay,
 		XMVECTOR plane);
+private:
+	bool release_mouse_needed = false;
 };

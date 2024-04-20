@@ -249,21 +249,19 @@ void Game::Render()
 	int numRenderObjects = m_displayList.size();
 	for (int i = 0; i < numRenderObjects; i++)
 	{
-		m_deviceResources->PIXBeginEvent(L"Draw model");
-		const XMVECTORF32 scale = { m_displayList[i].m_scale.x, m_displayList[i].m_scale.y, m_displayList[i].m_scale.z };
-		const XMVECTORF32 translate = { m_displayList[i].m_position.x, m_displayList[i].m_position.y, m_displayList[i].m_position.z };
-
-		//convert degrees into radians for rotation matrix
-		XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(m_displayList[i].m_orientation.y * 3.1415 / 180,
-			m_displayList[i].m_orientation.x * 3.1415 / 180,
-			m_displayList[i].m_orientation.z * 3.1415 / 180);
-
-		XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
-
-		m_displayList[i].m_model->Draw(context, *m_states, local, m_view, m_projection, false);	//last variable in draw,  make TRUE for wireframe
-
-		m_deviceResources->PIXEndEvent();
+		RenderDisplayObject(m_displayList[i]);
 	}
+
+	//RENDER DISPLAY HANDLES
+	for (const DisplayObject& handle : m_displayHandlesList)
+	{
+		RenderDisplayObject(handle);
+	}
+
+	for (int i = 0; i < m_displayHandlesList.size(); ++i)
+	{
+	}
+
 	m_deviceResources->PIXEndEvent();
 
 	//RENDER TERRAIN
@@ -479,6 +477,25 @@ DisplayObject Game::CreateDisplayObject(const SceneObject* object) const
 	return newDisplayObject;
 }
 
+void Game::RenderDisplayObject(const DisplayObject& obj) const
+{
+	auto context = m_deviceResources->GetD3DDeviceContext();
+	m_deviceResources->PIXBeginEvent(L"Draw model");
+	const XMVECTORF32 scale = { obj.m_scale.x, obj.m_scale.y, obj.m_scale.z };
+	const XMVECTORF32 translate = { obj.m_position.x, obj.m_position.y, obj.m_position.z };
+
+	//convert degrees into radians for rotation matrix
+	XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(obj.m_orientation.y * 3.1415 / 180,
+		obj.m_orientation.x * 3.1415 / 180,
+		obj.m_orientation.z * 3.1415 / 180);
+
+	XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
+
+	obj.m_model->Draw(context, *m_states, local, m_view, m_projection, false);	//last variable in draw,  make TRUE for wireframe
+
+	m_deviceResources->PIXEndEvent();
+}
+
 void Game::BuildDisplayList(std::vector<SceneObject>* SceneGraph)
 {
 	auto device = m_deviceResources->GetD3DDevice();
@@ -512,11 +529,11 @@ void Game::SaveDisplayChunk(ChunkObject* SceneChunk)
 	m_displayChunk.SaveHeightMap();			//save heightmap to file.
 }
 
-int Game::AddDisplayObject(const DisplayObject& display_object)
+int Game::AddVisualHandle(const DisplayObject& display_object)
 {
-	this->m_displayList.push_back(display_object);
+	this->m_displayHandlesList.push_back(display_object);
 	//Returns local object
-	return m_displayList.size() - 1;
+	return m_displayHandlesList.size() - 1;
 	//	return &this->m_displayList[m_displayList.size() - 1];
 	//	return &this->m_displayList.at(this->m_displayList.size() - 1);
 }
@@ -660,6 +677,11 @@ std::wstring StringToWCHART(std::string s)
 int Game::MousePicking() const
 {
 	return  this->MousePicking(m_displayList);
+}
+
+int Game::MouseHandlePicking() const
+{
+	return this->MousePicking(m_displayHandlesList);
 }
 
 int Game::MousePicking(std::vector<int> handleList) const

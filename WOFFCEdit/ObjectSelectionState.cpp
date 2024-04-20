@@ -16,7 +16,7 @@ void ObjectSelectionState::Update(const InputCommands& commands)
 		auto newTransfomrStateHacky = new ObjectTransformState();
 		//		newTransfomrStateHacky->Init(this->MainTool, commands);
 		this->MainTool->ChangeState(newTransfomrStateHacky);
-		//return;
+		return;
 	}
 	std::vector<int>& sel = MainTool->m_selectedObject;
 	if (commands.mouse_LB_Down)
