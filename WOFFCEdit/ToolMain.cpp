@@ -312,6 +312,18 @@ void ToolMain::Tick(MSG* msg)
 			m_toolInputCommands.plane_z = true;
 			m_toolInputCommands.CTRL_Down = true;
 		}
+		if (handlePickResult == 3)
+		{
+			m_toolInputCommands.plane_x = true;
+		}
+		if (handlePickResult == 4)
+		{
+			m_toolInputCommands.plane_y = true;
+		}
+		if (handlePickResult == 5)
+		{
+			m_toolInputCommands.plane_z = true;
+		}
 	}
 
 	ToolState->Update(m_toolInputCommands);
@@ -477,48 +489,65 @@ void ToolMain::InitHandlesDefaults()
 	tempPositionHandle.model_path = DefaultArrowModel;
 	tempPositionHandle.tex_diffuse_path = DefaultArrowTexture;
 
-	float relevantScale = 5.0f;
-	float notRelevantScale = 0.1f;
-	float handleRelevantOffset = relevantScale / 2.0f;
+	float positionHandleScaleRel = 5.0f;
+	float positionHandleScaleNonRel = 0.1f;
+	float handleRelevantOffset = positionHandleScaleRel / 2.0f;
 
 	tempPositionHandle.posY = 5;
 
 	//Add the objects to all objects being visualized
 	// and get its handle/pointer
 
-	//auto testDisplayObject = m_d3dRenderer.CreateDisplayObject(&tempPositionHandle);
-
+	//CREATE HANDLES TO MOVE OBJECT BY LOCAL AXIS
 	//Add x position handle
-	tempPositionHandle.scaX = relevantScale;
-	tempPositionHandle.scaY = notRelevantScale;
-	tempPositionHandle.scaZ = notRelevantScale;
+	tempPositionHandle.scaX = positionHandleScaleRel;
+	tempPositionHandle.scaY = positionHandleScaleNonRel;
+	tempPositionHandle.scaZ = positionHandleScaleNonRel;
 	int xHandle = m_d3dRenderer.AddVisualHandle(
 		m_d3dRenderer.CreateDisplayObject(&tempPositionHandle));
 
-	tempPositionHandle.scaX = notRelevantScale;
-	tempPositionHandle.scaY = relevantScale;
-	tempPositionHandle.scaZ = notRelevantScale;
+	tempPositionHandle.rotZ = 90;
 	int yHandle = m_d3dRenderer.AddVisualHandle(
 		m_d3dRenderer.CreateDisplayObject(&tempPositionHandle));
 
-	tempPositionHandle.scaX = notRelevantScale;
-	tempPositionHandle.scaY = notRelevantScale;
-	tempPositionHandle.scaZ = relevantScale;
+	tempPositionHandle.rotZ = 0;
+	tempPositionHandle.rotY = 90;
 	int zHandle = m_d3dRenderer.AddVisualHandle(
 		m_d3dRenderer.CreateDisplayObject(&tempPositionHandle));
+
+	//CREATE PLANE MOVING HANDLE
+	SceneObject tempScaleHandle;
+	tempScaleHandle.model_path = DefaultArrowModel;
+	tempScaleHandle.tex_diffuse_path = DefaultArrowTexture;
+	tempScaleHandle.posZ = -0.5f;
+	tempScaleHandle.posY = 0.5f;
+	tempScaleHandle.scaX = 0.1;
+	tempScaleHandle.scaY = 1;
+	tempScaleHandle.scaZ = 1;
+
+	int yzScaleHandle = m_d3dRenderer.AddVisualHandle(m_d3dRenderer.CreateDisplayObject(&tempScaleHandle));
+
+	//	tempScaleHandle.posZ = 0;
+	//	tempScaleHandle.posX = -1.0f;
+	tempScaleHandle.posX = -0.5f;
+	tempScaleHandle.posY = 0;
+	tempScaleHandle.posZ = -0.5f;
+	tempScaleHandle.rotZ = 90;
+	int xzScalHandle = m_d3dRenderer.AddVisualHandle(m_d3dRenderer.CreateDisplayObject(&tempScaleHandle));
+	//
+	tempScaleHandle.posX = -0.5f;
+	tempScaleHandle.posY = 0.5f;
+	tempScaleHandle.posZ = 0;
+	tempScaleHandle.rotZ = 0;
+	tempScaleHandle.rotY = 90;
+	int zyScaleHandle = m_d3dRenderer.AddVisualHandle(m_d3dRenderer.CreateDisplayObject(&tempScaleHandle));
 
 	this->PositionHandles.push_back(xHandle);
 	this->PositionHandles.push_back(yHandle);
 	this->PositionHandles.push_back(zHandle);
-
-	//	auto yHandle = m_d3dRenderer.AddDisplayObject(
-	//		m_d3dRenderer.CreateDisplayObject(&tempPositionHandle));
-	//	auto zHandle = m_d3dRenderer.AddDisplayObject(
-	//		m_d3dRenderer.CreateDisplayObject(&tempPositionHandle));
-
-	//	this->PositionHandles.push_back(m_d3dRenderer.);
-	//	this->PositionHandles.push_back(yHandle);
-	//	this->PositionHandles.push_back(zHandle);
+	this->PositionHandles.push_back(yzScaleHandle);
+	this->PositionHandles.push_back(xzScalHandle);
+	//	this->PositionHandles.push_back(zyScaleHandle);
 
 		//Push back all the handles display objects
 }

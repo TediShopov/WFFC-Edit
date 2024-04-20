@@ -80,11 +80,11 @@ void ObjectTransformState::Update(const InputCommands& input)
 		else
 		{
 			if (on_selection_commands.plane_x == true)
-				plane = selected_object_planes[1];
+				plane = selected_object_planes[0];
 			else if (on_selection_commands.plane_y == true)
-				plane = selected_object_planes[2];
+				plane = selected_object_planes[1];
 			else
-				plane = selected_object_planes[3];
+				plane = selected_object_planes[2];
 			newPosition = MoveOnPlane(
 				mouseWorldPos, plane);
 		}
