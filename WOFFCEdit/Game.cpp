@@ -191,6 +191,8 @@ void Game::Update(DX::StepTimer const& timer)
 	m_batchEffect->SetWorld(Matrix::Identity);
 	m_displayChunk.m_terrainEffect->SetView(m_view);
 	m_displayChunk.m_terrainEffect->SetWorld(Matrix::Identity);
+	//	m_handlesEffect->SetView(m_view);
+	//	m_handlesEffect->SetWorld(Matrix::Identity);
 
 #ifdef DXTK_AUDIO
 	m_audioTimerAcc -= (float)timer.GetElapsedSeconds();
@@ -248,6 +250,17 @@ void Game::Render()
 	m_font->DrawString(m_sprites.get(), var.c_str(), XMFLOAT2(100, 10), Colors::Yellow);
 	m_sprites->End();
 
+	context->OMSetDepthStencilState(m_states->DepthDefault(), 0);
+	context->RSSetState(m_states->CullNone());
+	context->RSSetState(m_states->Wireframe());
+	m_handlesEffect->Apply(context);
+	for (const DisplayObject* handle : m_displayHandlesList)
+	{
+		//context->OMSetBlendState(m_states->Additive(), nullptr, 0xFFFFFFFF);
+
+		RenderDisplayObject(*handle);
+	}
+
 	//RENDER OBJECTS FROM SCENEGRAPH
 	int numRenderObjects = m_displayList.size();
 	for (int i = 0; i < numRenderObjects; i++)
@@ -256,20 +269,16 @@ void Game::Render()
 	}
 
 	//RENDER DISPLAY HANDLES
-	for (const DisplayObject* handle : m_displayHandlesList)
-	{
-		RenderDisplayObject(*handle);
-	}
 
 	m_deviceResources->PIXEndEvent();
 
 	//RENDER TERRAIN
-	context->OMSetBlendState(m_states->AlphaBlend(), nullptr, 0xFFFFFFFF);
+	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
 	context->OMSetDepthStencilState(m_states->DepthDefault(), 0);
 	context->RSSetState(m_states->CullNone());
-	//	context->RSSetState(m_states->Wireframe());		//uncomment for wireframe
+	//context->RSSetState(m_states->Wireframe());		//uncomment for wireframe
 
-		//Render the batch,  This is handled in the Display chunk becuase it has the potential to get complex
+	//Render the batch,  This is handled in the Display chunk becuase it has the potential to get complex
 	m_displayChunk.RenderBatch(m_deviceResources);
 
 	m_deviceResources->Present();
@@ -434,14 +443,6 @@ DisplayObject* Game::CreateDisplayObject(const SceneObject* object) const
 	}
 
 	//apply new texture to models effect
-	newDisplayObject->m_model->UpdateEffects([&](IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
-		{
-			auto lights = dynamic_cast<BasicEffect*>(effect);
-			if (lights)
-			{
-				lights->SetTexture(newDisplayObject->m_texture_diffuse);
-			}
-		});
 
 	newDisplayObject->m_ID = object->ID;
 
@@ -475,6 +476,22 @@ DisplayObject* Game::CreateDisplayObject(const SceneObject* object) const
 	newDisplayObject->m_light_constant = object->light_constant;
 	newDisplayObject->m_light_linear = object->light_linear;
 	newDisplayObject->m_light_quadratic = object->light_quadratic;
+
+	newDisplayObject->m_model->UpdateEffects([&](IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
+		{
+			auto lights = dynamic_cast<BasicEffect*>(effect);
+			if (lights)
+			{
+				lights->SetTexture(newDisplayObject->m_texture_diffuse);
+				XMVECTOR diffuse{
+					newDisplayObject->m_light_diffuse_r,
+					newDisplayObject->m_light_diffuse_g,
+					newDisplayObject->m_light_diffuse_b,
+					0
+				};
+				lights->SetDiffuseColor(diffuse);
+			}
+		});
 
 	return newDisplayObject;
 }
@@ -615,6 +632,18 @@ void Game::CreateDeviceDependentResources()
 	m_batchEffect = std::make_unique<BasicEffect>(device);
 	m_batchEffect->SetVertexColorEnabled(true);
 
+	//Create effect for handles
+	m_handlesEffect = std::make_unique<BasicEffect>(m_deviceResources->GetD3DDevice());
+	//m_handlesEffect->EnableDefaultLighting();
+	m_handlesEffect->SetLightingEnabled(false);
+	m_handlesEffect->SetTextureEnabled(false);
+	{
+		void const* shaderByteCode;
+		size_t byteCodeLength;
+
+		m_handlesEffect->GetVertexShaderBytecode(&shaderByteCode, &byteCodeLength);
+	}
+
 	{
 		void const* shaderByteCode;
 		size_t byteCodeLength;
@@ -636,6 +665,24 @@ void Game::CreateDeviceDependentResources()
 		// SDKMESH has to use clockwise winding with right-handed coordinates, so textures are flipped in U
 	m_model = Model::CreateFromSDKMESH(device, L"tiny.sdkmesh", *m_fxFactory);
 
+	std::function<void(IEffect*)> setEffectFun(
+		[](IEffect* e)-> void
+		{
+			auto lights = dynamic_cast<IEffectLights*>(e);
+			auto  matrices = dynamic_cast<IEffectMatrices*>(e);
+
+			if (lights)
+			{
+				lights->SetLightingEnabled(false);
+				lights->SetLightDiffuseColor(0, Colors::Gold);
+			}
+			if (matrices)
+			{
+				matrices->SetProjection(XMMatrixIdentity());
+			}
+		});
+
+	m_model->UpdateEffects(setEffectFun);
 	// Load textures
 	DX::ThrowIfFailed(
 		CreateDDSTextureFromFile(device, L"seafloor.dds", nullptr, m_texture1.ReleaseAndGetAddressOf())

@@ -95,6 +95,8 @@ private:
 	DisplayChunk						m_displayChunk;
 	InputCommands						m_InputCommands;
 
+	std::unique_ptr<DirectX::BasicEffect>       m_handlesEffect;
+
 	//functionality
 	float								m_movespeed;
 

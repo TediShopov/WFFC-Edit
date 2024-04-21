@@ -521,6 +521,9 @@ void ToolMain::InitHandlesDefaults()
 
 	//CREATE HANDLES TO MOVE OBJECT BY LOCAL AXIS
 	//Add x position handle
+	tempPositionHandle.light_diffuse_r = 1;
+	tempPositionHandle.light_diffuse_b = 0;
+	tempPositionHandle.light_diffuse_g = 0;
 	tempPositionHandle.scaX = positionHandleScaleRel;
 	tempPositionHandle.scaY = positionHandleScaleNonRel;
 	tempPositionHandle.scaZ = positionHandleScaleNonRel;
@@ -528,11 +531,17 @@ void ToolMain::InitHandlesDefaults()
 		m_d3dRenderer.CreateDisplayObject(&tempPositionHandle));
 
 	tempPositionHandle.rotZ = 90;
+	tempPositionHandle.light_diffuse_r = 0;
+	tempPositionHandle.light_diffuse_b = 1;
+	tempPositionHandle.light_diffuse_g = 0;
 	int yHandle = m_d3dRenderer.AddVisualHandle(
 		m_d3dRenderer.CreateDisplayObject(&tempPositionHandle));
 
 	tempPositionHandle.rotZ = 0;
 	tempPositionHandle.rotY = 90;
+	tempPositionHandle.light_diffuse_r = 0;
+	tempPositionHandle.light_diffuse_b = 0;
+	tempPositionHandle.light_diffuse_g = 1;
 	int zHandle = m_d3dRenderer.AddVisualHandle(
 		m_d3dRenderer.CreateDisplayObject(&tempPositionHandle));
 
@@ -546,6 +555,9 @@ void ToolMain::InitHandlesDefaults()
 	tempScaleHandle.scaY = 1;
 	tempScaleHandle.scaZ = 1;
 
+	tempScaleHandle.light_diffuse_r = 1;
+	tempScaleHandle.light_diffuse_b = 0;
+	tempScaleHandle.light_diffuse_g = 0;
 	int yzScaleHandle = m_d3dRenderer.AddVisualHandle(m_d3dRenderer.CreateDisplayObject(&tempScaleHandle));
 
 	//	tempScaleHandle.posZ = 0;
@@ -554,6 +566,9 @@ void ToolMain::InitHandlesDefaults()
 	tempScaleHandle.posY = 0;
 	tempScaleHandle.posZ = -0.5f;
 	tempScaleHandle.rotZ = 90;
+	tempScaleHandle.light_diffuse_r = 0;
+	tempScaleHandle.light_diffuse_b = 1;
+	tempScaleHandle.light_diffuse_g = 0;
 	int xzScalHandle = m_d3dRenderer.AddVisualHandle(m_d3dRenderer.CreateDisplayObject(&tempScaleHandle));
 	//
 	tempScaleHandle.posX = -0.5f;
@@ -561,6 +576,9 @@ void ToolMain::InitHandlesDefaults()
 	tempScaleHandle.posZ = 0;
 	tempScaleHandle.rotZ = 0;
 	tempScaleHandle.rotY = 90;
+	tempScaleHandle.light_diffuse_r = 0;
+	tempScaleHandle.light_diffuse_b = 0;
+	tempScaleHandle.light_diffuse_g = 1;
 	int zyScaleHandle = m_d3dRenderer.AddVisualHandle(m_d3dRenderer.CreateDisplayObject(&tempScaleHandle));
 
 	this->PositionHandles.push_back(xHandle);
