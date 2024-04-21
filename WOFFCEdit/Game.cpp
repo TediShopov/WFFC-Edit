@@ -261,14 +261,10 @@ void Game::Render()
 		RenderDisplayObject(*handle);
 	}
 
-	for (int i = 0; i < m_displayHandlesList.size(); ++i)
-	{
-	}
-
 	m_deviceResources->PIXEndEvent();
 
 	//RENDER TERRAIN
-	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
+	context->OMSetBlendState(m_states->AlphaBlend(), nullptr, 0xFFFFFFFF);
 	context->OMSetDepthStencilState(m_states->DepthDefault(), 0);
 	context->RSSetState(m_states->CullNone());
 	//	context->RSSetState(m_states->Wireframe());		//uncomment for wireframe
@@ -485,6 +481,7 @@ DisplayObject* Game::CreateDisplayObject(const SceneObject* object) const
 
 void Game::RenderDisplayObject(const DisplayObject& obj) const
 {
+	if (obj.m_render == false) return;
 	auto context = m_deviceResources->GetD3DDeviceContext();
 	m_deviceResources->PIXBeginEvent(L"Draw model");
 	XMMATRIX world =
@@ -574,6 +571,16 @@ int Game::AddVisualHandle(DisplayObject* display_object)
 	//	return &this->m_displayList.at(this->m_displayList.size() - 1);
 }
 
+std::vector<DisplayObject*> Game::GetHandles()
+{
+	return std::vector<DisplayObject*>(m_displayHandlesList);
+}
+
+DisplayObject* Game::GetDisplayObject(int index)
+{
+	return this->m_displayList[index];
+}
+
 #ifdef DXTK_AUDIO
 void Game::NewAudioDevice()
 {
@@ -582,7 +589,7 @@ void Game::NewAudioDevice()
 		// Setup a retry in 1 second
 		m_audioTimerAcc = 1.f;
 		m_retryDefault = true;
-}
+	}
 }
 #endif
 

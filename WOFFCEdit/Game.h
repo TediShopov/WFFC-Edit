@@ -56,7 +56,8 @@ public:
 	//Adds a certain prototype of a display object and returns
 	// the pointer of the object actually added
 	int AddVisualHandle(DisplayObject* display_object);
-	DisplayObject& GetDisplayObject(int index);
+	std::vector<DisplayObject*> GetHandles();
+	DisplayObject* GetDisplayObject(int index);
 	void ClearDisplayList();
 
 	//Mouse Selection Methods

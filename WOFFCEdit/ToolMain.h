@@ -47,6 +47,7 @@ private:	//methods
 
 private:	//variables
 
+	bool	m_handlesInitialized = false; //If handle default are already constructed
 	HWND	m_toolHandle;		//Handle to the  window
 	InputCommands m_toolInputCommands;		//input commands that we want to use and possibly pass over to the renderer
 	CRect	WindowRECT;		//Window area rectangle.

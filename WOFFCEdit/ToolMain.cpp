@@ -289,44 +289,65 @@ void ToolMain::onActionSaveTerrain()
 
 void ToolMain::Tick(MSG* msg)
 {
-	m_toolInputCommands.handleHit = false;
-	//If hanle is picked by mouse
-	if (m_toolInputCommands.mouse_LB_Down && m_selectedObject.size() == 1)
-	{
-		int handlePickResult = m_d3dRenderer.MouseHandlePicking();
+	//Put the selected object as handles transform
 
-		if (handlePickResult != -1)
+	m_toolInputCommands.handleHit = false;
+	if (m_selectedObject.size() != 1)
+	{
+		for (DisplayObject* handle : this->m_d3dRenderer.GetHandles())
 		{
-			m_toolInputCommands.handleHit = true;
-		}
-		if (handlePickResult == 0)
-		{
-			m_toolInputCommands.plane_x = true;
-			m_toolInputCommands.CTRL_Down = true;
-		}
-		if (handlePickResult == 1)
-		{
-			m_toolInputCommands.plane_y = true;
-			m_toolInputCommands.CTRL_Down = true;
-		}
-		if (handlePickResult == 2)
-		{
-			m_toolInputCommands.plane_z = true;
-			m_toolInputCommands.CTRL_Down = true;
-		}
-		if (handlePickResult == 3)
-		{
-			m_toolInputCommands.plane_x = true;
-		}
-		if (handlePickResult == 4)
-		{
-			m_toolInputCommands.plane_y = true;
-		}
-		if (handlePickResult == 5)
-		{
-			m_toolInputCommands.plane_z = true;
+			handle->m_render = false;
 		}
 	}
+
+	if (m_selectedObject.size() == 1)
+	{
+		for (DisplayObject* handle : this->m_d3dRenderer.GetHandles())
+		{
+			handle->m_render = true;
+			handle->parentObject =
+				this->m_d3dRenderer.GetDisplayObject(m_selectedObject[0]);
+		}
+
+		if (m_toolInputCommands.mouse_LB_Down)
+		{
+			int handlePickResult = m_d3dRenderer.MouseHandlePicking();
+
+			if (handlePickResult != -1)
+			{
+				m_toolInputCommands.handleHit = true;
+			}
+			if (handlePickResult == 0)
+			{
+				m_toolInputCommands.plane_x = true;
+				m_toolInputCommands.CTRL_Down = true;
+			}
+			if (handlePickResult == 1)
+			{
+				m_toolInputCommands.plane_y = true;
+				m_toolInputCommands.CTRL_Down = true;
+			}
+			if (handlePickResult == 2)
+			{
+				m_toolInputCommands.plane_z = true;
+				m_toolInputCommands.CTRL_Down = true;
+			}
+			if (handlePickResult == 3)
+			{
+				m_toolInputCommands.plane_x = true;
+			}
+			if (handlePickResult == 4)
+			{
+				m_toolInputCommands.plane_y = true;
+			}
+			if (handlePickResult == 5)
+			{
+				m_toolInputCommands.plane_z = true;
+			}
+		}
+	}
+
+	//If hanle is picked by mouse
 
 	ToolState->Update(m_toolInputCommands);
 	//	if (ShouldStartSelectDragging()
@@ -494,8 +515,6 @@ void ToolMain::InitHandlesDefaults()
 	float positionHandleScaleRel = 5.0f;
 	float positionHandleScaleNonRel = 0.1f;
 	float handleRelevantOffset = positionHandleScaleRel / 2.0f;
-
-	tempPositionHandle.posY = 5;
 
 	//Add the objects to all objects being visualized
 	// and get its handle/pointer
