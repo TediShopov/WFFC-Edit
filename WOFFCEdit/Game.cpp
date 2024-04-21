@@ -250,25 +250,13 @@ void Game::Render()
 	m_font->DrawString(m_sprites.get(), var.c_str(), XMFLOAT2(100, 10), Colors::Yellow);
 	m_sprites->End();
 
-	context->OMSetDepthStencilState(m_states->DepthDefault(), 0);
-	context->RSSetState(m_states->CullNone());
-	context->RSSetState(m_states->Wireframe());
-	m_handlesEffect->Apply(context);
-	for (const DisplayObject* handle : m_displayHandlesList)
-	{
-		//context->OMSetBlendState(m_states->Additive(), nullptr, 0xFFFFFFFF);
-
-		RenderDisplayObject(*handle);
-	}
-
+	//RENDER DISPLAY HANDLES
 	//RENDER OBJECTS FROM SCENEGRAPH
 	int numRenderObjects = m_displayList.size();
 	for (int i = 0; i < numRenderObjects; i++)
 	{
 		RenderDisplayObject(*m_displayList[i]);
 	}
-
-	//RENDER DISPLAY HANDLES
 
 	m_deviceResources->PIXEndEvent();
 
@@ -281,6 +269,13 @@ void Game::Render()
 	//Render the batch,  This is handled in the Display chunk becuase it has the potential to get complex
 	m_displayChunk.RenderBatch(m_deviceResources);
 
+	//m_handlesEffect->Apply(context);
+	for (const DisplayObject* handle : m_displayHandlesList)
+	{
+		//context->OMSetBlendState(m_states->Additive(), nullptr, 0xFFFFFFFF);
+
+		RenderDisplayObjectOnTop(*handle);
+	}
 	m_deviceResources->Present();
 }
 
@@ -503,7 +498,37 @@ void Game::RenderDisplayObject(const DisplayObject& obj) const
 	m_deviceResources->PIXBeginEvent(L"Draw model");
 	XMMATRIX world =
 		m_world * obj.GetWorldMatrix();
+
 	obj.m_model->Draw(context, *m_states, world, m_view, m_projection, false);	//last variable in draw,  make TRUE for wireframe
+
+	m_deviceResources->PIXEndEvent();
+}
+
+void Game::RenderDisplayObjectOnTop(const DisplayObject& obj) const
+{
+	if (obj.m_render == false) return;
+	auto context = m_deviceResources->GetD3DDeviceContext();
+	m_deviceResources->PIXBeginEvent(L"Draw model");
+	XMMATRIX world =
+		m_world * obj.GetWorldMatrix();
+
+	context->OMSetDepthStencilState(m_states->DepthNone(), 0);
+	auto model = obj.m_model.get();
+	assert(model != nullptr);
+
+	for (const auto& it : model->meshes)
+	{
+		auto mesh = it.get();
+		assert(mesh != nullptr);
+
+		//mesh->PrepareForRendering(context, *m_states, false, true);
+
+		// Do model-level setCustomState work here
+
+		mesh->Draw(context, world, m_view, m_projection, false);
+	}
+
+	//obj.m_model->Draw(context, *m_states, world, m_view, m_projection, false);	//last variable in draw,  make TRUE for wireframe
 
 	m_deviceResources->PIXEndEvent();
 }
