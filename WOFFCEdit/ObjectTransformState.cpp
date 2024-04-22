@@ -2,10 +2,68 @@
 
 #include "ObjectSelectionState.h"
 #include "ToolMain.h"
+#include  "PostionControlHandle.h"
+
+XMMATRIX ObjectTransformState::LocalAxes =
+{
+	XMVECTOR{ 0,0,0,1 },
+	XMVECTOR{ 1,0,0,1 },
+	XMVECTOR{ 0,1,0,1 },
+	XMVECTOR{ 0,0,1,1 }
+};
+ObjectTransformState::ObjectTransformState()
+{
+	from_handle = false;
+}
+
+ObjectTransformState::ObjectTransformState(AXES axisType, bool a)
+{
+	this->move_on_axis = a;
+	from_handle = true;
+	release_mouse_needed = true;
+	this->axisType = axisType;
+}
 
 void ObjectTransformState::Init(ToolMain* tool, const InputCommands& comms)
 {
 	this->MainTool = tool;
+	on_selection_commands = comms;
+	if (from_handle)
+	{
+		if (this->MainTool->m_selectedObject.size() != 1) return;;
+		GetLocalVectors(this->MainTool->m_selectedObject[0], selected_object_axes);
+		GetLocalPlanes(
+			this->MainTool->m_selectedObject[0],
+			selected_object_planes);
+		if (move_on_axis)
+		{
+			if (axisType == X_AXIS)
+			{
+				axis = selected_object_axes[1];
+				plane = selected_object_planes[2];
+			}
+			else if (axisType == Y_AXIS)
+			{
+				axis = selected_object_axes[2];
+				plane = selected_object_planes[2];
+			}
+			else
+			{
+				axis = selected_object_axes[3];
+				plane = selected_object_planes[1];
+			}
+		}
+		else
+		{
+			if (axisType == X_AXIS)
+				plane = selected_object_planes[0];
+			else if (axisType == Y_AXIS)
+				plane = selected_object_planes[1];
+			else
+				plane = selected_object_planes[2];
+		}
+		return;
+	};
 	if (this->MainTool->m_selectedObject.size() == 1)
 	{
 		if (comms.handleHit == true)
@@ -15,47 +73,10 @@ void ObjectTransformState::Init(ToolMain* tool, const InputCommands& comms)
 			release_mouse_needed = true;
 		}
 
-		on_selection_commands = comms;
 		GetLocalVectors(this->MainTool->m_selectedObject[0], selected_object_axes);
 		GetLocalPlanes(
 			this->MainTool->m_selectedObject[0],
 			selected_object_planes);
-	}
-}
-
-void ObjectTransformState::Update(const InputCommands& input)
-{
-	XMVECTOR plane;
-	XMVECTOR axis;
-
-	XMVECTOR newPosition;
-
-	if (MainTool->ShouldStartSelectDragging() == false)
-	{
-		if (release_mouse_needed)
-		{
-			if (input.mouse_LB_Down == false)
-			{
-				this->MainTool->ChangeState(new ObjectSelectionState());
-			}
-		}
-		else
-		{
-			this->MainTool->ChangeState(new ObjectSelectionState());
-		}
-	}
-
-	if (this->MainTool->m_selectedObject.size() == 1)
-	{
-		SceneObject& obj = this->MainTool->m_sceneGraph[this->MainTool->m_selectedObject[0]];
-
-		POINT p;
-		GetCursorPos(&p);
-		XMVECTOR mouseWorldPos =
-			this->MainTool->m_d3dRenderer.GetWorldRay(
-				input.mouse_x,
-				input.mouse_y,
-				1000);
 		if (on_selection_commands.CTRL_Down)
 		{
 			if (on_selection_commands.plane_x)
@@ -74,8 +95,7 @@ void ObjectTransformState::Update(const InputCommands& input)
 				plane = selected_object_planes[1];
 			}
 
-			newPosition = MoveOnAxis(
-				mouseWorldPos, plane, axis);
+			move_on_axis = true;
 		}
 		else
 		{
@@ -85,6 +105,48 @@ void ObjectTransformState::Update(const InputCommands& input)
 				plane = selected_object_planes[1];
 			else
 				plane = selected_object_planes[2];
+
+			move_on_axis = false;
+		}
+	}
+}
+
+void ObjectTransformState::Update(const InputCommands& input)
+{
+	XMVECTOR newPosition;
+	if (MainTool->ShouldStartSelectDragging() == false)
+	{
+		if (release_mouse_needed)
+		{
+			if (input.mouse_LB_Down == false)
+			{
+				this->MainTool->ChangeState(new ObjectSelectionState());
+			}
+		}
+		else
+		{
+			this->MainTool->ChangeState(new ObjectSelectionState());
+		}
+	}
+	if (this->MainTool->m_selectedObject.size() == 1)
+	{
+		SceneObject& obj = this->MainTool->m_sceneGraph[this->MainTool->m_selectedObject[0]];
+
+		POINT p;
+		GetCursorPos(&p);
+		XMVECTOR mouseWorldPos =
+			this->MainTool->m_d3dRenderer.GetWorldRay(
+				input.mouse_x,
+				input.mouse_y,
+				1000);
+
+		if (move_on_axis)
+		{
+			newPosition = MoveOnAxis(
+				mouseWorldPos, plane, axis);
+		}
+		else
+		{
 			newPosition = MoveOnPlane(
 				mouseWorldPos, plane);
 		}

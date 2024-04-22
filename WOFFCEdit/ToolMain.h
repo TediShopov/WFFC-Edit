@@ -41,7 +41,9 @@ public:	//variables
 	bool ShouldStartSelectDragging() const;
 
 private:	//methods
+	ControlHandle* m_activeHandle;
 	void InitHandlesDefaults();
+
 	//std::vector<int> PositionHandles;
 	void	onContentAdded();
 

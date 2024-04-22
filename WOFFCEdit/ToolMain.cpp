@@ -301,108 +301,23 @@ void ToolMain::Tick(MSG* msg)
 	//	}
 	//}
 
-	if (m_selectedObject.size() == 1)
-	{
-		//	for (DisplayObject* handle : this->m_d3dRenderer.GetHandles())
-		//	{
-		//		handle->m_render = true;
-		//		handle->parentObject =
-		//			this->m_d3dRenderer.GetDisplayObject(m_selectedObject[0]);
-		//	}
-	//
-	//		if (m_toolInputCommands.mouse_LB_Down)
-	//		{
-	//			int handlePickResult = m_d3dRenderer.MouseHandlePicking();
-	//
-	//			if (handlePickResult != -1)
-	//			{
-	//				m_toolInputCommands.handleHit = true;
-	//			}
-	//			if (handlePickResult == 0)
-	//			{
-	//				m_toolInputCommands.plane_x = true;
-	//				m_toolInputCommands.CTRL_Down = true;
-	//			}
-	//			if (handlePickResult == 1)
-	//			{
-	//				m_toolInputCommands.plane_y = true;
-	//				m_toolInputCommands.CTRL_Down = true;
-	//			}
-	//			if (handlePickResult == 2)
-	//			{
-	//				m_toolInputCommands.plane_z = true;
-	//				m_toolInputCommands.CTRL_Down = true;
-	//			}
-	//			if (handlePickResult == 3)
-	//			{
-	//				m_toolInputCommands.plane_x = true;
-	//			}
-	//			if (handlePickResult == 4)
-	//			{
-	//				m_toolInputCommands.plane_y = true;
-	//			}
-	//			if (handlePickResult == 5)
-	//			{
-	//				m_toolInputCommands.plane_z = true;
-	//			}
-	//		}
-	//	}
-	}
-
 	//If hanle is picked by mouse
 
+	if (m_toolInputCommands.mouse_LB_Down)
+	{
+		if (this->m_activeHandle == nullptr)
+		{
+			ControlHandle* selecedHandle = m_d3dRenderer.ControlHandleHitTest();
+			this->m_activeHandle = selecedHandle;
+			if (selecedHandle != nullptr)
+				this->ChangeState(selecedHandle->OnMouseClick());
+		}
+	}
+	else
+	{
+		this->m_activeHandle = nullptr;
+	}
 	ToolState->Update(m_toolInputCommands);
-	//	if (ShouldStartSelectDragging()
-	//		!= is_select_draggin)
-	//	{
-	//		is_select_draggin = ShouldStartSelectDragging();
-	//		if (is_select_draggin)
-	//			StartSelectionDrag();
-	//	}
-	//
-	//	if (is_select_draggin)
-	//	{
-	//		DoSelectionDrag();
-	//	}
-	//
-	//	//do we have a selection
-	//	int newSelectedId = -1;
-	//	//if mouse is over this window
-	//	if (m_toolInputCommands.mouse_LB_Down)
-	//	{
-	//		newSelectedId = m_d3dRenderer.MousePicking();
-	//		m_toolInputCommands.mouse_LB_Down = false;
-	//		if (m_toolInputCommands.CTRL_Down == true)
-	//		{
-	//			//Add selection to the list of selections
-	//			//only if it is unique
-	//			if (std::find(m_selectedObject.begin(), m_selectedObject.end(), newSelectedId) == m_selectedObject.end()) {
-	//				m_selectedObject.push_back(newSelectedId);
-	//			}
-	//		}
-	//		else
-	//		{
-	//			//Reset selection and add newly selected
-	//			m_selectedObject.clear();
-	//			if (newSelectedId != -1)
-	//				m_selectedObject.push_back(newSelectedId);
-	//		}
-	//		this->Notify(*this);
-	//	}
-		//	if (m_toolInputCommands.plane_x
-		//		|| m_toolInputCommands.plane_y
-		//		|| m_toolInputCommands.plane_z)
-		//	{
-		//		StartSelectionDrag();
-		//	}
-			//do we have a mode
-			//are we clicking / dragging /releasing
-			//has something changed
-				//update Scenegraph
-				//add to scenegraph
-				//resend scenegraph to Direct X renderer
-
-			//Renderer Update Call
 	m_d3dRenderer.Tick(&m_toolInputCommands);
 }
 
@@ -525,87 +440,24 @@ void ToolMain::InitHandlesDefaults()
 	//CREATE HANDLES TO MOVE OBJECT BY LOCAL AXIS
 	//Add x position handle
 	m_d3dRenderer.AddVisualHandle(new PostionControlHandle(
+		X_AXIS,
 		this,
-		0, 0, 0,
 		&tempPositionHandle,
 		Colors::Red
 	));
 	//Add z position handle
 	m_d3dRenderer.AddVisualHandle(new PostionControlHandle(
+		Y_AXIS,
 		this,
-		0, 0, 1,
 		&tempPositionHandle,
 		Colors::Green
 	));
 	//CREATE HANDLES TO MOVE OBJECT BY LOCAL AXIS
 	//Add y position handle
 	m_d3dRenderer.AddVisualHandle(new PostionControlHandle(
+		Z_AXIS,
 		this,
-		0, 1, 0,
 		&tempPositionHandle,
 		Colors::Blue
 	));
-
-	//	int xHandle = m_d3dRenderer.AddVisualHandle(
-	//		m_d3dRenderer.CreateDisplayObject(&tempPositionHandle));
-
-	//	tempPositionHandle.rotZ = 90;
-	//	tempPositionHandle.light_diffuse_r = 0;
-	//	tempPositionHandle.light_diffuse_b = 1;
-	//	tempPositionHandle.light_diffuse_g = 0;
-	//	int yHandle = m_d3dRenderer.AddVisualHandle(
-	//		m_d3dRenderer.CreateDisplayObject(&tempPositionHandle));
-	//
-	//	tempPositionHandle.rotZ = 0;
-	//	tempPositionHandle.rotY = 90;
-	//	tempPositionHandle.light_diffuse_r = 0;
-	//	tempPositionHandle.light_diffuse_b = 0;
-	//	tempPositionHandle.light_diffuse_g = 1;
-	//	int zHandle = m_d3dRenderer.AddVisualHandle(
-	//		m_d3dRenderer.CreateDisplayObject(&tempPositionHandle));
-	//
-	//	//CREATE PLANE MOVING HANDLE
-	//	SceneObject tempScaleHandle;
-	//	tempScaleHandle.model_path = DefaultArrowModel;
-	//	tempScaleHandle.tex_diffuse_path = DefaultArrowTexture;
-	//	tempScaleHandle.posZ = -0.5f;
-	//	tempScaleHandle.posY = 0.5f;
-	//	tempScaleHandle.scaX = 0.1;
-	//	tempScaleHandle.scaY = 1;
-	//	tempScaleHandle.scaZ = 1;
-	//
-	//	tempScaleHandle.light_diffuse_r = 1;
-	//	tempScaleHandle.light_diffuse_b = 0;
-	//	tempScaleHandle.light_diffuse_g = 0;
-	//	int yzScaleHandle = m_d3dRenderer.AddVisualHandle(m_d3dRenderer.CreateDisplayObject(&tempScaleHandle));
-	//
-	//	//	tempScaleHandle.posZ = 0;
-	//	//	tempScaleHandle.posX = -1.0f;
-	//	tempScaleHandle.posX = -0.5f;
-	//	tempScaleHandle.posY = 0;
-	//	tempScaleHandle.posZ = -0.5f;
-	//	tempScaleHandle.rotZ = 90;
-	//	tempScaleHandle.light_diffuse_r = 0;
-	//	tempScaleHandle.light_diffuse_b = 1;
-	//	tempScaleHandle.light_diffuse_g = 0;
-	//	int xzScalHandle = m_d3dRenderer.AddVisualHandle(m_d3dRenderer.CreateDisplayObject(&tempScaleHandle));
-	//	//
-	//	tempScaleHandle.posX = -0.5f;
-	//	tempScaleHandle.posY = 0.5f;
-	//	tempScaleHandle.posZ = 0;
-	//	tempScaleHandle.rotZ = 0;
-	//	tempScaleHandle.rotY = 90;
-	//	tempScaleHandle.light_diffuse_r = 0;
-	//	tempScaleHandle.light_diffuse_b = 0;
-	//	tempScaleHandle.light_diffuse_g = 1;
-	//	int zyScaleHandle = m_d3dRenderer.AddVisualHandle(m_d3dRenderer.CreateDisplayObject(&tempScaleHandle));
-	//
-	//	this->PositionHandles.push_back(xHandle);
-	//	this->PositionHandles.push_back(yHandle);
-	//	this->PositionHandles.push_back(zHandle);
-	//	this->PositionHandles.push_back(yzScaleHandle);
-	//	this->PositionHandles.push_back(xzScalHandle);
-		//	this->PositionHandles.push_back(zyScaleHandle);
-
-			//Push back all the handles display objects
 }

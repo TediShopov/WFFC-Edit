@@ -24,19 +24,29 @@ Quaternion PostionControlHandle::FromToQuaternion(
 	return q;
 }
 
-PostionControlHandle::PostionControlHandle(
-	ToolMain* tool,
-	float x, float y, float z, const SceneObject* scene_object,
-	XMVECTOR color)
+//PostionControlHandle::PostionControlHandle(
+//	ToolMain* tool,
+//	float x, float y, float z,
+//	float x1, float y1, float z1,
+//	const SceneObject* scene_object,
+//	XMVECTOR color)
+//{
+//
+//
+//}
+
+PostionControlHandle::PostionControlHandle(AXES axesType, ToolMain* tool, const SceneObject* scene_obj,
+	DirectX::XMVECTOR color)
 {
-	DisplayObject* mesh = tool->m_d3dRenderer.CreateDisplayObject(scene_object);
+	this->Type = axesType;
 	Color = color;
 	this->mainTool = tool;
+	DisplayObject* mesh = tool->m_d3dRenderer.CreateDisplayObject(scene_obj);
+
 	//Orient handle to the correct direction using Quaternions
 	// the expected direction of the object is X positive
-	XMVECTOR expectedX{ 1,0,0 };
-	XMVECTOR handleOrientation{ x,y,z };
-	Rotation = FromToQuaternion(expectedX, handleOrientation);
+	XMVECTOR localDirection = ObjectTransformState::LocalAxes.r[((int)(axesType))];
+	Rotation = FromToQuaternion(ObjectTransformState::LocalAxes.r[1], localDirection);
 
 	m_model = mesh->m_model;
 	m_texture_diffuse = mesh->m_texture_diffuse;
@@ -64,7 +74,6 @@ PostionControlHandle::PostionControlHandle(
 	m_light_constant = 0.0f;
 	m_light_linear = 0.0f;
 	m_light_quadratic = 0.0f;
-
 	this->m_model->UpdateEffects([&](IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
 		{
 			auto lights = dynamic_cast<BasicEffect*>(effect);
@@ -74,6 +83,7 @@ PostionControlHandle::PostionControlHandle(
 			}
 		});
 }
+
 //
 DirectX::XMMATRIX PostionControlHandle::GetWorldMatrix() const
 {
@@ -108,6 +118,5 @@ void PostionControlHandle::Update()
 
 ToolStateBase* PostionControlHandle::OnMouseClick()
 {
-	//return nullptr;
-	return new ObjectTransformState();
+	return new ObjectTransformState(this->Type, true);
 }

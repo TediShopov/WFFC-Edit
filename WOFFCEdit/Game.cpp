@@ -142,12 +142,6 @@ void Game::Tick(InputCommands* Input)
 		handle->Update();
 	}
 
-	if (m_InputCommands.mouse_LB_Down)
-	{
-		ControlHandle* selecedHandle = ControlHandleHitTest();
-		if (selecedHandle != nullptr)
-			selecedHandle->OnMouseClick();
-	}
 	Render();
 }
 
@@ -227,7 +221,7 @@ void Game::Update(DX::StepTimer const& timer)
 
 			if (m_audioEvent >= 11)
 				m_audioEvent = 0;
-}
+		}
 	}
 #endif
 }
@@ -637,7 +631,7 @@ void Game::NewAudioDevice()
 		// Setup a retry in 1 second
 		m_audioTimerAcc = 1.f;
 		m_retryDefault = true;
-}
+	}
 }
 #endif
 
