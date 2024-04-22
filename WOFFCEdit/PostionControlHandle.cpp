@@ -1,13 +1,14 @@
+#include "ToolMain.h"
 #include "PostionControlHandle.h"
-
-//#include "ObjectTransformState.h"
-//#include "ToolMain.h"
+#include "ObjectTransformState.h"
 using  DirectX::XMVECTOR;
 using DirectX::SimpleMath::Quaternion;
 PostionControlHandle::PostionControlHandle(
+	ToolMain* tool,
 	DirectX::XMVECTOR handleOrientation, DisplayObject* mesh,
 	XMVECTOR color)
 {
+	this->mainTool = tool;
 	m_model = mesh->m_model;
 	m_texture_diffuse = mesh->m_texture_diffuse;
 	m_orientation.x = mesh->m_orientation.x;
@@ -56,20 +57,20 @@ DirectX::XMMATRIX PostionControlHandle::GetWorldMatrix() const
 //
 void PostionControlHandle::Update()
 {
-	//if (this->mainTool->m_selectedObject.size() != 1)
-	//{
-	//	this->m_render = false;
-	//}
-	//else
-	//{
-	//	this->m_render = true;
-	//	this->parentObject = this->mainTool->m_d3dRenderer.GetDisplayObject
-	//	(this->mainTool->m_selectedObject[0]);
-	//}
+	if (this->mainTool->m_selectedObject.size() != 1)
+	{
+		this->m_render = false;
+	}
+	else
+	{
+		this->m_render = true;
+		this->parentObject = this->mainTool->m_d3dRenderer.GetDisplayObject
+		(this->mainTool->m_selectedObject[0]);
+	}
 }
 
 ToolStateBase* PostionControlHandle::OnMouseClick()
 {
-	return nullptr;
-	//	return new ObjectTransformState();
+	//return nullptr;
+	return new ObjectTransformState();
 }

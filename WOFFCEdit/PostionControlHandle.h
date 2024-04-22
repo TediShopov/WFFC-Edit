@@ -7,7 +7,9 @@ class PostionControlHandle :
 public:
 	DirectX::SimpleMath::Quaternion Rotation;
 	DirectX::XMVECTOR Color;
-	PostionControlHandle(DirectX::XMVECTOR handleOrientation,
+	PostionControlHandle(
+		ToolMain* tool,
+		DirectX::XMVECTOR handleOrientation,
 		DisplayObject* mesh, DirectX::XMVECTOR color);
 
 	DirectX::XMMATRIX GetWorldMatrix() const override;

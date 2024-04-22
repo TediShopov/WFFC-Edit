@@ -1,8 +1,6 @@
-#include "DisplayObject.h"
 //#include "pch.h"
-//#include "ToolMain.h"
-#include "ObjectSelectionState.h"
-#include "ObjectTransformState.h"
+#include "ToolMain.h"
+#include "DisplayObject.h"
 
 DisplayObject::DisplayObject()
 {

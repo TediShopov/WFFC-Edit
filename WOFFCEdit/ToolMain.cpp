@@ -1,4 +1,5 @@
 #include "ToolMain.h"
+//#include "pch.h"
 #include <vector>
 #include <sstream>
 
@@ -530,10 +531,12 @@ void ToolMain::InitHandlesDefaults()
 	tempPositionHandle.scaZ = positionHandleScaleNonRel;
 	auto displayObject = m_d3dRenderer.CreateDisplayObject(&tempPositionHandle);
 	m_d3dRenderer.AddVisualHandle(new PostionControlHandle(
+		this,
 		XMVECTOR{ 0,1,0,0 },
 		displayObject,
 		Colors::Red
 	));
+
 	//	int xHandle = m_d3dRenderer.AddVisualHandle(
 	//		m_d3dRenderer.CreateDisplayObject(&tempPositionHandle));
 
