@@ -1,3 +1,5 @@
+//#include "pch.h"
+#include "ToolMain.h"
 #include "DisplayObject.h"
 
 DisplayObject::DisplayObject()
@@ -16,7 +18,7 @@ DisplayObject::DisplayObject()
 	m_render = true;
 	m_wireframe = false;
 
-	m_light_type =0;
+	m_light_type = 0;
 	m_light_diffuse_r = 0.0f;	m_light_diffuse_g = 0.0f;	m_light_diffuse_b = 0.0f;
 	m_light_specular_r = 0.0f;	m_light_specular_g = 0.0f;	m_light_specular_b = 0.0f;
 	m_light_spot_cutoff = 0.0f;
@@ -25,8 +27,31 @@ DisplayObject::DisplayObject()
 	m_light_quadratic = 0.0f;
 }
 
-
 DisplayObject::~DisplayObject()
 {
-//	delete m_texture_diffuse;
+	//	delete m_texture_diffuse;
+}
+
+DirectX::XMMATRIX DisplayObject::GetWorldMatrix() const
+{
+	const DirectX::XMVECTORF32 scale = { this->m_scale.x, this->m_scale.y, this->m_scale.z };
+	const DirectX::XMVECTORF32 translate = { this->m_position.x, this->m_position.y, this->m_position.z };
+
+	//convert degrees into radians for rotation matrix
+	DirectX::XMVECTOR rotate =
+		DirectX::SimpleMath::Quaternion::
+		CreateFromYawPitchRoll(this->m_orientation.y * 3.1415 / 180,
+			this->m_orientation.x * 3.1415 / 180,
+			this->m_orientation.z * 3.1415 / 180);
+
+	DirectX::XMMATRIX local =
+		XMMatrixTransformation(
+			DirectX::g_XMZero,
+			DirectX::SimpleMath::Quaternion::Identity,
+			scale, DirectX::g_XMZero, rotate, translate);
+	if (this->parentObject != nullptr)
+	{
+		return   local * this->parentObject->GetWorldMatrix();
+	}
+	return local;
 }

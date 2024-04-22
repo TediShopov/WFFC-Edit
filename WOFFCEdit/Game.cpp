@@ -10,6 +10,7 @@
 #include "DisplayObject.h"
 #include <string>
 
+#include "ControlHandle.h"
 using namespace DirectX;
 using namespace DirectX::SimpleMath;
 
@@ -136,6 +137,10 @@ void Game::Tick(InputCommands* Input)
 	}
 #endif
 
+	for (ControlHandle* handle : m_displayHandlesList)
+	{
+		handle->Update();
+	}
 	Render();
 }
 
@@ -604,7 +609,7 @@ void Game::SaveDisplayChunk(ChunkObject* SceneChunk)
 	m_displayChunk.SaveHeightMap();			//save heightmap to file.
 }
 
-int Game::AddVisualHandle(DisplayObject* display_object)
+int Game::AddVisualHandle(ControlHandle* display_object)
 {
 	this->m_displayHandlesList.push_back(display_object);
 	//Returns local object
@@ -613,10 +618,10 @@ int Game::AddVisualHandle(DisplayObject* display_object)
 	//	return &this->m_displayList.at(this->m_displayList.size() - 1);
 }
 
-std::vector<DisplayObject*> Game::GetHandles()
-{
-	return std::vector<DisplayObject*>(m_displayHandlesList);
-}
+//std::vector<DisplayObject*> Game::GetHandles()
+//{
+//	return std::vector<DisplayObject*>(m_displayHandlesList);
+//}
 
 DisplayObject* Game::GetDisplayObject(int index)
 {
@@ -794,9 +799,14 @@ int Game::MousePicking() const
 	return  this->MousePicking(m_displayList);
 }
 
-int Game::MouseHandlePicking() const
+ControlHandle* Game::ControlHandleHitTest() const
 {
-	return this->MousePicking(m_displayHandlesList);
+	std::vector<DisplayObject*> baseObjectVector;
+	for (ControlHandle* handle : m_displayHandlesList)
+	{
+		baseObjectVector.push_back(handle);
+	}
+	return m_displayHandlesList[this->MousePicking(baseObjectVector)];
 }
 
 //int Game::MousePicking(std::vector<int> handleList) const
@@ -825,17 +835,7 @@ int Game::MousePicking(const std::vector<DisplayObject*>& objectList) const
 	//Loop through entire display list of objects and pick with each in turn.
 	for (int i = 0; i < objectList.size(); i++)
 	{
-		//		//Get the scale factor and translation of the object
-		//		const XMVECTORF32 scale = { objectList[i]->m_scale.x,		objectList[i]->m_scale.y,		objectList[i]->m_scale.z };
-		//		const XMVECTORF32 translate = { objectList[i]->m_position.x,		objectList[i]->m_position.y,	objectList[i]->m_position.z };
-		//
-		//		//convert euler angles into a quaternion for the rotation of the object
-		//		XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(objectList[i]->m_orientation.y * 3.1415 / 180, objectList[i]->m_orientation.x * 3.1415 / 180,
-		//			objectList[i]->m_orientation.z * 3.1415 / 180);
-		//
-		//		//create set the matrix of the selected object in the world based on the translation, scale and rotation.
 		XMMATRIX local = m_world * objectList[i]->GetWorldMatrix();
-
 		//Unproject the points on the near and far plane, with respect to the matrix we just created.
 		XMVECTOR nearPoint = XMVector3Unproject(nearSource, 0.0f, 0.0f, m_ScreenDimensions.right, m_ScreenDimensions.bottom, m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, local);
 

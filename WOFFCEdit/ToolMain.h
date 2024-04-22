@@ -42,7 +42,7 @@ public:	//variables
 
 private:	//methods
 	void InitHandlesDefaults();
-	std::vector<int> PositionHandles;
+	//std::vector<int> PositionHandles;
 	void	onContentAdded();
 
 private:	//variables

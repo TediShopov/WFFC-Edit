@@ -7,11 +7,14 @@
 #include "DeviceResources.h"
 #include "StepTimer.h"
 #include "SceneObject.h"
-#include "DisplayObject.h"
 #include "DisplayChunk.h"
 #include "ChunkObject.h"
 #include "InputCommands.h"
 #include <vector>
+
+//FORWARD DECLARATIONS
+class ControlHandle;
+class DisplayObject;
 
 // A basic game implementation that creates a D3D11 device and
 // provides a game loop.
@@ -56,14 +59,14 @@ public:
 
 	//Adds a certain prototype of a display object and returns
 	// the pointer of the object actually added
-	int AddVisualHandle(DisplayObject* display_object);
+	int AddVisualHandle(ControlHandle* display_object);
 	std::vector<DisplayObject*> GetHandles();
 	DisplayObject* GetDisplayObject(int index);
 	void ClearDisplayList();
 
 	//Mouse Selection Methods
 	int MousePicking() const;
-	int MouseHandlePicking() const;
+	ControlHandle* ControlHandleHitTest() const;
 	//int MousePicking(std::vector<int> handleList) const;
 	int MousePicking(const std::vector<DisplayObject*>& objectList) const;
 
@@ -91,7 +94,7 @@ private:
 	void XM_CALLCONV DrawGrid(DirectX::FXMVECTOR xAxis, DirectX::FXMVECTOR yAxis, DirectX::FXMVECTOR origin, size_t xdivs, size_t ydivs, DirectX::GXMVECTOR color);
 
 	//tool specific
-	std::vector<DisplayObject*>			m_displayHandlesList;
+	std::vector<ControlHandle*>			m_displayHandlesList;
 	std::vector<DisplayObject*>			m_displayList;
 	DisplayChunk						m_displayChunk;
 	InputCommands						m_InputCommands;
