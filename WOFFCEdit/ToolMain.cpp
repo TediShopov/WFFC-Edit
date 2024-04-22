@@ -523,18 +523,27 @@ void ToolMain::InitHandlesDefaults()
 
 	//CREATE HANDLES TO MOVE OBJECT BY LOCAL AXIS
 	//Add x position handle
-	tempPositionHandle.light_diffuse_r = 1;
-	tempPositionHandle.light_diffuse_b = 0;
-	tempPositionHandle.light_diffuse_g = 0;
 	tempPositionHandle.scaX = positionHandleScaleRel;
 	tempPositionHandle.scaY = positionHandleScaleNonRel;
 	tempPositionHandle.scaZ = positionHandleScaleNonRel;
 	auto displayObject = m_d3dRenderer.CreateDisplayObject(&tempPositionHandle);
 	m_d3dRenderer.AddVisualHandle(new PostionControlHandle(
 		this,
-		XMVECTOR{ 0,1,0,0 },
+		XMVECTOR{ 1,0,0,0 },
 		displayObject,
 		Colors::Red
+	));
+	m_d3dRenderer.AddVisualHandle(new PostionControlHandle(
+		this,
+		XMVECTOR{ 0,1,0,0 },
+		displayObject,
+		Colors::Blue
+	));
+	m_d3dRenderer.AddVisualHandle(new PostionControlHandle(
+		this,
+		XMVECTOR{ 0,0,1,0 },
+		displayObject,
+		Colors::Green
 	));
 
 	//	int xHandle = m_d3dRenderer.AddVisualHandle(

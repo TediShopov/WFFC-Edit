@@ -7,6 +7,7 @@ class PostionControlHandle :
 public:
 	DirectX::SimpleMath::Quaternion Rotation;
 	DirectX::XMVECTOR Color;
+	static SimpleMath::Quaternion FromToQuaternion(DirectX::XMVECTOR from, DirectX::XMVECTOR to);
 	PostionControlHandle(
 		ToolMain* tool,
 		DirectX::XMVECTOR handleOrientation,

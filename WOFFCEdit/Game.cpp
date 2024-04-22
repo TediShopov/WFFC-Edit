@@ -487,7 +487,7 @@ DisplayObject* Game::CreateDisplayObject(const SceneObject* object) const
 					newDisplayObject->m_light_diffuse_r,
 					newDisplayObject->m_light_diffuse_g,
 					newDisplayObject->m_light_diffuse_b,
-					0
+					1
 				};
 				lights->SetDiffuseColor(diffuse);
 			}
@@ -526,15 +526,9 @@ void Game::RenderDisplayObjectOnTop(const DisplayObject& obj) const
 		auto mesh = it.get();
 		assert(mesh != nullptr);
 
-		//mesh->PrepareForRendering(context, *m_states, false, true);
-
 		// Do model-level setCustomState work here
-
 		mesh->Draw(context, world, m_view, m_projection, false);
 	}
-
-	//obj.m_model->Draw(context, *m_states, world, m_view, m_projection, false);	//last variable in draw,  make TRUE for wireframe
-
 	m_deviceResources->PIXEndEvent();
 }
 
