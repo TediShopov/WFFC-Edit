@@ -426,30 +426,42 @@ void ToolMain::InitHandlesDefaults()
 {
 	//Defines a scene object that is to converted to display object
 	SceneObject tempPositionHandle;
-	tempPositionHandle.model_path = DefaultArrowModel;
-	tempPositionHandle.tex_diffuse_path = DefaultArrowTexture;
 
-	const float positionHandleScaleRel = 5.0f;
-	const float positionHandleScaleNonRel = 0.1f;
-
-	//Add the objects to all objects being visualized
-	// and get its handle/pointer
-	tempPositionHandle.scaX = positionHandleScaleRel;
-	tempPositionHandle.scaY = positionHandleScaleNonRel;
-	tempPositionHandle.scaZ = positionHandleScaleNonRel;
-	//CREATE HANDLES TO MOVE OBJECT BY LOCAL AXIS
-	//Add x position handle
+	///CREATE PLANE DRAG HANDLES
+	m_d3dRenderer.AddVisualHandle(new PostionControlHandle(
+		Z_AXIS,
+		Y_AXIS,
+		this,
+		DefaultArrowModel,
+		Colors::Blue
+	));
+	m_d3dRenderer.AddVisualHandle(new PostionControlHandle(
+		X_AXIS,
+		Y_AXIS,
+		this,
+		DefaultArrowModel,
+		Colors::Red
+	));
+	m_d3dRenderer.AddVisualHandle(new PostionControlHandle(
+		X_AXIS,
+		Z_AXIS,
+		this,
+		DefaultArrowModel,
+		Colors::Green
+	));
+	//	//CREATE HANDLES TO MOVE OBJECT BY LOCAL AXIS
+	//	//Add x position handle
 	m_d3dRenderer.AddVisualHandle(new PostionControlHandle(
 		X_AXIS,
 		this,
-		&tempPositionHandle,
+		DefaultArrowModel,
 		Colors::Red
 	));
 	//Add z position handle
 	m_d3dRenderer.AddVisualHandle(new PostionControlHandle(
 		Y_AXIS,
 		this,
-		&tempPositionHandle,
+		DefaultArrowModel,
 		Colors::Green
 	));
 	//CREATE HANDLES TO MOVE OBJECT BY LOCAL AXIS
@@ -457,7 +469,7 @@ void ToolMain::InitHandlesDefaults()
 	m_d3dRenderer.AddVisualHandle(new PostionControlHandle(
 		Z_AXIS,
 		this,
-		&tempPositionHandle,
+		DefaultArrowModel,
 		Colors::Blue
 	));
 }

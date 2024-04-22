@@ -14,6 +14,7 @@ class PostionControlHandle :
 {
 public:
 
+	bool move_on_axis;
 	AXES Type;
 	DirectX::XMVECTOR Color;
 	DirectX::SimpleMath::Quaternion Rotation;
@@ -24,7 +25,11 @@ public:
 	//		float x1, float y1, float z1,
 	//		const SceneObject* mesh, DirectX::XMVECTOR color);
 	PostionControlHandle(AXES axesType,
-		ToolMain* tool, const SceneObject* mesh, DirectX::XMVECTOR color);
+		ToolMain* tool, std::string model_path, DirectX::XMVECTOR color);
+	PostionControlHandle(
+		AXES axesType,
+		AXES axesTypeTwo,
+		ToolMain* tool, std::string model_path, DirectX::XMVECTOR color);
 
 	DirectX::XMMATRIX GetWorldMatrix() const override;
 

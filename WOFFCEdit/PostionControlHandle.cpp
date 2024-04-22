@@ -35,53 +35,56 @@ Quaternion PostionControlHandle::FromToQuaternion(
 //
 //}
 
-PostionControlHandle::PostionControlHandle(AXES axesType, ToolMain* tool, const SceneObject* scene_obj,
+PostionControlHandle::PostionControlHandle(AXES axesType, ToolMain* tool, std::string model_path,
 	DirectX::XMVECTOR color)
 {
 	this->Type = axesType;
 	Color = color;
 	this->mainTool = tool;
-	DisplayObject* mesh = tool->m_d3dRenderer.CreateDisplayObject(scene_obj);
+
+	//DisplayObject* mesh = new DisplayObject();
+	this->mainTool->m_d3dRenderer
+		.CreateHandleObject(this, model_path, Color);
+	this->m_scale.x = 1.5f;
+	this->m_scale.y = 0.1;
+	this->m_scale.z = 0.1;
 
 	//Orient handle to the correct direction using Quaternions
 	// the expected direction of the object is X positive
-	XMVECTOR localDirection = ObjectTransformState::LocalAxes.r[((int)(axesType))];
+	XMVECTOR localDirection = ObjectTransformState::LocalAxes.r[((int)(this->Type))];
 	Rotation = FromToQuaternion(ObjectTransformState::LocalAxes.r[1], localDirection);
+}
 
-	m_model = mesh->m_model;
-	m_texture_diffuse = mesh->m_texture_diffuse;
-	m_orientation.x = mesh->m_orientation.x;
-	m_orientation.y = mesh->m_orientation.y;
-	m_orientation.z = mesh->m_orientation.z;
-	m_position.x = mesh->m_position.x;
-	m_position.y = mesh->m_position.y;
-	m_position.z = mesh->m_position.z;
-	m_scale.x = mesh->m_scale.x;
-	m_scale.y = mesh->m_scale.y;
-	m_scale.z = mesh->m_scale.z;
-	m_render = mesh->m_render;
-	m_wireframe = mesh->m_wireframe;
+PostionControlHandle::PostionControlHandle(AXES axesType, AXES axesTypeTwo, ToolMain* tool, std::string model_path,
+	DirectX::XMVECTOR color)
+{
+	move_on_axis = false;
 
-	m_light_type = 0;
-
-	//Change the color to the one in the ctor
-	m_light_diffuse_r = Color.m128_f32[0];
-	m_light_diffuse_g = Color.m128_f32[1];
-	m_light_diffuse_b = Color.m128_f32[2];
-
-	m_light_specular_r = 0.0f;	m_light_specular_g = 0.0f;	m_light_specular_b = 0.0f;
-	m_light_spot_cutoff = 0.0f;
-	m_light_constant = 0.0f;
-	m_light_linear = 0.0f;
-	m_light_quadratic = 0.0f;
-	this->m_model->UpdateEffects([&](IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
+	//Get the only remaining axis
+	int indexOfRemainigAxes = 0;
+	for (int i = 1; i <= 3; ++i)
+	{
+		if (axesType != (AXES)i && axesTypeTwo != (AXES)i)
 		{
-			auto lights = dynamic_cast<BasicEffect*>(effect);
-			if (lights)
-			{
-				lights->SetDiffuseColor(this->Color);
-			}
-		});
+			indexOfRemainigAxes = i;
+			break;
+		}
+	}
+	this->Type = (AXES)indexOfRemainigAxes;
+	Color = color;
+	this->mainTool = tool;
+
+	//DisplayObject* mesh = new DisplayObject();
+	this->mainTool->m_d3dRenderer
+		.CreateHandleObject(this, model_path, Color);
+
+	auto axes = ObjectTransformState::LocalAxes;
+
+	this->m_scale = (axes.r[axesType] + axes.r[axesTypeTwo]);
+	this->m_scale *= 0.6;
+	this->m_scale += (axes.r[this->Type] * 0.001);
+
+	this->m_position = XMVector3Rotate(this->m_position, Rotation);
 }
 
 //
@@ -118,5 +121,5 @@ void PostionControlHandle::Update()
 
 ToolStateBase* PostionControlHandle::OnMouseClick()
 {
-	return new ObjectTransformState(this->Type, true);
+	return new ObjectTransformState(this->Type, move_on_axis);
 }

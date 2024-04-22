@@ -422,6 +422,45 @@ void Game::UpdateDisplayElementTransform(int i, std::vector<SceneObject>* SceneG
 	newDisplayObject.m_light_quadratic = SceneGraph->at(i).light_quadratic;
 }
 
+void Game::CreateHandleObject(DisplayObject* newDisplayObject, std::string model_path, DirectX::SimpleMath::Color color) const
+{
+	//create a temp display object that we will populate then append to the display list.
+	auto device = m_deviceResources->GetD3DDevice();
+
+	//load model
+	std::wstring modelwstr = StringToWCHART(model_path);							//convect string to Wchar
+	newDisplayObject->m_model = Model::CreateFromCMO(device, modelwstr.c_str(), *m_fxFactory, true);	//get DXSDK to load model "False" for LH coordinate system (maya)
+
+	//set scale
+	newDisplayObject->m_scale.x = 1;
+	newDisplayObject->m_scale.y = 1;
+	newDisplayObject->m_scale.z = 1;
+
+	//set wireframe / render flags
+	newDisplayObject->m_render = true;
+	newDisplayObject->m_wireframe = false;
+
+	newDisplayObject->m_light_diffuse_r = color.R();
+	newDisplayObject->m_light_diffuse_g = color.G();
+	newDisplayObject->m_light_diffuse_b = color.B();
+
+	newDisplayObject->m_model->UpdateEffects([&](IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
+		{
+			auto lights = dynamic_cast<BasicEffect*>(effect);
+			if (lights)
+			{
+				//lights->SetTexture(newDisplayObject->m_texture_diffuse);
+				XMVECTOR diffuse{
+					newDisplayObject->m_light_diffuse_r,
+					newDisplayObject->m_light_diffuse_g,
+					newDisplayObject->m_light_diffuse_b,
+					1
+				};
+				lights->SetDiffuseColor(diffuse);
+			}
+		});
+}
+
 DisplayObject* Game::CreateDisplayObject(const SceneObject* object) const
 {
 	//create a temp display object that we will populate then append to the display list.
