@@ -4,130 +4,21 @@
 #include "ToolMain.h"
 #include  "PostionControlHandle.h"
 
-XMMATRIX ObjectTransformState::LocalAxes =
-{
-	XMVECTOR{ 0,0,0,1 },
-	XMVECTOR{ 1,0,0,1 },
-	XMVECTOR{ 0,1,0,1 },
-	XMVECTOR{ 0,0,1,1 }
-};
 ObjectTransformState::ObjectTransformState()
+	:AxisBasedTransformState()
 {
-	from_handle = false;
 }
 
 ObjectTransformState::ObjectTransformState(AXES axisType, bool a)
+	:AxisBasedTransformState(axisType)
 {
 	this->move_on_axis = a;
-	from_handle = true;
-	release_mouse_needed = true;
-	this->axisType = axisType;
-}
-
-void ObjectTransformState::Init(ToolMain* tool, const InputCommands& comms)
-{
-	this->MainTool = tool;
-	on_selection_commands = comms;
-	if (from_handle)
-	{
-		if (this->MainTool->m_selectedObject.size() != 1) return;;
-		GetLocalVectors(this->MainTool->m_selectedObject[0], selected_object_axes);
-		GetLocalPlanes(
-			this->MainTool->m_selectedObject[0],
-			selected_object_planes);
-		if (move_on_axis)
-		{
-			if (axisType == X_AXIS)
-			{
-				axis = selected_object_axes[1];
-				plane = selected_object_planes[2];
-			}
-			else if (axisType == Y_AXIS)
-			{
-				axis = selected_object_axes[2];
-				plane = selected_object_planes[2];
-			}
-			else
-			{
-				axis = selected_object_axes[3];
-				plane = selected_object_planes[1];
-			}
-		}
-		else
-		{
-			if (axisType == X_AXIS)
-				plane = selected_object_planes[0];
-			else if (axisType == Y_AXIS)
-				plane = selected_object_planes[1];
-			else
-				plane = selected_object_planes[2];
-		}
-		return;
-	};
-	if (this->MainTool->m_selectedObject.size() == 1)
-	{
-		if (comms.handleHit == true)
-		{
-			//Mouse button should be releases as well as any other transform realted button
-			//to exit this state
-			release_mouse_needed = true;
-		}
-
-		GetLocalVectors(this->MainTool->m_selectedObject[0], selected_object_axes);
-		GetLocalPlanes(
-			this->MainTool->m_selectedObject[0],
-			selected_object_planes);
-		if (on_selection_commands.CTRL_Down)
-		{
-			if (on_selection_commands.plane_x)
-			{
-				axis = selected_object_axes[1];
-				plane = selected_object_planes[2];
-			}
-			else if (on_selection_commands.plane_y)
-			{
-				axis = selected_object_axes[2];
-				plane = selected_object_planes[2];
-			}
-			else
-			{
-				axis = selected_object_axes[3];
-				plane = selected_object_planes[1];
-			}
-
-			move_on_axis = true;
-		}
-		else
-		{
-			if (on_selection_commands.plane_x == true)
-				plane = selected_object_planes[0];
-			else if (on_selection_commands.plane_y == true)
-				plane = selected_object_planes[1];
-			else
-				plane = selected_object_planes[2];
-
-			move_on_axis = false;
-		}
-	}
 }
 
 void ObjectTransformState::Update(const InputCommands& input)
 {
+	AxisBasedTransformState::Update(input);
 	XMVECTOR newPosition;
-	if (MainTool->ShouldStartSelectDragging() == false)
-	{
-		if (release_mouse_needed)
-		{
-			if (input.mouse_LB_Down == false)
-			{
-				this->MainTool->ChangeState(new ObjectSelectionState());
-			}
-		}
-		else
-		{
-			this->MainTool->ChangeState(new ObjectSelectionState());
-		}
-	}
 	if (this->MainTool->m_selectedObject.size() == 1)
 	{
 		SceneObject& obj = this->MainTool->m_sceneGraph[this->MainTool->m_selectedObject[0]];
@@ -165,47 +56,62 @@ void ObjectTransformState::Update(const InputCommands& input)
 	}
 }
 
-void ObjectTransformState::GetLocalVectors(int objectIndex, XMVECTOR vecs[4])
+void ObjectTransformState::Init(ToolMain* tool, const InputCommands& input_commands)
 {
-	XMMATRIX local = this->MainTool->m_d3dRenderer
-		.GetObjectLocalMatrix(objectIndex);
-
-	vecs[0] =
-		XMVECTOR{ 0,0,0,1 };
-	vecs[1] =
-		XMVECTOR{ 1,0,0,1 };
-	vecs[2] =
-		XMVECTOR{ 0,1,0,1 };
-	vecs[3] =
-		XMVECTOR{ 0,0,1,1 };
-	for (int i = 0; i < 4; ++i)
+	AxisBasedTransformState::Init(tool, input_commands);
+	if (move_on_axis)
 	{
-		//Transform to local coordinates
-		vecs[i] =
-			XMVector3Transform(vecs[i], local);
+		axis = world_axes.r[this->axisType];
+
+		//Usually planes on the same index as an axis is
+		//constructed from selected object origin and that axis as normal
+
+		//Plane at 0 index is invalid by default, so get any index that
+		//is not zero or axis index
+		if (this->axisType == 3)
+			plane = world_planes.r[2];
+		else
+			plane = world_planes.r[this->axisType + 1];
 	}
 }
 
-void ObjectTransformState::GetLocalPlanes(int objectIndex, DirectX::XMVECTOR planes[3])
+void ObjectTransformState::FromInput(const InputCommands& input)
 {
-	//GetLocalVectors(objectIndex, selected_object_axes);
+	move_on_axis = input.CTRL_Down;
 
-	//Local vector are in Origin, X, Y, Z order
-
-	//Pressing x key --> YZ plane
-	planes[0] =
-		DirectX::XMPlaneFromPoints(selected_object_axes[0], selected_object_axes[2], selected_object_axes[3]);
-	//Pressing y key --> XZ plane
-	planes[1] =
-		DirectX::XMPlaneFromPoints(selected_object_axes[0], selected_object_axes[1], selected_object_axes[3]);
-	//Pressing z key --> XY plane
-	planes[2] =
-		DirectX::XMPlaneFromPoints(selected_object_axes[0], selected_object_axes[1], selected_object_axes[2]);
+	if (move_on_axis)
+	{
+		if (axisType == X_AXIS)
+		{
+			axis = world_axes.r[1];
+			plane = world_planes.r[2];
+		}
+		else if (axisType == Y_AXIS)
+		{
+			axis = world_axes.r[2];
+			plane = world_planes.r[2];
+		}
+		else
+		{
+			axis = world_axes.r[3];
+			plane = world_planes.r[1];
+		}
+	}
+	else
+	{
+		if (axisType == X_AXIS)
+			plane = world_planes.r[0];
+		else if (axisType == Y_AXIS)
+			plane = world_planes.r[1];
+		else
+			plane = world_planes.r[2];
+	}
+	return;
 }
 
 XMVECTOR ObjectTransformState::MoveOnAxis(XMVECTOR mouseWorldRay, XMVECTOR plane, XMVECTOR rayOnPlane)
 {
-	XMVECTOR origin = selected_object_axes[0];
+	XMVECTOR origin = world_axes.r[0];
 
 	XMVECTOR globalPlaneIntersection = MoveOnPlane(mouseWorldRay, plane);
 	XMVECTOR localVectorToPoint = globalPlaneIntersection - origin;
