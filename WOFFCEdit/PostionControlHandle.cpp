@@ -26,11 +26,18 @@ Quaternion PostionControlHandle::FromToQuaternion(
 
 PostionControlHandle::PostionControlHandle(
 	ToolMain* tool,
-	DirectX::XMVECTOR handleOrientation, DisplayObject* mesh,
+	float x, float y, float z, const SceneObject* scene_object,
 	XMVECTOR color)
 {
+	DisplayObject* mesh = tool->m_d3dRenderer.CreateDisplayObject(scene_object);
 	Color = color;
 	this->mainTool = tool;
+	//Orient handle to the correct direction using Quaternions
+	// the expected direction of the object is X positive
+	XMVECTOR expectedX{ 1,0,0 };
+	XMVECTOR handleOrientation{ x,y,z };
+	Rotation = FromToQuaternion(expectedX, handleOrientation);
+
 	m_model = mesh->m_model;
 	m_texture_diffuse = mesh->m_texture_diffuse;
 	m_orientation.x = mesh->m_orientation.x;
@@ -51,6 +58,7 @@ PostionControlHandle::PostionControlHandle(
 	m_light_diffuse_r = Color.m128_f32[0];
 	m_light_diffuse_g = Color.m128_f32[1];
 	m_light_diffuse_b = Color.m128_f32[2];
+
 	m_light_specular_r = 0.0f;	m_light_specular_g = 0.0f;	m_light_specular_b = 0.0f;
 	m_light_spot_cutoff = 0.0f;
 	m_light_constant = 0.0f;
@@ -62,21 +70,9 @@ PostionControlHandle::PostionControlHandle(
 			auto lights = dynamic_cast<BasicEffect*>(effect);
 			if (lights)
 			{
-				//lights->SetTexture(this->m_texture_diffuse);
-				//lights->SetDiffuseColor(Colors::AliceBlue);
-//				XMVECTOR diffuse{
-//					this->m_light_diffuse_r,
-//					this->m_light_diffuse_g,
-//					this->m_light_diffuse_b,
-//					0
-//				};
 				lights->SetDiffuseColor(this->Color);
 			}
 		});
-	//Orient handle to the correct direction using Quaternions
-	// the expected direction of the object is X positive
-	XMVECTOR expectedX{ 1,0,0 };
-	Rotation = FromToQuaternion(expectedX, handleOrientation);
 }
 //
 DirectX::XMMATRIX PostionControlHandle::GetWorldMatrix() const

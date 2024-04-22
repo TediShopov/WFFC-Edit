@@ -10,8 +10,8 @@ public:
 	static SimpleMath::Quaternion FromToQuaternion(DirectX::XMVECTOR from, DirectX::XMVECTOR to);
 	PostionControlHandle(
 		ToolMain* tool,
-		DirectX::XMVECTOR handleOrientation,
-		DisplayObject* mesh, DirectX::XMVECTOR color);
+		float x, float y, float z,
+		const SceneObject* mesh, DirectX::XMVECTOR color);
 
 	DirectX::XMMATRIX GetWorldMatrix() const override;
 

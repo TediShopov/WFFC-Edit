@@ -141,6 +141,13 @@ void Game::Tick(InputCommands* Input)
 	{
 		handle->Update();
 	}
+
+	if (m_InputCommands.mouse_LB_Down)
+	{
+		ControlHandle* selecedHandle = ControlHandleHitTest();
+		if (selecedHandle != nullptr)
+			selecedHandle->OnMouseClick();
+	}
 	Render();
 }
 
@@ -220,7 +227,7 @@ void Game::Update(DX::StepTimer const& timer)
 
 			if (m_audioEvent >= 11)
 				m_audioEvent = 0;
-		}
+}
 	}
 #endif
 }
@@ -630,7 +637,7 @@ void Game::NewAudioDevice()
 		// Setup a retry in 1 second
 		m_audioTimerAcc = 1.f;
 		m_retryDefault = true;
-	}
+}
 }
 #endif
 
@@ -800,7 +807,10 @@ ControlHandle* Game::ControlHandleHitTest() const
 	{
 		baseObjectVector.push_back(handle);
 	}
-	return m_displayHandlesList[this->MousePicking(baseObjectVector)];
+	int pickedIndex = this->MousePicking(baseObjectVector);
+	if (pickedIndex < 0 || pickedIndex >= m_displayHandlesList.size())
+		return nullptr;
+	return m_displayHandlesList[pickedIndex];
 }
 
 //int Game::MousePicking(std::vector<int> handleList) const

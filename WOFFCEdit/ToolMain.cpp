@@ -514,36 +514,36 @@ void ToolMain::InitHandlesDefaults()
 	tempPositionHandle.model_path = DefaultArrowModel;
 	tempPositionHandle.tex_diffuse_path = DefaultArrowTexture;
 
-	float positionHandleScaleRel = 5.0f;
-	float positionHandleScaleNonRel = 0.1f;
-	float handleRelevantOffset = positionHandleScaleRel / 2.0f;
+	const float positionHandleScaleRel = 5.0f;
+	const float positionHandleScaleNonRel = 0.1f;
 
 	//Add the objects to all objects being visualized
 	// and get its handle/pointer
-
-	//CREATE HANDLES TO MOVE OBJECT BY LOCAL AXIS
-	//Add x position handle
 	tempPositionHandle.scaX = positionHandleScaleRel;
 	tempPositionHandle.scaY = positionHandleScaleNonRel;
 	tempPositionHandle.scaZ = positionHandleScaleNonRel;
-	auto displayObject = m_d3dRenderer.CreateDisplayObject(&tempPositionHandle);
+	//CREATE HANDLES TO MOVE OBJECT BY LOCAL AXIS
+	//Add x position handle
 	m_d3dRenderer.AddVisualHandle(new PostionControlHandle(
 		this,
-		XMVECTOR{ 1,0,0,0 },
-		displayObject,
+		0, 0, 0,
+		&tempPositionHandle,
 		Colors::Red
 	));
+	//Add z position handle
 	m_d3dRenderer.AddVisualHandle(new PostionControlHandle(
 		this,
-		XMVECTOR{ 0,1,0,0 },
-		displayObject,
-		Colors::Blue
-	));
-	m_d3dRenderer.AddVisualHandle(new PostionControlHandle(
-		this,
-		XMVECTOR{ 0,0,1,0 },
-		displayObject,
+		0, 0, 1,
+		&tempPositionHandle,
 		Colors::Green
+	));
+	//CREATE HANDLES TO MOVE OBJECT BY LOCAL AXIS
+	//Add y position handle
+	m_d3dRenderer.AddVisualHandle(new PostionControlHandle(
+		this,
+		0, 1, 0,
+		&tempPositionHandle,
+		Colors::Blue
 	));
 
 	//	int xHandle = m_d3dRenderer.AddVisualHandle(
