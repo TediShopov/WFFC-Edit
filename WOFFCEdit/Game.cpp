@@ -747,6 +747,11 @@ DisplayObject* Game::GetDisplayObject(int index)
 	return this->m_displayList[index];
 }
 
+void Game::RemoveDisplayObject(int index)
+{
+	m_displayList.erase(this->m_displayList.begin() + index);
+}
+
 #ifdef DXTK_AUDIO
 void Game::NewAudioDevice()
 {

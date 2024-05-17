@@ -369,6 +369,38 @@ void MFCTransformView::VisualizeSelectionOnTreeCtrl(const ToolMain& tool)
 	std::map<int, HTREEITEM>* idToTreeItems = &objectsTreeItems;
 	std::vector<SceneObject> sceneCopy = tool.m_sceneGraph;
 
+	//Update the transform tree if an object from scene was deleted
+	if(sceneCopy.size() != idToTreeItems->size())
+	{
+		std::vector<int> uncontainedIndexes;
+
+		for (std::map<int, HTREEITEM>::iterator it = idToTreeItems->begin(); it != idToTreeItems->end(); ++it)
+		{
+
+
+			auto iter = std::find_if(
+				sceneCopy.begin(),
+				sceneCopy.end(),
+				[it](const SceneObject& s) {return s.ID == it->first; });
+
+			if (iter == sceneCopy.end())
+				uncontainedIndexes.push_back(it->first);
+		}
+
+
+		for (int uncontained_index : uncontainedIndexes)
+		{
+			m_treeCtrl.DeleteItem(idToTreeItems->at(uncontained_index));
+			
+			idToTreeItems->erase(uncontained_index);
+			
+		}
+		
+		
+	}
+
+
+
 	while (sceneCopy.size() != 0)
 	{
 		//Remove items which id's are already presented in object to tree map

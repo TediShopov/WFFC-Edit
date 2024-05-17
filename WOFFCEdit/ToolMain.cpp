@@ -294,6 +294,19 @@ void ToolMain::Tick(MSG* msg)
 {
 	//Put the selected object as handles transform
 
+	if(m_toolInputCommands.deleteSelected && this->m_selectedObject.size() >= 1)
+	{
+		for (int i = 0; i < m_selectedObject.size(); ++i)
+		{
+			this->m_sceneGraph.erase(this->m_sceneGraph.begin() + m_selectedObject[i]);
+			this->m_d3dRenderer.RemoveDisplayObject(this->m_selectedObject[i]);
+			
+		}
+		this->m_selectedObject.clear();
+		Notify(*this);
+		m_toolInputCommands.deleteSelected = false;
+		
+	}
 	m_toolInputCommands.handleHit = false;
 	//If hanle is picked by mouse
 
@@ -344,49 +357,26 @@ void ToolMain::UpdateInput(MSG* msg)
 
 	//here we update all the actual app functionality that we want.  This information will either be used int toolmain, or sent down to the renderer (Camera movement etc
 	//WASD movement
-	if (m_keyArray['W'])
-	{
-		m_toolInputCommands.forward = true;
-	}
-	else m_toolInputCommands.forward = false;
-	if (m_keyArray[VK_CONTROL])
-	{
-		m_toolInputCommands.CTRL_Down = true;
-	}
-	else m_toolInputCommands.CTRL_Down = false;
+	m_toolInputCommands.forward = m_keyArray['W'];
+	m_toolInputCommands.CTRL_Down = m_keyArray[VK_CONTROL];
 
-	if (m_keyArray['S'])
-	{
-		m_toolInputCommands.back = true;
-	}
-	else m_toolInputCommands.back = false;
-	if (m_keyArray['A'])
-	{
-		m_toolInputCommands.left = true;
-	}
-	else m_toolInputCommands.left = false;
+	m_toolInputCommands.back = m_keyArray['S'];
+	m_toolInputCommands.left = m_keyArray['A'];
 
-	if (m_keyArray['D'])
-	{
-		m_toolInputCommands.right = true;
-	}
-	else m_toolInputCommands.right = false;
+	m_toolInputCommands.right = m_keyArray['D'];
 	//rotation
-	if (m_keyArray['E'])
-	{
-		m_toolInputCommands.rotRight = true;
-	}
-	else m_toolInputCommands.rotRight = false;
-	if (m_keyArray['Q'])
-	{
-		m_toolInputCommands.rotLeft = true;
-	}
-	else m_toolInputCommands.rotLeft = false;
+	m_toolInputCommands.rotRight = m_keyArray['E'];
+	m_toolInputCommands.rotLeft = m_keyArray['Q'];
 
 	//Plane and axis movement keys
 	m_toolInputCommands.plane_x = m_keyArray['Z'];
 	m_toolInputCommands.plane_y = m_keyArray['X'];
 	m_toolInputCommands.plane_z = m_keyArray['C'];
+
+
+	//Create Delete
+
+	m_toolInputCommands.deleteSelected = m_keyArray[46];
 	//WASD
 }
 

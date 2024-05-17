@@ -64,6 +64,7 @@ public:
 	int AddVisualHandle(ControlHandle* display_object);
 	std::vector<DisplayObject*> GetHandles();
 	DisplayObject* GetDisplayObject(int index);
+	void RemoveDisplayObject(int index);
 	void ClearDisplayList();
 
 	//Mouse Selection Methods
