@@ -43,6 +43,7 @@ public:	//variables
 private:	//methods
 	ControlHandle* m_activeHandle;
 	void InitHandlesDefaults();
+	void ResetInputKeyBuffer();
 
 	//std::vector<int> PositionHandles;
 	void	onContentAdded();

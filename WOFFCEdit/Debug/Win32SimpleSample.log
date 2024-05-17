@@ -1,33 +1,38 @@
 ﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (Win32SimpleSample.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  MFCTransformView.cpp
+  ToolMain.cpp
   _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\MFCTransformView.cpp(154,37): warning C4101: 'e': unreferenced local variable
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\xstring(2749,53): warning C4244: 'argument': conversion from 'wchar_t' to 'const _Elem', possible loss of data
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\xstring(2749,53): warning C4244:         with
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\xstring(2749,53): warning C4244:         [
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\xstring(2749,53): warning C4244:             _Elem=char
-C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\xstring(2749,53): warning C4244:         ]
-  (compiling source file 'MFCTransformView.cpp')
-  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\xstring(2749,53):
-  the template instantiation context (the oldest one first) is
-  	D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\MFCTransformView.cpp(330,17):
-  	see reference to function template instantiation 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)' being compiled
-          with
-          [
-              _Elem=wchar_t,
-              _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
-              _Alloc=std::allocator<char>
-          ]
-  		D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\MFCTransformView.cpp(330,17):
-  		see the first reference to 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string' in 'MFCTransformView::OnTransformPropertyChanged'
-  	C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\xstring(2590,17):
-  	see reference to function template instantiation 'void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<wchar_t*,wchar_t*,_Size_type>(_Iter,const _Sent,_Size)' being compiled
-          with
-          [
-              _Size_type=unsigned int,
-              _Iter=wchar_t *,
-              _Sent=wchar_t *,
-              _Size=unsigned int
-          ]
-  
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(109,46): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(110,46): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(111,46): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(112,46): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(113,46): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(114,46): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(115,46): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(116,46): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(117,46): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(129,48): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(130,48): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(131,48): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(135,48): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(136,47): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(137,42): warning C4244: '=': conversion from 'int' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(141,50): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(142,50): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(152,57): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(153,57): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(154,57): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(155,58): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(156,58): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(157,58): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(158,59): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(159,56): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(160,54): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(161,57): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(301,21): warning C4018: '<': signed/unsigned mismatch
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(429,56): warning C4316: 'PostionControlHandle': object allocated on the heap may not be aligned 16
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(436,56): warning C4316: 'PostionControlHandle': object allocated on the heap may not be aligned 16
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(443,56): warning C4316: 'PostionControlHandle': object allocated on the heap may not be aligned 16
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(452,56): warning C4316: 'PostionControlHandle': object allocated on the heap may not be aligned 16
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(459,56): warning C4316: 'PostionControlHandle': object allocated on the heap may not be aligned 16
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(467,56): warning C4316: 'PostionControlHandle': object allocated on the heap may not be aligned 16
   Win32SimpleSample.vcxproj -> D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Debug\WoFEdit.exe

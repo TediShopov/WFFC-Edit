@@ -69,6 +69,10 @@
     <ClCompile Include="ObjectTransformState.cpp" />
     <ClCompile Include="ControlHandle.cpp" />
     <ClCompile Include="PostionControlHandle.cpp" />
+    <ClCompile Include="AxisBasedTransformState.cpp" />
+    <ClCompile Include="ScaleControlHandle.cpp" />
+    <ClCompile Include="ScaleTransformState.cpp" />
+    <ClCompile Include="CreateObjectDialog.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -124,6 +128,10 @@
     <ClInclude Include="ObjectTransformState.h" />
     <ClInclude Include="ControlHandle.h" />
     <ClInclude Include="PostionControlHandle.h" />
+    <ClInclude Include="AxisBasedTransformState.h" />
+    <ClInclude Include="ScaleControlHandle.h" />
+    <ClInclude Include="ScaleTransformState.h" />
+    <ClInclude Include="CreateObjectDialog.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

@@ -5,7 +5,9 @@
 
 #include "ObjectSelectionState.h"
 #include "PostionControlHandle.h"
+#include "CreateObjectDialog.h"
 
+//#include "CreateObjectDialog.h"
 const std::string DefaultArrowModel = "database/data/placeholder.cmo";
 const std::string DefaultArrowTexture = "database/data/placeholder.dds";
 //
@@ -298,7 +300,7 @@ void ToolMain::Tick(MSG* msg)
 	{
 		for (int i = 0; i < m_selectedObject.size(); ++i)
 		{
-			this->m_sceneGraph.erase(this->m_sceneGraph.begin() + m_selectedObject[i]);
+			//this->m_sceneGraph.erase(this->m_sceneGraph.begin() + m_selectedObject[i]);
 			this->m_d3dRenderer.RemoveDisplayObject(this->m_selectedObject[i]);
 			
 		}
@@ -307,6 +309,19 @@ void ToolMain::Tick(MSG* msg)
 		m_toolInputCommands.deleteSelected = false;
 		
 	}
+
+	if(m_toolInputCommands.insertObject)
+	{
+		ResetInputKeyBuffer();
+		CreateObjectDialog newD(nullptr);
+		newD.SetObjectData(this);
+		newD.DoModal();
+		m_toolInputCommands.insertObject = false;
+	//	MessageBox(NULL, L"Insert New Object", L"Notification",MB_OK);
+		
+	}
+
+
 	m_toolInputCommands.handleHit = false;
 	//If hanle is picked by mouse
 
@@ -373,11 +388,10 @@ void ToolMain::UpdateInput(MSG* msg)
 	m_toolInputCommands.plane_y = m_keyArray['X'];
 	m_toolInputCommands.plane_z = m_keyArray['C'];
 
-
-	//Create Delete
-
+	//Insert Key Pressed
+	m_toolInputCommands.insertObject = m_keyArray[45];
+	//Delete1 Key Pressed
 	m_toolInputCommands.deleteSelected = m_keyArray[46];
-	//WASD
 }
 
 void ToolMain::Notify(const ToolMain& data)
@@ -456,4 +470,12 @@ void ToolMain::InitHandlesDefaults()
 		DefaultArrowModel,
 		Colors::Blue
 	));
+}
+
+void ToolMain::ResetInputKeyBuffer()
+{
+	for (int i = 0; i < 256; ++i)
+	{
+		m_keyArray[i] = false;
+	}
 }

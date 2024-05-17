@@ -16,5 +16,6 @@ struct InputCommands
 	bool plane_y;
 	bool plane_z;
 	bool handleHit;
+	bool insertObject;
 	bool deleteSelected;
 };

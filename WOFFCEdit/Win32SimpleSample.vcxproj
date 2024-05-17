@@ -168,6 +168,7 @@
     <ClCompile Include="AxisBasedTransformState.cpp" />
     <ClCompile Include="ChunkObject.cpp" />
     <ClCompile Include="ControlHandle.cpp" />
+    <ClCompile Include="CreateObjectDialog.cpp" />
     <ClCompile Include="DeviceResources.cpp" />
     <ClCompile Include="DisplayChunk.cpp" />
     <ClCompile Include="DisplayObject.cpp" />
@@ -194,6 +195,7 @@
     <ClInclude Include="AxisBasedTransformState.h" />
     <ClInclude Include="ChunkObject.h" />
     <ClInclude Include="ControlHandle.h" />
+    <ClInclude Include="CreateObjectDialog.h" />
     <ClInclude Include="DeviceResources.h" />
     <ClInclude Include="DisplayChunk.h" />
     <ClInclude Include="DisplayObject.h" />
