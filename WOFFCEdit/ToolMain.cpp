@@ -37,12 +37,12 @@ ToolMain::~ToolMain()
 	sqlite3_close(m_databaseConnection); //close the database connection
 }
 
-int ToolMain::getCurrentSelectionID()
+int ToolMain::getCurrentSelectionID() const
 {
 	return m_selectedObject[0];
 }
 
-std::vector<int> ToolMain::getCurrentSelectionIDs()
+std::vector<int> ToolMain::getCurrentSelectionIDs() const
 {
 	return m_selectedObject;
 }
@@ -296,29 +296,26 @@ void ToolMain::Tick(MSG* msg)
 {
 	//Put the selected object as handles transform
 
-	if(m_toolInputCommands.deleteSelected && this->m_selectedObject.size() >= 1)
+	if (m_toolInputCommands.deleteSelected && this->m_selectedObject.size() >= 1)
 	{
 		for (int i = 0; i < m_selectedObject.size(); ++i)
 		{
 			//this->m_sceneGraph.erase(this->m_sceneGraph.begin() + m_selectedObject[i]);
 			this->m_d3dRenderer.RemoveDisplayObject(this->m_selectedObject[i]);
-			
 		}
 		this->m_selectedObject.clear();
 		Notify(*this);
 		m_toolInputCommands.deleteSelected = false;
-		
 	}
 
-	if(m_toolInputCommands.insertObject)
+	if (m_toolInputCommands.insertObject)
 	{
 		ResetInputKeyBuffer();
 		CreateObjectDialog newD(nullptr);
 		newD.SetObjectData(this);
 		newD.DoModal();
 		m_toolInputCommands.insertObject = false;
-	//	MessageBox(NULL, L"Insert New Object", L"Notification",MB_OK);
-		
+		//	MessageBox(NULL, L"Insert New Object", L"Notification",MB_OK);
 	}
 
 
