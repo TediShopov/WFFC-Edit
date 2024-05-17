@@ -5,9 +5,12 @@
 #include "MFCTransformView.h"
 
 #include <map>
+#include <__msvc_filebuf.hpp>
 
 // MFCTransformView
-
+#define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
 IMPLEMENT_DYNCREATE(MFCTransformView, CFormView)
 
 MFCTransformView::MFCTransformView()
@@ -58,7 +61,7 @@ MFCTransformView::MFCTransformView()
 			reinterpret_cast<DWORD_PTR>(&sceneObjectCopy.model_path)));
 
 	//Texture Mesh Dialog
-	//----------------------------------------------
+	//----------------------------------------------path
 
 	static TCHAR BASED_CODE textureFilter[] = _T(
 		"DDS (*.dds)|*.dds||"
@@ -108,6 +111,52 @@ void MFCTransformView::UpdateFileProp(std::string* data)
 	if (prop != nullptr)
 		prop->SetValue(w);
 }
+
+bool MFCTransformView::convert_to_relative_path(const std::string& absolute_path, 
+	std::string& relative_path)
+{
+	try {
+		fs::path abs_path(absolute_path);
+		fs::path base_path = fs::current_path();
+
+		// Convert both paths to absolute paths
+		abs_path = fs::absolute(abs_path);
+		base_path = fs::absolute(base_path);
+
+		// Check if the base_path is a prefix of abs_path
+		auto abs_iter = abs_path.begin();
+		auto base_iter = base_path.begin();
+
+		// Find common prefix
+		while (abs_iter != abs_path.end() && base_iter != base_path.end() && (*abs_iter) == (*base_iter)) {
+			++abs_iter;
+			++base_iter;
+		}
+
+		if (base_iter != base_path.end()) {
+			relative_path = "database/data/placeholder.dds";
+			return false;
+		}
+
+		fs::path rel_path;
+		while (base_iter != base_path.end()) {
+			rel_path /= "..";
+			++base_iter;
+		}
+		while (abs_iter != abs_path.end()) {
+			rel_path /= *abs_iter;
+			++abs_iter;
+		}
+
+		relative_path = rel_path.string();
+		return true;
+	}
+	catch (const fs::filesystem_error& e) {
+		relative_path = "database/data/placeholder.dds";
+		return false;
+	}
+}
+
 
 MFCTransformView::~MFCTransformView()
 {
@@ -280,10 +329,16 @@ LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpara
 			std::wstring ws(test.bstrVal, SysStringLen(test.bstrVal));
 			std::string s(ws.begin(),ws.end());
 
+			//TODO make to relative path
+// Get the current working directory
+			std::string absolute_path = s;
+			std::string relative_path;
+			convert_to_relative_path(absolute_path,  relative_path);
 			
 
+			propChanged->SetValue( CString(relative_path.c_str()));
 
-			(*d) =s;
+			(*d) =relative_path;
 			(*foundObj) = sceneObjectCopy;
 
 
