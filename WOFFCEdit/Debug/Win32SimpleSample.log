@@ -1,4 +1,94 @@
 ﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (Win32SimpleSample.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  AxisBasedTransformState.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+  CreateObjectDialog.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\CreateObjectDialog.cpp(134,37): warning C4101: 'e': unreferenced local variable
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\xstring(2749,53): warning C4244: 'argument': conversion from 'wchar_t' to 'const _Elem', possible loss of data
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\xstring(2749,53): warning C4244:         with
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\xstring(2749,53): warning C4244:         [
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\xstring(2749,53): warning C4244:             _Elem=char
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\xstring(2749,53): warning C4244:         ]
+  (compiling source file 'CreateObjectDialog.cpp')
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\xstring(2749,53):
+  the template instantiation context (the oldest one first) is
+  	D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\CreateObjectDialog.cpp(79,15):
+  	see reference to function template instantiation 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)' being compiled
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+  		D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\CreateObjectDialog.cpp(79,15):
+  		see the first reference to 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string' in 'CreateObjectDialog::OnTransformPropertyChanged'
+  	C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\xstring(2590,17):
+  	see reference to function template instantiation 'void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<wchar_t*,wchar_t*,_Size_type>(_Iter,const _Sent,_Size)' being compiled
+          with
+          [
+              _Size_type=unsigned int,
+              _Iter=wchar_t *,
+              _Sent=wchar_t *,
+              _Size=unsigned int
+          ]
+  
+  DisplayObject.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\DisplayObject.cpp(45,35): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\DisplayObject.cpp(44,35): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\DisplayObject.cpp(43,57): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+  Main.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+  MFCFrame.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+  MFCTransformView.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\MFCTransformView.cpp(154,37): warning C4101: 'e': unreferenced local variable
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\xstring(2749,53): warning C4244: 'argument': conversion from 'wchar_t' to 'const _Elem', possible loss of data
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\xstring(2749,53): warning C4244:         with
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\xstring(2749,53): warning C4244:         [
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\xstring(2749,53): warning C4244:             _Elem=char
+C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\xstring(2749,53): warning C4244:         ]
+  (compiling source file 'MFCTransformView.cpp')
+  C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\xstring(2749,53):
+  the template instantiation context (the oldest one first) is
+  	D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\MFCTransformView.cpp(330,17):
+  	see reference to function template instantiation 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string<std::_String_iterator<std::_String_val<std::_Simple_types<_Elem>>>,0>(_Iter,_Iter,const _Alloc &)' being compiled
+          with
+          [
+              _Elem=wchar_t,
+              _Iter=std::_String_iterator<std::_String_val<std::_Simple_types<wchar_t>>>,
+              _Alloc=std::allocator<char>
+          ]
+  		D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\MFCTransformView.cpp(330,17):
+  		see the first reference to 'std::basic_string<char,std::char_traits<char>,std::allocator<char>>::basic_string' in 'MFCTransformView::OnTransformPropertyChanged'
+  	C:\Program Files\Microsoft Visual Studio\2022\Community\VC\Tools\MSVC\14.38.33130\include\xstring(2590,17):
+  	see reference to function template instantiation 'void std::basic_string<char,std::char_traits<char>,std::allocator<char>>::_Construct_from_iter<wchar_t*,wchar_t*,_Size_type>(_Iter,const _Sent,_Size)' being compiled
+          with
+          [
+              _Size_type=unsigned int,
+              _Iter=wchar_t *,
+              _Sent=wchar_t *,
+              _Size=unsigned int
+          ]
+  
+  ObjectSelectionState.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ObjectSelectionState.cpp(16,57): warning C4316: 'ObjectTransformState': object allocated on the heap may not be aligned 16
+  ObjectTransformState.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ObjectTransformState.cpp(31,10): warning C4244: 'argument': conversion from 'const int' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ObjectTransformState.cpp(30,10): warning C4244: 'argument': conversion from 'const int' to 'float', possible loss of data
+  MFCMain.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+  PostionControlHandle.cpp
+  _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\PostionControlHandle.cpp(18,12): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\PostionControlHandle.cpp(49,20): warning C4305: '=': truncation from 'double' to 'float'
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\PostionControlHandle.cpp(50,20): warning C4305: '=': truncation from 'double' to 'float'
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\PostionControlHandle.cpp(84,19): warning C4305: 'argument': truncation from 'double' to 'float'
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\PostionControlHandle.cpp(85,41): warning C4305: 'argument': truncation from 'double' to 'float'
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\PostionControlHandle.cpp(124,33): warning C4316: 'ObjectTransformState': object allocated on the heap may not be aligned 16
   ToolMain.cpp
   _WIN32_WINNT not defined. Defaulting to _WIN32_WINNT_MAXVER (see WinSDKVer.h)
 D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(109,46): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
@@ -29,10 +119,11 @@ D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(159,56): warning C
 D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(160,54): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(161,57): warning C4244: '=': conversion from 'double' to 'float', possible loss of data
 D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(301,21): warning C4018: '<': signed/unsigned mismatch
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(429,56): warning C4316: 'PostionControlHandle': object allocated on the heap may not be aligned 16
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(436,56): warning C4316: 'PostionControlHandle': object allocated on the heap may not be aligned 16
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(443,56): warning C4316: 'PostionControlHandle': object allocated on the heap may not be aligned 16
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(452,56): warning C4316: 'PostionControlHandle': object allocated on the heap may not be aligned 16
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(459,56): warning C4316: 'PostionControlHandle': object allocated on the heap may not be aligned 16
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(467,56): warning C4316: 'PostionControlHandle': object allocated on the heap may not be aligned 16
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(426,56): warning C4316: 'PostionControlHandle': object allocated on the heap may not be aligned 16
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(433,56): warning C4316: 'PostionControlHandle': object allocated on the heap may not be aligned 16
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(440,56): warning C4316: 'PostionControlHandle': object allocated on the heap may not be aligned 16
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(449,56): warning C4316: 'PostionControlHandle': object allocated on the heap may not be aligned 16
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(456,56): warning C4316: 'PostionControlHandle': object allocated on the heap may not be aligned 16
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\ToolMain.cpp(464,56): warning C4316: 'PostionControlHandle': object allocated on the heap may not be aligned 16
+  Generating Code...
   Win32SimpleSample.vcxproj -> D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Debug\WoFEdit.exe
