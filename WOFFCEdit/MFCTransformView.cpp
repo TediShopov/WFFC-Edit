@@ -67,11 +67,18 @@ MFCTransformView::MFCTransformView()
 		new CMFCPropertyGridFileProperty(
 			_T("Texture"),
 			TRUE,
-			_T(""),
+			sceneObjectCopy.tex_diffuse_path.c_str(),
 			_T("dds"),
 			0,
 			textureFilter,
-			_T("Specifies the dialog icon")));
+			_T("Specifies the dialog icon"),
+			reinterpret_cast<DWORD_PTR>(&sceneObjectCopy.tex_diffuse_path)));
+			
+			
+	//TODO(lowPriority) Add color 
+	//Color 
+	//----------------------------------------------
+			
 
 	//TODO Add Control For Object Color
 	m_propertyGrid.AddProperty(modelProperties, 1, 1);
@@ -268,7 +275,23 @@ LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpara
 		std::string s = propChanged->GetRuntimeClass()->m_lpszClassName;
 		if (s.compare("CMFCPropertyGridFileProperty") == 0)
 		{
-			int a = 3;
+			std::string* d = reinterpret_cast<std::string*>(propChanged->GetData());
+			auto test = propChanged->GetValue();
+			std::wstring ws(test.bstrVal, SysStringLen(test.bstrVal));
+			std::string s(ws.begin(),ws.end());
+
+			
+
+
+			(*d) =s;
+			(*foundObj) = sceneObjectCopy;
+
+
+
+			m_toolPtr->m_d3dRenderer.UpdateDisplayElmentModel(
+				foundObj->ID - 1, &m_toolPtr->m_sceneGraph
+			);
+
 		}
 		else
 		{

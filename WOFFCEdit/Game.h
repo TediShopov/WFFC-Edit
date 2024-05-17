@@ -48,6 +48,7 @@ public:
 	void OnWindowSizeChanged(int width, int height);
 
 	void UpdateDisplayElementTransform(int index, std::vector<SceneObject>* SceneGraph);
+	bool UpdateDisplayElmentModel(int index, std::vector<SceneObject>* SceneGraph);
 	void CreateHandleObject(DisplayObject*, std::string model_path, DirectX::SimpleMath::Color) const;
 	DisplayObject* CreateDisplayObject(const SceneObject* object) const;
 	//tool specific

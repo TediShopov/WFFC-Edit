@@ -423,6 +423,79 @@ void Game::UpdateDisplayElementTransform(int i, std::vector<SceneObject>* SceneG
 	newDisplayObject.m_light_quadratic = SceneGraph->at(i).light_quadratic;
 }
 
+bool Game::UpdateDisplayElmentModel(int index, std::vector<SceneObject>* SceneGraph)
+{
+	//Rearead model and texture
+
+	DisplayObject& newDisplayObject = *this->m_displayList[index];
+	auto sceneObject = SceneGraph->at(index);
+	
+	auto device = m_deviceResources->GetD3DDevice();
+	//load model
+	std::wstring modelwstr = 
+		StringToWCHART(sceneObject.model_path); //convect string to Wchar
+	try
+	{
+	newDisplayObject.m_model = 
+		Model::CreateFromCMO(
+			device,
+			modelwstr.c_str(),
+			*m_fxFactory,
+			true);
+		
+	}
+	catch (...)
+	{
+		//Loading model failed
+		return false;
+
+	}
+	//get DXSDK to load model "False" for LH coordinate system (maya)
+
+	//Load Texture
+	std::wstring texturewstr = 
+		StringToWCHART(sceneObject.tex_diffuse_path); //convect string to Wchar
+	HRESULT rs;
+	rs = CreateDDSTextureFromFile(
+		device,
+		texturewstr.c_str(),
+		nullptr,
+		&newDisplayObject.m_texture_diffuse);
+	//load tex into Shader resource
+
+	//if texture fails.  load error default
+	if (rs)
+	{
+		CreateDDSTextureFromFile(device,
+			L"database/data/Error.dds",
+			nullptr,
+			&newDisplayObject.m_texture_diffuse);
+		//load tex into Shader resource
+	}
+
+
+
+	newDisplayObject.m_model->UpdateEffects(
+		[&](IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
+		{
+			auto lights = dynamic_cast<BasicEffect*>(effect);
+			if (lights)
+			{
+				lights->SetTexture(newDisplayObject.m_texture_diffuse);
+				XMVECTOR diffuse{
+					newDisplayObject.m_light_diffuse_r,
+					newDisplayObject.m_light_diffuse_g,
+					newDisplayObject.m_light_diffuse_b,
+					1
+				};
+				lights->SetDiffuseColor(diffuse);
+			}
+		});
+
+	return true;
+
+}
+
 void Game::CreateHandleObject(DisplayObject* newDisplayObject, std::string model_path,
                               DirectX::SimpleMath::Color color) const
 {
