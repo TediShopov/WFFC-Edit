@@ -33,13 +33,57 @@ MFCTransformView::MFCTransformView()
 	transform->AddSubItem(localScaleGroup);
 	transform->AddSubItem(localOrientationGroup);
 
+	//==============================================
+	//Adding texture string search through windows
+
+	//NULL, reinterpret_cast<DWORD_PTR>(data));
+	auto modelProperties = new CMFCPropertyGridProperty("Model");
+	//Model Mesh File Dialog
+	//----------------------------------------------
+	//TODO Add a single option for all supported files
+	static TCHAR BASED_CODE modelFilter[] = _T(
+		"Visual Studio Starter Kit Files(*.cmo)|*.cmo|"
+		"Direct X SDK(*.sdkmesh)|*.sdkmesh|"
+		"VBO (*.vbo)|*.vbo||"
+		"");
+	modelProperties->AddSubItem(
+		new CMFCPropertyGridFileProperty(
+			_T("Model Mesh"),
+			TRUE,
+			sceneObjectCopy.model_path.c_str(),
+			_T("ico"),
+			0,
+			modelFilter,
+			_T("Specifies the dialog icon"),
+			reinterpret_cast<DWORD_PTR>(&sceneObjectCopy.model_path)));
+
+	//Texture Mesh Dialog
+	//----------------------------------------------
+
+	static TCHAR BASED_CODE textureFilter[] = _T(
+		"DDS (*.dds)|*.dds||"
+		"");
+	modelProperties->AddSubItem(
+		new CMFCPropertyGridFileProperty(
+			_T("Texture"),
+			TRUE,
+			_T(""),
+			_T("dds"),
+			0,
+			textureFilter,
+			_T("Specifies the dialog icon")));
+
+	//TODO Add Control For Object Color
+	m_propertyGrid.AddProperty(modelProperties, 1, 1);
+
 	m_propertyGrid.AddProperty(transform, 1, 1);
 }
+
 CMFCPropertyGridProperty* MFCTransformView::CreateFloatProp(
 	const CString name, float* data)
 {
 	return new CMFCPropertyGridProperty(name, COleVariant(*data),
-		NULL, reinterpret_cast<DWORD_PTR>(data));
+	                                    NULL, reinterpret_cast<DWORD_PTR>(data));
 }
 
 void MFCTransformView::UpdateFloatProp(float* data)
@@ -47,6 +91,15 @@ void MFCTransformView::UpdateFloatProp(float* data)
 	CMFCPropertyGridProperty* prop = m_propertyGrid.FindItemByData(
 		reinterpret_cast<DWORD_PTR>(data), TRUE);
 	prop->SetValue(*data);
+}
+
+void MFCTransformView::UpdateFileProp(std::string* data)
+{
+	CStringW w(data->c_str());
+	CMFCPropertyGridProperty* prop = m_propertyGrid.FindItemByData(
+		reinterpret_cast<DWORD_PTR>(data), TRUE);
+	if (prop != nullptr)
+		prop->SetValue(w);
 }
 
 MFCTransformView::~MFCTransformView()
@@ -94,8 +147,8 @@ void MFCTransformView::OnClickTree(NMHDR* pNMHDR, LRESULT* pResult)
 	NM_TREEVIEW* pNMTreeView = (NM_TREEVIEW*)pNMHDR;
 
 	// Get the selected item
-//	HTREEITEM hItem = this->Transfo0rmSelections.m_currentSelections.GetSelectedItem();
-	TVHITTESTINFO ht = { 0 };
+	//	HTREEITEM hItem = this->Transfo0rmSelections.m_currentSelections.GetSelectedItem();
+	TVHITTESTINFO ht = {0};
 
 	DWORD dwpos = GetMessagePos();
 	ht.pt.x = GET_X_LPARAM(dwpos);
@@ -141,7 +194,8 @@ void MFCTransformView::UncheckTreeItemAndChildren(CTreeCtrl& treeCtrl, HTREEITEM
 	HTREEITEM childItem = treeCtrl.GetChildItem(item);
 
 	// Recursively uncheck children until no more child is found
-	while (childItem) {
+	while (childItem)
+	{
 		UncheckTreeItemAndChildren(treeCtrl, childItem);
 		childItem = treeCtrl.GetNextItem(childItem, TVGN_NEXT);
 	}
@@ -193,26 +247,40 @@ void MFCTransformView::UpdatePropertyGrid(SceneObject* obj)
 	UpdateFloatProp(&sceneObjectCopy.rotY);
 	UpdateFloatProp(&sceneObjectCopy.rotZ);
 
+	UpdateFileProp(&sceneObjectCopy.model_path);
+	UpdateFileProp(&sceneObjectCopy.tex_diffuse_path);
+
 	m_propertyGrid.MarkModifiedProperties(1, 1);
 }
 
 LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lparam)
 {
 	CMFCPropertyGridProperty* propChanged = (CMFCPropertyGridProperty*)lparam;
+
 	SceneObject* foundObj = nullptr;
+	//IF property changed was string
+	//IF property changed was float
 	if (m_toolPtr->m_selectedObject.size() == 1)
 	{
 		m_propertyGrid.MarkModifiedProperties(1, 1);
 		m_propertyGrid.ShowWindow(SW_SHOW);
 		foundObj = FindSceneObject((m_toolPtr->m_selectedObject)[0]);
-		float* d = reinterpret_cast<float*>(propChanged->GetData());
-		auto test = propChanged->GetValue();
-		(*d) = test.fltVal;
-		(*foundObj) = sceneObjectCopy;
-		m_toolPtr->m_d3dRenderer.
-			UpdateDisplayElementTransform(
-				foundObj->ID - 1, &m_toolPtr->m_sceneGraph
-			);
+		std::string s = propChanged->GetRuntimeClass()->m_lpszClassName;
+		if (s.compare("CMFCPropertyGridFileProperty") == 0)
+		{
+			int a = 3;
+		}
+		else
+		{
+			float* d = reinterpret_cast<float*>(propChanged->GetData());
+			auto test = propChanged->GetValue();
+			(*d) = test.fltVal;
+			(*foundObj) = sceneObjectCopy;
+			m_toolPtr->m_d3dRenderer.
+			           UpdateDisplayElementTransform(
+				           foundObj->ID - 1, &m_toolPtr->m_sceneGraph
+			           );
+		}
 	}
 	return TRUE;
 }
@@ -227,14 +295,17 @@ void MFCTransformView::VisualizeSelectionOnTreeCtrl(const ToolMain& tool)
 	{
 		//Remove items which id's are already presented in object to tree map
 		auto removed = std::remove_if(sceneCopy.begin(), sceneCopy.end(),
-			[idToTreeItems](SceneObject v) { return idToTreeItems->find(v.ID) != idToTreeItems->end(); });
+		                              [idToTreeItems](SceneObject v)
+		                              {
+			                              return idToTreeItems->find(v.ID) != idToTreeItems->end();
+		                              });
 		sceneCopy.erase(removed, sceneCopy.end());
 		for (const SceneObject& element : sceneCopy)
 		{
 			if (element.parent_id == 0)
 			{
 				HTREEITEM treeitem = m_treeCtrl.InsertItem(std::to_wstring(element.ID).c_str());
-				idToTreeItems->insert({ element.ID, treeitem });
+				idToTreeItems->insert({element.ID, treeitem});
 			}
 			else
 			{
@@ -244,7 +315,7 @@ void MFCTransformView::VisualizeSelectionOnTreeCtrl(const ToolMain& tool)
 					HTREEITEM treeitem = m_treeCtrl.InsertItem(
 						std::to_wstring(element.ID).c_str()
 						, parentItem);
-					idToTreeItems->insert({ element.ID, treeitem });
+					idToTreeItems->insert({element.ID, treeitem});
 				}
 			}
 		}
@@ -264,6 +335,7 @@ void MFCTransformView::VisualizeSelectionOnTreeCtrl(const ToolMain& tool)
 		}
 	}
 }
+
 // Function to uncheck a tree item and its children recursively
 
 void MFCTransformView::AssertValid() const

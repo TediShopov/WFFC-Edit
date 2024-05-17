@@ -123,9 +123,9 @@ void Game::Tick(InputCommands* Input)
 	//copy over the input commands so we have a local version to use elsewhere.
 	m_InputCommands = *Input;
 	m_timer.Tick([&]()
-		{
-			Update(m_timer);
-		});
+	{
+		Update(m_timer);
+	});
 
 #ifdef DXTK_AUDIO
 	// Only update audio engine once per frame
@@ -245,13 +245,13 @@ void Game::Render()
 	if (m_grid)
 	{
 		// Draw procedurally generated dynamic grid
-		const XMVECTORF32 xaxis = { 512.f, 0.f, 0.f };
-		const XMVECTORF32 yaxis = { 0.f, 0.f, 512.f };
+		const XMVECTORF32 xaxis = {512.f, 0.f, 0.f};
+		const XMVECTORF32 yaxis = {0.f, 0.f, 512.f};
 		DrawGrid(xaxis, yaxis, g_XMZero, 512, 512, Colors::Gray);
 	}
 	//CAMERA POSITION ON HUD
 	m_sprites->Begin();
-	WCHAR   Buffer[256];
+	WCHAR Buffer[256];
 	std::wstring var = L"Cam X: " + std::to_wstring(m_camPosition.x) + L"Cam Z: " + std::to_wstring(m_camPosition.z);
 	m_font->DrawString(m_sprites.get(), var.c_str(), XMFLOAT2(100, 10), Colors::Yellow);
 	m_sprites->End();
@@ -306,7 +306,8 @@ void Game::Clear()
 	m_deviceResources->PIXEndEvent();
 }
 
-void XM_CALLCONV Game::DrawGrid(FXMVECTOR xAxis, FXMVECTOR yAxis, FXMVECTOR origin, size_t xdivs, size_t ydivs, GXMVECTOR color)
+void XM_CALLCONV Game::DrawGrid(FXMVECTOR xAxis, FXMVECTOR yAxis, FXMVECTOR origin, size_t xdivs, size_t ydivs,
+                                GXMVECTOR color)
 {
 	m_deviceResources->PIXBeginEvent(L"Draw grid");
 
@@ -422,14 +423,16 @@ void Game::UpdateDisplayElementTransform(int i, std::vector<SceneObject>* SceneG
 	newDisplayObject.m_light_quadratic = SceneGraph->at(i).light_quadratic;
 }
 
-void Game::CreateHandleObject(DisplayObject* newDisplayObject, std::string model_path, DirectX::SimpleMath::Color color) const
+void Game::CreateHandleObject(DisplayObject* newDisplayObject, std::string model_path,
+                              DirectX::SimpleMath::Color color) const
 {
 	//create a temp display object that we will populate then append to the display list.
 	auto device = m_deviceResources->GetD3DDevice();
 
 	//load model
-	std::wstring modelwstr = StringToWCHART(model_path);							//convect string to Wchar
-	newDisplayObject->m_model = Model::CreateFromCMO(device, modelwstr.c_str(), *m_fxFactory, true);	//get DXSDK to load model "False" for LH coordinate system (maya)
+	std::wstring modelwstr = StringToWCHART(model_path); //convect string to Wchar
+	newDisplayObject->m_model = Model::CreateFromCMO(device, modelwstr.c_str(), *m_fxFactory, true);
+	//get DXSDK to load model "False" for LH coordinate system (maya)
 
 	//set scale
 	newDisplayObject->m_scale.x = 1;
@@ -444,7 +447,8 @@ void Game::CreateHandleObject(DisplayObject* newDisplayObject, std::string model
 	newDisplayObject->m_light_diffuse_g = color.G();
 	newDisplayObject->m_light_diffuse_b = color.B();
 
-	newDisplayObject->m_model->UpdateEffects([&](IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
+	newDisplayObject->m_model->UpdateEffects(
+		[&](IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
 		{
 			auto lights = dynamic_cast<BasicEffect*>(effect);
 			if (lights)
@@ -468,18 +472,21 @@ DisplayObject* Game::CreateDisplayObject(const SceneObject* object) const
 	auto device = m_deviceResources->GetD3DDevice();
 
 	//load model
-	std::wstring modelwstr = StringToWCHART(object->model_path);							//convect string to Wchar
-	newDisplayObject->m_model = Model::CreateFromCMO(device, modelwstr.c_str(), *m_fxFactory, true);	//get DXSDK to load model "False" for LH coordinate system (maya)
+	std::wstring modelwstr = StringToWCHART(object->model_path); //convect string to Wchar
+	newDisplayObject->m_model = Model::CreateFromCMO(device, modelwstr.c_str(), *m_fxFactory, true);
+	//get DXSDK to load model "False" for LH coordinate system (maya)
 
 	//Load Texture
-	std::wstring texturewstr = StringToWCHART(object->tex_diffuse_path);								//convect string to Wchar
+	std::wstring texturewstr = StringToWCHART(object->tex_diffuse_path); //convect string to Wchar
 	HRESULT rs;
-	rs = CreateDDSTextureFromFile(device, texturewstr.c_str(), nullptr, &newDisplayObject->m_texture_diffuse);	//load tex into Shader resource
+	rs = CreateDDSTextureFromFile(device, texturewstr.c_str(), nullptr, &newDisplayObject->m_texture_diffuse);
+	//load tex into Shader resource
 
 	//if texture fails.  load error default
 	if (rs)
 	{
-		CreateDDSTextureFromFile(device, L"database/data/Error.dds", nullptr, &newDisplayObject->m_texture_diffuse);	//load tex into Shader resource
+		CreateDDSTextureFromFile(device, L"database/data/Error.dds", nullptr, &newDisplayObject->m_texture_diffuse);
+		//load tex into Shader resource
 	}
 
 	//apply new texture to models effect
@@ -517,7 +524,8 @@ DisplayObject* Game::CreateDisplayObject(const SceneObject* object) const
 	newDisplayObject->m_light_linear = object->light_linear;
 	newDisplayObject->m_light_quadratic = object->light_quadratic;
 
-	newDisplayObject->m_model->UpdateEffects([&](IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
+	newDisplayObject->m_model->UpdateEffects(
+		[&](IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
 		{
 			auto lights = dynamic_cast<BasicEffect*>(effect);
 			if (lights)
@@ -544,7 +552,8 @@ void Game::RenderDisplayObject(const DisplayObject& obj) const
 	XMMATRIX world =
 		m_world * obj.GetWorldMatrix();
 
-	obj.m_model->Draw(context, *m_states, world, m_view, m_projection, false);	//last variable in draw,  make TRUE for wireframe
+	obj.m_model->Draw(context, *m_states, world, m_view, m_projection, false);
+	//last variable in draw,  make TRUE for wireframe
 
 	m_deviceResources->PIXEndEvent();
 }
@@ -577,9 +586,9 @@ void Game::BuildDisplayList(std::vector<SceneObject>* SceneGraph)
 	auto device = m_deviceResources->GetD3DDevice();
 	auto devicecontext = m_deviceResources->GetD3DDeviceContext();
 
-	if (!m_displayList.empty())		//is the vector empty
+	if (!m_displayList.empty()) //is the vector empty
 	{
-		m_displayList.clear();		//if not, empty it
+		m_displayList.clear(); //if not, empty it
 	}
 
 	//for every item in the scenegraph
@@ -598,7 +607,10 @@ void Game::BuildDisplayHierarchy(std::vector<SceneObject>* SceneGraph)
 	{
 		//Remove items which id's are already presented in object to tree map
 		auto removed = std::remove_if(sceneCopy.begin(), sceneCopy.end(),
-			[idToTreeItems](SceneObject v) { return idToTreeItems.find(v.ID) != idToTreeItems.end(); });
+		                              [idToTreeItems](SceneObject v)
+		                              {
+			                              return idToTreeItems.find(v.ID) != idToTreeItems.end();
+		                              });
 		sceneCopy.erase(removed, sceneCopy.end());
 		for (const SceneObject& element : sceneCopy)
 		{
@@ -606,7 +618,7 @@ void Game::BuildDisplayHierarchy(std::vector<SceneObject>* SceneGraph)
 			{
 				DisplayObject* object = CreateDisplayObject(&element);
 				m_displayList.push_back(object);
-				idToTreeItems.insert({ element.ID, object });
+				idToTreeItems.insert({element.ID, object});
 			}
 			else
 			{
@@ -620,7 +632,7 @@ void Game::BuildDisplayHierarchy(std::vector<SceneObject>* SceneGraph)
 						int c = 3;
 					}
 					object->parentObject = parent;
-					idToTreeItems.insert({ element.ID, object });
+					idToTreeItems.insert({element.ID, object});
 				}
 			}
 		}
@@ -632,7 +644,7 @@ void Game::BuildDisplayChunk(ChunkObject* SceneChunk)
 {
 	//populate our local DISPLAYCHUNK with all the chunk info we need from the object stored in toolmain
 	//which, to be honest, is almost all of it. Its mostly rendering related info so...
-	m_displayChunk.PopulateChunkData(SceneChunk);		//migrate chunk data
+	m_displayChunk.PopulateChunkData(SceneChunk); //migrate chunk data
 	m_displayChunk.LoadHeightMap(m_deviceResources);
 	m_displayChunk.m_terrainEffect->SetProjection(m_projection);
 	m_displayChunk.InitialiseBatch();
@@ -640,7 +652,7 @@ void Game::BuildDisplayChunk(ChunkObject* SceneChunk)
 
 void Game::SaveDisplayChunk(ChunkObject* SceneChunk)
 {
-	m_displayChunk.SaveHeightMap();			//save heightmap to file.
+	m_displayChunk.SaveHeightMap(); //save heightmap to file.
 }
 
 int Game::AddVisualHandle(ControlHandle* display_object)
@@ -687,7 +699,8 @@ void Game::CreateDeviceDependentResources()
 
 	m_fxFactory = std::make_unique<EffectFactory>(device);
 	m_fxFactory->SetDirectory(L"database/data/"); //fx Factory will look in the database directory
-	m_fxFactory->SetSharing(false);	//we must set this to false otherwise it will share effects based on the initial tex loaded (When the model loads) rather than what we will change them to.
+	m_fxFactory->SetSharing(false);
+	//we must set this to false otherwise it will share effects based on the initial tex loaded (When the model loads) rather than what we will change them to.
 
 	m_sprites = std::make_unique<SpriteBatch>(context);
 
@@ -716,9 +729,9 @@ void Game::CreateDeviceDependentResources()
 
 		DX::ThrowIfFailed(
 			device->CreateInputLayout(VertexPositionColor::InputElements,
-				VertexPositionColor::InputElementCount,
-				shaderByteCode, byteCodeLength,
-				m_batchInputLayout.ReleaseAndGetAddressOf())
+			                          VertexPositionColor::InputElementCount,
+			                          shaderByteCode, byteCodeLength,
+			                          m_batchInputLayout.ReleaseAndGetAddressOf())
 		);
 	}
 
@@ -726,14 +739,14 @@ void Game::CreateDeviceDependentResources()
 
 	//    m_shape = GeometricPrimitive::CreateTeapot(context, 4.f, 8);
 
-		// SDKMESH has to use clockwise winding with right-handed coordinates, so textures are flipped in U
+	// SDKMESH has to use clockwise winding with right-handed coordinates, so textures are flipped in U
 	m_model = Model::CreateFromSDKMESH(device, L"tiny.sdkmesh", *m_fxFactory);
 
 	std::function<void(IEffect*)> setEffectFun(
 		[](IEffect* e)-> void
 		{
 			auto lights = dynamic_cast<IEffectLights*>(e);
-			auto  matrices = dynamic_cast<IEffectMatrices*>(e);
+			auto matrices = dynamic_cast<IEffectMatrices*>(e);
 
 			if (lights)
 			{
@@ -828,9 +841,10 @@ std::wstring StringToWCHART(std::string s)
 	delete[] buf;
 	return r;
 }
+
 int Game::MousePicking() const
 {
-	return  this->MousePicking(m_displayList);
+	return this->MousePicking(m_displayList);
 }
 
 ControlHandle* Game::ControlHandleHitTest() const
@@ -865,7 +879,7 @@ int Game::MousePicking(const std::vector<DisplayObject*>& objectList) const
 	float closestPickedDistance = D3D11_FLOAT32_MAX;
 
 	//setup near and far planes of frustum with mouse X and mouse y passed down from Toolmain.
-		//they may look the same but note, the difference in Z
+	//they may look the same but note, the difference in Z
 	const XMVECTOR nearSource = XMVectorSet(m_InputCommands.mouse_x, m_InputCommands.mouse_y, 0.0f, 1.0f);
 	const XMVECTOR farSource = XMVectorSet(m_InputCommands.mouse_x, m_InputCommands.mouse_y, 1.0f, 1.0f);
 
@@ -874,9 +888,17 @@ int Game::MousePicking(const std::vector<DisplayObject*>& objectList) const
 	{
 		XMMATRIX local = m_world * objectList[i]->GetWorldMatrix();
 		//Unproject the points on the near and far plane, with respect to the matrix we just created.
-		XMVECTOR nearPoint = XMVector3Unproject(nearSource, 0.0f, 0.0f, m_ScreenDimensions.right, m_ScreenDimensions.bottom, m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, local);
+		XMVECTOR nearPoint = XMVector3Unproject(nearSource, 0.0f, 0.0f, m_ScreenDimensions.right,
+		                                        m_ScreenDimensions.bottom,
+		                                        m_deviceResources->GetScreenViewport().MinDepth,
+		                                        m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view,
+		                                        local);
 
-		XMVECTOR farPoint = XMVector3Unproject(farSource, 0.0f, 0.0f, m_ScreenDimensions.right, m_ScreenDimensions.bottom, m_deviceResources->GetScreenViewport().MinDepth, m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view, local);
+		XMVECTOR farPoint = XMVector3Unproject(farSource, 0.0f, 0.0f, m_ScreenDimensions.right,
+		                                       m_ScreenDimensions.bottom,
+		                                       m_deviceResources->GetScreenViewport().MinDepth,
+		                                       m_deviceResources->GetScreenViewport().MaxDepth, m_projection, m_view,
+		                                       local);
 
 		//turn the transformed points into our picking vector.
 		XMVECTOR pickingVector = farPoint - nearPoint;
@@ -886,7 +908,8 @@ int Game::MousePicking(const std::vector<DisplayObject*>& objectList) const
 		for (int y = 0; y < objectList[i]->m_model.get()->meshes.size(); y++)
 		{
 			//checking for ray intersection
-			if (objectList[i]->m_model.get()->meshes[y]->boundingBox.Intersects(nearPoint, pickingVector, pickedDistance))
+			if (objectList[i]->m_model.get()->meshes[y]->boundingBox.Intersects(
+				nearPoint, pickingVector, pickedDistance))
 			{
 				if (pickedDistance < closestPickedDistance)
 				{

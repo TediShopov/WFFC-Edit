@@ -20,7 +20,7 @@ class MFCTransformView : public CFormView, public Observer<ToolMain>
 	DECLARE_DYNCREATE(MFCTransformView)
 
 protected:
-	MFCTransformView();           // protected constructor used by dynamic creation
+	MFCTransformView(); // protected constructor used by dynamic creation
 	virtual ~MFCTransformView();
 
 public:
@@ -38,7 +38,7 @@ public:
 #endif
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX); // DDX/DDV support
 	void Update(const Subject<ToolMain>* subject, const ToolMain& data) override;
 
 	DECLARE_MESSAGE_MAP()
@@ -60,6 +60,7 @@ public:
 	CMFCPropertyGridProperty* CreateFloatProp(
 		const CString name, float* data);
 	void UpdateFloatProp(float* data);
+	void UpdateFileProp(std::string* data);
 
 private:
 	//Poistion Controls
