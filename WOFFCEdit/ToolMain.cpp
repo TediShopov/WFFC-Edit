@@ -365,7 +365,16 @@ void ToolMain::UpdateInput(MSG* msg)
 	case WM_LBUTTONUP: //mouse button down,  you will probably need to check when its up too
 		m_toolInputCommands.mouse_LB_Down = false;
 		break;
+	case WM_RBUTTONDOWN:
+		m_toolInputCommands.mouse_RB_Down = true;
+		break;
+	case WM_RBUTTONUP:
+		m_toolInputCommands.mouse_RB_Down = false;
+		break;
 	}
+	m_toolInputCommands.scroll_wheel_delta =
+		GET_WHEEL_DELTA_WPARAM(msg->wParam) / 120;
+
 
 	//here we update all the actual app functionality that we want.  This information will either be used int toolmain, or sent down to the renderer (Camera movement etc
 	//WASD movement

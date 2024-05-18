@@ -14,6 +14,8 @@ class Camera
 public:
 	Camera();
 	~Camera();
+	void UpdateCameraBasedOnKeyInput(const InputCommands& m_InputCommands);
+	void UpdateCameraBasedOnMouseInput(const InputCommands& m_InputCommands);
 
 	void Update(const InputCommands& input_commands);
 	XMMATRIX GetView();
@@ -21,7 +23,11 @@ public:
 public:
 	//functionality
 	float m_movespeed;
-	float m_camRotRate;
+	float m_camRotateOnPress;
+	float m_camRotateFromMouseDelta;
+
+
+	RECT m_screenRect;
 
 	//Camera State
 	Vector3 m_camPosition;
@@ -31,5 +37,10 @@ public:
 	Vector3 m_camRight;
 
 private:
+	float m_previousXNDC;
+	float m_previousYNDC;
+	void ConvertToNDC(int x, int y, float& xNDC, float& yNDC);
+
+
 	XMMATRIX m_view;
 };

@@ -11,6 +11,8 @@ struct InputCommands
 	int mouse_x;
 	int mouse_y;
 	bool mouse_LB_Down;
+	bool mouse_RB_Down;
+	short scroll_wheel_delta;
 	bool CTRL_Down;
 	bool plane_x;
 	bool plane_y;

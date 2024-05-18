@@ -23,6 +23,7 @@ Game::Game()
 	m_deviceResources->RegisterDeviceNotify(this);
 	m_displayList.clear();
 
+
 	//initial Settings
 	//modes
 	m_grid = false;
@@ -57,6 +58,7 @@ void Game::Initialize(HWND window, int width, int height)
 	CreateWindowSizeDependentResources();
 
 	GetClientRect(window, &m_ScreenDimensions);
+	camera.m_screenRect = m_ScreenDimensions;
 
 #ifdef DXTK_AUDIO
 	// Create DirectXTK for Audio objects
