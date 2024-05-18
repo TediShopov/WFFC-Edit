@@ -107,15 +107,15 @@ DirectX::XMMATRIX PostionControlHandle::GetWorldMatrix() const
 //
 void PostionControlHandle::Update()
 {
-	if (this->mainTool->m_selectedObject.size() != 1)
+	auto displayObjects = mainTool->GetSelectedDisplayObjects();
+	if (displayObjects.size() != 1)
 	{
 		this->m_render = false;
 	}
 	else
 	{
 		this->m_render = true;
-		this->parentObject = this->mainTool->m_d3dRenderer.GetDisplayObject
-		(this->mainTool->m_selectedObject[0]);
+		this->parentObject = displayObjects[0];
 	}
 }
 

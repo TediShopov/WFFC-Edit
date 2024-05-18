@@ -50,8 +50,8 @@ public:
 
 	// Function to traverse the entire tree and uncheck all items
 	void UncheckAllTreeItems(CTreeCtrl& treeCtrl);
-	SceneObject* FindSceneObject(int selectedItemId);
-	void UpdatePropertyGridSelection(const std::vector<int>* selection);
+	//SceneObject* FindSceneObject(int selectedItemId);
+	void UpdatePropertyGridSelection(std::vector<SceneObject*>* selection);
 	void UpdatePropertyGrid(SceneObject* obj);
 	afx_msg LRESULT OnTransformPropertyChanged(__in WPARAM wparam, __in LPARAM lparam);
 

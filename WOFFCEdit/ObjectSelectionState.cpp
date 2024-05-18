@@ -18,28 +18,29 @@ void ObjectSelectionState::Update(const InputCommands& commands)
 		this->MainTool->ChangeState(newTransfomrStateHacky);
 		return;
 	}
-	std::vector<int>& sel = MainTool->m_selectedObject;
+	//std::vector<int>& sel = MainTool->m_selectedObject;
+	auto sel = MainTool->GetSelectedObjects();
 	if (commands.mouse_LB_Down)
 	{
 		int selectedId =
 			MainTool->m_d3dRenderer.MousePicking();
-		if (commands.CTRL_Down == true)
+		if (selectedId == -1)
 		{
-			//Add selection to the list of selections
-			//only if it is unique
-			if (std::find(
-				sel.begin(),
-				sel.end(),
-				selectedId) == sel.end()) {
-				sel.push_back(selectedId);
-			}
+			MainTool->ClearSelection();
+			
 		}
 		else
 		{
-			//Reset selection and add newly selected
-			sel.clear();
-			if (selectedId != -1)
-				sel.push_back(selectedId);
+			if (commands.CTRL_Down == true)
+			{
+				MainTool->AddToSelection(selectedId);
+			}
+			else
+			{
+				MainTool->ClearSelection();
+				MainTool->AddToSelection(selectedId);
+			}
+			
 		}
 
 		this->MainTool->Notify(*MainTool);

@@ -27,10 +27,8 @@ void AxisBasedTransformState::Init(ToolMain* tool, const InputCommands& comms)
 {
 	this->MainTool = tool;
 	on_selection_commands = comms;
-	if (this->MainTool->m_selectedObject.size() != 1) return;
-
-	SelectedObject = this->MainTool->m_d3dRenderer.GetDisplayObject(
-		this->MainTool->m_selectedObject[0]);
+	if (this->MainTool->HasSelectedObject() == false) return;
+	SelectedObject = this->MainTool->GetSelectedDisplayObjects()[0];
 	world_axes = this->GetWorldAxes(SelectedObject);
 	world_planes = this->GetWorldPlanes(SelectedObject);
 	if (!from_handle)

@@ -21,9 +21,10 @@ void ObjectTransformState::Update(const InputCommands& input)
 {
 	AxisBasedTransformState::Update(input);
 	XMVECTOR newPosition;
-	if (this->MainTool->m_selectedObject.size() == 1)
+	auto sel = MainTool->GetSelectedObjects();
+	if (sel.size() == 1)
 	{
-		SceneObject& obj = this->MainTool->m_sceneGraph[this->MainTool->m_selectedObject[0]];
+		SceneObject* obj = sel[0];
 
 		POINT p;
 		GetCursorPos(&p);
@@ -44,11 +45,12 @@ void ObjectTransformState::Update(const InputCommands& input)
 				mouseWorldPos, plane);
 		}
 
-		obj.posX = newPosition.m128_f32[0];
-		obj.posY = newPosition.m128_f32[1];
-		obj.posZ = newPosition.m128_f32[2];
+		obj->posX = newPosition.m128_f32[0];
+		obj->posY = newPosition.m128_f32[1];
+		obj->posZ = newPosition.m128_f32[2];
+		
 		this->MainTool->m_d3dRenderer.UpdateDisplayElementTransform(
-			this->MainTool->m_selectedObject[0], &this->MainTool->m_sceneGraph);
+			sel[0]->ID - 1, &this->MainTool->m_sceneGraph);
 		//
 		this->MainTool->Notify(*this->MainTool);
 	}

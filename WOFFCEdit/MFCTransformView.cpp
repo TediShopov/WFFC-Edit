@@ -174,22 +174,18 @@ void MFCTransformView::DoDataExchange(CDataExchange* pDX)
 
 void MFCTransformView::UpdateWireFrameCheck(const ToolMain& data)
 {
-	if(data.m_selectedObject.size()!=1)
-	{
+	auto selected = this->m_toolPtr->GetSelectedDisplayObjects();
+	if(selected.size()!=1)
 		m_wireframeCheck.SetCheck(false);
-	}
 	else
-	{
-		m_wireframeCheck.SetCheck(this->m_toolPtr->m_d3dRenderer.GetDisplayObject(
-			this->m_toolPtr->m_selectedObject[0])->m_wireframe);
-			
-	}
+		m_wireframeCheck.SetCheck(selected[0]->m_wireframe);
 }
 
 void MFCTransformView::Update(const Subject<ToolMain>* subject, const ToolMain& data)
 {
 	VisualizeSelectionOnTreeCtrl(data);
-	UpdatePropertyGridSelection(&data.m_selectedObject);
+	auto selected = this->m_toolPtr->GetSelectedObjects();
+	UpdatePropertyGridSelection(&selected);
 	UpdateWireFrameCheck(data);
 }
 
@@ -204,14 +200,12 @@ END_MESSAGE_MAP()
 
 // MFCTransformView diagnostics
 
-void MFCTransformView::UpdatePropertyGridSelection(const std::vector<int>* selection)
+void MFCTransformView::UpdatePropertyGridSelection(std::vector<SceneObject*>* selection)
 {
-	SceneObject* foundObj = nullptr;
 	if (selection->size() == 1)
 	{
 		m_propertyGrid.ShowWindow(SW_SHOW);
-		foundObj = FindSceneObject((*selection)[0]);
-		UpdatePropertyGrid(foundObj);
+		UpdatePropertyGrid((*selection)[0]);
 	}
 	else
 	{
@@ -235,28 +229,24 @@ void MFCTransformView::OnClickTree(NMHDR* pNMHDR, LRESULT* pResult)
 	//MapWindowPoints(pWnd, &ht.pt, 1);
 	m_treeCtrl.ScreenToClient(&ht.pt);
 	m_treeCtrl.HitTest(&ht);
-	auto selection = &m_toolPtr->m_selectedObject;
 	if (TVHT_ONITEMSTATEICON & ht.flags)
 	{
 		CString id = m_treeCtrl.GetItemText(ht.hItem);
 
 		//Reverse as this event is called before actual update happens
 		bool nextState = !m_treeCtrl.GetCheck(ht.hItem);
+		int actualIndex = _wtoi(id) - 1;
 		if (nextState == true)
 		{
-			selection->push_back(_wtoi(id) - 1);
+			m_toolPtr->AddToSelection(actualIndex);
 		}
 		else
 		{
-			auto iter = std::find(
-				selection->begin()
-				, selection->end(),
-				_wtoi(id) - 1);
-			selection->erase(iter);
+			m_toolPtr->RemoveFromSelection(actualIndex);
 		}
 	}
-
-	UpdatePropertyGridSelection(selection);
+	auto selection = m_toolPtr->GetSelectedObjects();
+	UpdatePropertyGridSelection(&selection);
 	UpdateWireFrameCheck(*this->m_toolPtr);
 
 	// Handle multi-selection logic here
@@ -292,20 +282,20 @@ void MFCTransformView::UncheckAllTreeItems(CTreeCtrl& treeCtrl)
 	}
 }
 
-SceneObject* MFCTransformView::FindSceneObject(int selectedItemId)
-{
-	SceneObject* obj = nullptr;
-	std::vector<SceneObject>* objects = &m_toolPtr->m_sceneGraph;
-	for (SceneObject& scene_object : *objects)
-	{
-		if (scene_object.ID == selectedItemId + 1)
-		{
-			obj = &scene_object;
-			break;
-		}
-	}
-	return obj;
-}
+//SceneObject* MFCTransformView::FindSceneObject(int selectedItemId)
+//{
+//	SceneObject* obj = nullptr;
+//	std::vector<SceneObject>* objects = &m_toolPtr->m_sceneGraph;
+//	for (SceneObject& scene_object : *objects)
+//	{
+//		if (scene_object.ID == selectedItemId + 1)
+//		{
+//			obj = &scene_object;
+//			break;
+//		}
+//	}
+//	return obj;
+//}
 
 void MFCTransformView::UpdatePropertyGrid(SceneObject* obj)
 {
@@ -338,11 +328,13 @@ LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpara
 	SceneObject* foundObj = nullptr;
 	//IF property changed was string
 	//IF property changed was float
-	if (m_toolPtr->m_selectedObject.size() == 1)
+	auto sceneObjects = this->m_toolPtr->GetSelectedObjects();
+	if (sceneObjects.size() == 1)
 	{
 		m_propertyGrid.MarkModifiedProperties(1, 1);
 		m_propertyGrid.ShowWindow(SW_SHOW);
-		foundObj = FindSceneObject((m_toolPtr->m_selectedObject)[0]);
+		//foundObj = FindSceneObject((m_toolPtr->m_selectedObject)[0]);
+		foundObj = sceneObjects[0];
 		std::string s = propChanged->GetRuntimeClass()->m_lpszClassName;
 		if (s.compare("CMFCPropertyGridFileProperty") == 0)
 		{
@@ -457,7 +449,8 @@ void MFCTransformView::VisualizeSelectionOnTreeCtrl(const ToolMain& tool)
 	UncheckAllTreeItems(m_treeCtrl);
 
 	//Update selection state of the tree ctrl
-	for (int selectionId : tool.m_selectedObject)
+
+	for (int selectionId : tool.getCurrentSelectionIDs())
 	{
 		auto objectTreeMap = idToTreeItems->find(selectionId + 1);
 		if (objectTreeMap != idToTreeItems->end())
@@ -487,8 +480,8 @@ void MFCTransformView::Dump(CDumpContext& dc) const
 
 void MFCTransformView::OnBnClickedButton1()
 {
-	this->m_toolPtr->m_selectedObject.clear();
-	UpdatePropertyGridSelection(&m_toolPtr->m_selectedObject);
+	m_toolPtr->ClearSelection();
+	UpdatePropertyGridSelection(&(m_toolPtr->GetSelectedObjects()));
 	// TODO: Add your control notification handler code here
 	UncheckAllTreeItems(m_treeCtrl);
 	//	CMFCPropertyGridProperty* prop = m_propertyGrid.FindItemByData(reinterpret_cast<DWORD_PTR>(&testData));
@@ -511,11 +504,11 @@ void MFCTransformView::OnBnClickedButton2()
 
 void MFCTransformView::OnBnClickedCheck1()
 {
-	if(this->m_toolPtr->m_selectedObject.size()==1)
+	auto sel = m_toolPtr->GetSelectedDisplayObjects();
+	if(sel.size()==1)
 	{
 		bool wireframeNewState = m_wireframeCheck.GetCheck();
-		this->m_toolPtr->m_d3dRenderer.GetDisplayObject(
-			this->m_toolPtr->m_selectedObject[0])->m_wireframe =
-			wireframeNewState;
+		sel[0]->m_wireframe = wireframeNewState;
+
 	}
 }

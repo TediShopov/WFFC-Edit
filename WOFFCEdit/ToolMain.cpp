@@ -448,6 +448,57 @@ bool ToolMain::ShouldStartSelectDragging() const
 		|| m_toolInputCommands.plane_z) && m_selectedObject.size() == 1;
 }
 
+bool ToolMain::HasSelectedObject()
+{
+	return this->m_selectedObject.size() >= 1;
+}
+
+void ToolMain::ClearSelection()
+{ m_selectedObject.clear(); }
+
+std::vector<DisplayObject*> ToolMain::GetSelectedDisplayObjects()
+{
+	std::vector<DisplayObject*> selectedDisplayObjects;
+	for (int i = 0; i < m_selectedObject.size(); ++i)
+	{
+		selectedDisplayObjects.push_back(
+			this->m_d3dRenderer.GetDisplayObject(i)
+		);
+	}
+	return selectedDisplayObjects;
+	
+}
+
+std::vector<SceneObject*> ToolMain::GetSelectedObjects()
+{
+	std::vector<SceneObject*> selectedObjects;
+	for (int i = 0; i < m_selectedObject.size(); ++i)
+	{
+		selectedObjects.push_back(&m_sceneGraph[m_selectedObject[i]]);
+	}
+	return selectedObjects;
+}
+
+void ToolMain::AddToSelection(int index)
+{
+
+	if (std::find(
+		m_selectedObject.begin(),
+		m_selectedObject.end(),
+		index) == m_selectedObject.end()) {
+		this->m_selectedObject.push_back(index);
+	}
+}
+
+void ToolMain::RemoveFromSelection(int index)
+{
+	auto iter = std::find(
+		m_selectedObject.begin()
+				, m_selectedObject.end(),
+				index);
+	m_selectedObject.erase(iter);
+}
+
 void ToolMain::InitHandlesDefaults()
 {
 	//Defines a scene object that is to converted to display object

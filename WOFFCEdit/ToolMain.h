@@ -41,15 +41,22 @@ public: //variables
 	Game m_d3dRenderer; //Instance of D3D rendering system for our tool
 	ChunkObject m_chunk; //our landscape chunk
 	ToolStateBase* ToolState;
-	std::vector<int> m_selectedObject; //ID of current Selection
 	std::vector<SceneObject> m_sceneGraph; //our scenegraph storing all the objects in the current chunk
 
+	bool HasSelectedObject();
+	void ClearSelection();
+	void AddToSelection(int index);
+	void RemoveFromSelection(int index);
+	std::vector<DisplayObject*> GetSelectedDisplayObjects();
+	std::vector<SceneObject*> GetSelectedObjects();
+	
 private: //methods
 	void InitHandlesDefaults();
 	void ResetInputKeyBuffer();
 
 private: //variables
 
+	std::vector<int> m_selectedObject; //ID of current Selection
 	char m_keyArray[256];
 	bool m_handlesInitialized = false; //If handle default are already constructed
 	int m_width; //dimensions passed to directX
