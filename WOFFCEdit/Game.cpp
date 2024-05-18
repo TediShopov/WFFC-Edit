@@ -199,21 +199,21 @@ void Game::Render()
 	m_deviceResources->PIXEndEvent();
 
 	//RENDER TERRAIN
-//	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
-//	context->OMSetDepthStencilState(m_states->DepthDefault(), 0);
-//	context->RSSetState(m_states->CullNone());
-//	//context->RSSetState(m_states->Wireframe());		//uncomment for wireframe
-//
-//	//Render the batch,  This is handled in the Display chunk becuase it has the potential to get complex
+	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
+	context->OMSetDepthStencilState(m_states->DepthDefault(), 0);
+	context->RSSetState(m_states->CullNone());
+	//context->RSSetState(m_states->Wireframe());		//uncomment for wireframe
+
+	//Render the batch,  This is handled in the Display chunk becuase it has the potential to get complex
 	m_displayChunk.RenderBatch(m_deviceResources);
 
 	//m_handlesEffect->Apply(context);
-//	for (const DisplayObject* handle : m_displayHandlesList)
-//	{
-//		//context->OMSetBlendState(m_states->Additive(), nullptr, 0xFFFFFFFF);
-//
-//		RenderDisplayObjectOnTop(*handle);
-//	}
+	for (const DisplayObject* handle : m_displayHandlesList)
+	{
+		//context->OMSetBlendState(m_states->Additive(), nullptr, 0xFFFFFFFF);
+
+		RenderDisplayObjectOnTop(*handle);
+	}
 	m_deviceResources->Present();
 }
 
@@ -321,51 +321,50 @@ void Game::OnWindowSizeChanged(int width, int height)
 	CreateWindowSizeDependentResources();
 }
 
-void Game::UpdateDisplayElementTransform(int i, std::vector<SceneObject>* SceneGraph)
+void Game::UpdateDisplayElementTransform(int i, SceneObject* sceneObject)
 {
-	DisplayObject& newDisplayObject = *this->m_displayList[i];
-	newDisplayObject.m_position.x = SceneGraph->at(i).posX;
-	newDisplayObject.m_position.y = SceneGraph->at(i).posY;
-	newDisplayObject.m_position.z = SceneGraph->at(i).posZ;
+	DisplayObject& newDisplayObject = *GetDisplayObject(i);
+	newDisplayObject.m_position.x = sceneObject->posX;
+	newDisplayObject.m_position.y = sceneObject->posY;
+	newDisplayObject.m_position.z = sceneObject->posZ;
 
 	//setorientation
-	newDisplayObject.m_orientation.x = SceneGraph->at(i).rotX;
-	newDisplayObject.m_orientation.y = SceneGraph->at(i).rotY;
-	newDisplayObject.m_orientation.z = SceneGraph->at(i).rotZ;
+	newDisplayObject.m_orientation.x = sceneObject->rotX;
+	newDisplayObject.m_orientation.y = sceneObject->rotY;
+	newDisplayObject.m_orientation.z = sceneObject->rotZ;
 
 	//set scale
-	newDisplayObject.m_scale.x = SceneGraph->at(i).scaX;
-	newDisplayObject.m_scale.y = SceneGraph->at(i).scaY;
-	newDisplayObject.m_scale.z = SceneGraph->at(i).scaZ;
+	newDisplayObject.m_scale.x = sceneObject->scaX;
+	newDisplayObject.m_scale.y = sceneObject->scaY;
+	newDisplayObject.m_scale.z = sceneObject->scaZ;
 
 	//set wireframe / render flags
-	newDisplayObject.m_render = SceneGraph->at(i).editor_render;
-	newDisplayObject.m_wireframe = SceneGraph->at(i).editor_wireframe;
+	newDisplayObject.m_render = sceneObject->editor_render;
+	newDisplayObject.m_wireframe = sceneObject->editor_wireframe;
 
-	newDisplayObject.m_light_type = SceneGraph->at(i).light_type;
-	newDisplayObject.m_light_diffuse_r = SceneGraph->at(i).light_diffuse_r;
-	newDisplayObject.m_light_diffuse_g = SceneGraph->at(i).light_diffuse_g;
-	newDisplayObject.m_light_diffuse_b = SceneGraph->at(i).light_diffuse_b;
-	newDisplayObject.m_light_specular_r = SceneGraph->at(i).light_specular_r;
-	newDisplayObject.m_light_specular_g = SceneGraph->at(i).light_specular_g;
-	newDisplayObject.m_light_specular_b = SceneGraph->at(i).light_specular_b;
-	newDisplayObject.m_light_spot_cutoff = SceneGraph->at(i).light_spot_cutoff;
-	newDisplayObject.m_light_constant = SceneGraph->at(i).light_constant;
-	newDisplayObject.m_light_linear = SceneGraph->at(i).light_linear;
-	newDisplayObject.m_light_quadratic = SceneGraph->at(i).light_quadratic;
+	newDisplayObject.m_light_type = sceneObject->light_type;
+	newDisplayObject.m_light_diffuse_r = sceneObject->light_diffuse_r;
+	newDisplayObject.m_light_diffuse_g = sceneObject->light_diffuse_g;
+	newDisplayObject.m_light_diffuse_b = sceneObject->light_diffuse_b;
+	newDisplayObject.m_light_specular_r = sceneObject->light_specular_r;
+	newDisplayObject.m_light_specular_g = sceneObject->light_specular_g;
+	newDisplayObject.m_light_specular_b = sceneObject->light_specular_b;
+	newDisplayObject.m_light_spot_cutoff = sceneObject->light_spot_cutoff;
+	newDisplayObject.m_light_constant = sceneObject->light_constant;
+	newDisplayObject.m_light_linear = sceneObject->light_linear;
+	newDisplayObject.m_light_quadratic = sceneObject->light_quadratic;
 }
 
-bool Game::UpdateDisplayElmentModel(int index, std::vector<SceneObject>* SceneGraph)
+bool Game::UpdateDisplayElmentModel(int index, SceneObject* sceneObject)
 {
 	//Rearead model and texture
 
 	DisplayObject& newDisplayObject = *this->m_displayList[index];
-	auto sceneObject = SceneGraph->at(index);
 
 	auto device = m_deviceResources->GetD3DDevice();
 	//load model
 	std::wstring modelwstr =
-		StringToWCHART(sceneObject.model_path); //convect string to Wchar
+		StringToWCHART(sceneObject->model_path); //convect string to Wchar
 	try
 	{
 		newDisplayObject.m_model =
@@ -384,7 +383,7 @@ bool Game::UpdateDisplayElmentModel(int index, std::vector<SceneObject>* SceneGr
 
 	//Load Texture
 	std::wstring texturewstr =
-		StringToWCHART(sceneObject.tex_diffuse_path); //convect string to Wchar
+		StringToWCHART(sceneObject->tex_diffuse_path); //convect string to Wchar
 	HRESULT rs;
 	rs = CreateDDSTextureFromFile(
 		device,
@@ -672,7 +671,13 @@ int Game::AddVisualHandle(ControlHandle* display_object)
 
 DisplayObject* Game::GetDisplayObject(int index)
 {
-	return this->m_displayList[index];
+
+	for (int i = 0; i < m_displayList.size(); ++i)
+	{
+		if(m_displayList[i]->m_ID == index)
+			return m_displayList[i];
+	}
+	return nullptr;
 }
 
 void Game::RemoveDisplayObject(int index)
@@ -920,7 +925,7 @@ int Game::MousePicking(const std::vector<DisplayObject*>& objectList) const
 				if (pickedDistance < closestPickedDistance)
 				{
 					closestPickedDistance = pickedDistance;
-					selectedID = i;
+					selectedID = objectList[i]->m_ID;
 				}
 			}
 		}

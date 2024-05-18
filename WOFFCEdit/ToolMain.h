@@ -45,8 +45,8 @@ public: //variables
 
 	bool HasSelectedObject();
 	void ClearSelection();
-	void AddToSelection(int index);
-	void RemoveFromSelection(int index);
+	void AddToSelection(int id);
+	void RemoveFromSelection(int id);
 	std::vector<DisplayObject*> GetSelectedDisplayObjects();
 	std::vector<SceneObject*> GetSelectedObjects();
 
@@ -57,6 +57,8 @@ public: //variables
 private: //methods
 	void InitHandlesDefaults();
 	void ResetInputKeyBuffer();
+
+	SceneObject* GetById(int ID) ;
 
 private: //variables
 

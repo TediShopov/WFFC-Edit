@@ -62,8 +62,8 @@ public:
 	DisplayObject* GetDisplayObject(int index);
 
 	//Synchronisation between scene object and display object
-	void UpdateDisplayElementTransform(int index, std::vector<SceneObject>* SceneGraph);
-	bool UpdateDisplayElmentModel(int index, std::vector<SceneObject>* SceneGraph);
+	void UpdateDisplayElementTransform(int index, SceneObject* sceneObj);
+	bool UpdateDisplayElmentModel(int index, SceneObject* sceneObj);
 
 	//Tool Control Handles
 	std::vector<DisplayObject*> GetHandles();

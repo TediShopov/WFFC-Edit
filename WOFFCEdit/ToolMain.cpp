@@ -462,7 +462,7 @@ std::vector<DisplayObject*> ToolMain::GetSelectedDisplayObjects()
 	for (int i = 0; i < m_selectedObject.size(); ++i)
 	{
 		selectedDisplayObjects.push_back(
-			this->m_d3dRenderer.GetDisplayObject(i)
+			this->m_d3dRenderer.GetDisplayObject(m_selectedObject[i])
 		);
 	}
 	return selectedDisplayObjects;
@@ -474,35 +474,46 @@ std::vector<SceneObject*> ToolMain::GetSelectedObjects()
 	std::vector<SceneObject*> selectedObjects;
 	for (int i = 0; i < m_selectedObject.size(); ++i)
 	{
-		selectedObjects.push_back(&m_sceneGraph[m_selectedObject[i]]);
+		selectedObjects.push_back(GetById(m_selectedObject[i]));
 	}
 	return selectedObjects;
 }
 
 void ToolMain::SyncDisplayAndSceneObjects(int i)
 {
-	this->m_d3dRenderer.UpdateDisplayElementTransform(i, &m_sceneGraph);
-	this->m_d3dRenderer.UpdateDisplayElmentModel(i, &m_sceneGraph);
+	this->m_d3dRenderer.UpdateDisplayElementTransform(i, GetById(i));
+	this->m_d3dRenderer.UpdateDisplayElmentModel(i, GetById(i));
 }
 
-void ToolMain::AddToSelection(int index)
+void ToolMain::AddToSelection(int id)
 {
 
-	if (std::find(
-		m_selectedObject.begin(),
-		m_selectedObject.end(),
-		index) == m_selectedObject.end()) {
-		this->m_selectedObject.push_back(index);
+	if(this->GetById(id) != nullptr)
+	{
+		if (std::find(
+			m_selectedObject.begin(),
+			m_selectedObject.end(),
+			id) == m_selectedObject.end()) {
+			this->m_selectedObject.push_back(id);
+		}
 	}
+	
+
+
+
+
 }
 
-void ToolMain::RemoveFromSelection(int index)
+void ToolMain::RemoveFromSelection(int id)
 {
-	auto iter = std::find(
-		m_selectedObject.begin()
-				, m_selectedObject.end(),
-				index);
-	m_selectedObject.erase(iter);
+	if (this->GetById(id) != nullptr)
+	{
+		auto iter = std::find(
+			m_selectedObject.begin()
+			, m_selectedObject.end(),
+			id);
+		m_selectedObject.erase(iter);
+	}
 }
 
 void ToolMain::InitHandlesDefaults()
@@ -563,4 +574,14 @@ void ToolMain::ResetInputKeyBuffer()
 	{
 		m_keyArray[i] = false;
 	}
+}
+
+SceneObject* ToolMain::GetById(int ID) 
+{
+	for (int i = 0; i < m_sceneGraph.size(); ++i)
+	{
+		if(m_sceneGraph[i].ID == ID)
+			return &m_sceneGraph[i];
+	}
+	return nullptr;
 }

@@ -40,6 +40,7 @@ void ObjectTransformState::Update(const InputCommands& input)
 				mouseWorldPos, plane, axis);
 		}
 		else
+
 		{
 			newPosition = MoveOnPlane(
 				mouseWorldPos, plane);
@@ -49,9 +50,7 @@ void ObjectTransformState::Update(const InputCommands& input)
 		obj->posY = newPosition.m128_f32[1];
 		obj->posZ = newPosition.m128_f32[2];
 		
-		this->MainTool->m_d3dRenderer.UpdateDisplayElementTransform(
-			sel[0]->ID-1, &this->MainTool->m_sceneGraph);
-		//
+		this->MainTool->SyncDisplayAndSceneObjects(sel[0]->ID);
 		this->MainTool->Notify(*this->MainTool);
 	}
 	else

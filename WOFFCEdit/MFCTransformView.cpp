@@ -235,7 +235,7 @@ void MFCTransformView::OnClickTree(NMHDR* pNMHDR, LRESULT* pResult)
 
 		//Reverse as this event is called before actual update happens
 		bool nextState = !m_treeCtrl.GetCheck(ht.hItem);
-		int actualIndex = _wtoi(id) - 1;
+		int actualIndex = _wtoi(id);
 		if (nextState == true)
 		{
 			m_toolPtr->AddToSelection(actualIndex);
@@ -354,7 +354,7 @@ LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpara
 
 			(*d) =relative_path;
 			(*foundObj) = sceneObjectCopy;
-			m_toolPtr->SyncDisplayAndSceneObjects(foundObj->ID - 1);
+			m_toolPtr->SyncDisplayAndSceneObjects(foundObj->ID );
 		}
 		else
 		{
@@ -362,7 +362,7 @@ LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpara
 			auto test = propChanged->GetValue();
 			(*d) = test.fltVal;
 			(*foundObj) = sceneObjectCopy;
-			m_toolPtr->SyncDisplayAndSceneObjects(foundObj->ID - 1);
+			m_toolPtr->SyncDisplayAndSceneObjects(foundObj->ID);
 		}
 	}
 	return TRUE;
@@ -446,7 +446,7 @@ void MFCTransformView::VisualizeSelectionOnTreeCtrl(const ToolMain& tool)
 
 	for (int selectionId : tool.getCurrentSelectionIDs())
 	{
-		auto objectTreeMap = idToTreeItems->find(selectionId + 1);
+		auto objectTreeMap = idToTreeItems->find(selectionId);
 		if (objectTreeMap != idToTreeItems->end())
 		{
 			HTREEITEM& treeitem = objectTreeMap->second;
