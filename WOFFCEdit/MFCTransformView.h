@@ -39,6 +39,7 @@ public:
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX); // DDX/DDV support
+	void UpdateWireFrameCheck(const ToolMain& data);
 	void Update(const Subject<ToolMain>* subject, const ToolMain& data) override;
 
 	DECLARE_MESSAGE_MAP()
@@ -56,6 +57,7 @@ public:
 
 	CTreeCtrl m_treeCtrl;
 	CMFCPropertyGridCtrl m_propertyGrid;
+	CButton m_wireframeCheck;
 	afx_msg void OnBnClickedButton1();
 	CMFCPropertyGridProperty* CreateFloatProp(
 		const CString name, float* data);
@@ -70,4 +72,5 @@ private:
 public:
 	afx_msg void OnBnClickedButton3();
 	afx_msg void OnBnClickedButton2();
+	afx_msg void OnBnClickedCheck1();
 };

@@ -553,7 +553,7 @@ void Game::RenderDisplayObject(const DisplayObject& obj) const
 	XMMATRIX world =
 		m_world * obj.GetWorldMatrix();
 
-	obj.m_model->Draw(context, *m_states, world, m_view, m_projection, false);
+	obj.m_model->Draw(context, *m_states, world, m_view, m_projection, obj.m_wireframe);
 	//last variable in draw,  make TRUE for wireframe
 
 	m_deviceResources->PIXEndEvent();

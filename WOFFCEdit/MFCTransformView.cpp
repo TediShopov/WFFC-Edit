@@ -10,6 +10,8 @@
 // MFCTransformView
 #define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
 #include <experimental/filesystem>
+
+#include "DisplayObject.h"
 namespace fs = std::experimental::filesystem;
 IMPLEMENT_DYNCREATE(MFCTransformView, CFormView)
 
@@ -166,13 +168,29 @@ void MFCTransformView::DoDataExchange(CDataExchange* pDX)
 {
 	CFormView::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_TREE1, m_treeCtrl);
+	DDX_Control(pDX, IDC_CHECK1, m_wireframeCheck);
 	DDX_Control(pDX, IDC_MFCPROPERTYGRID2, m_propertyGrid);
+}
+
+void MFCTransformView::UpdateWireFrameCheck(const ToolMain& data)
+{
+	if(data.m_selectedObject.size()!=1)
+	{
+		m_wireframeCheck.SetCheck(false);
+	}
+	else
+	{
+		m_wireframeCheck.SetCheck(this->m_toolPtr->m_d3dRenderer.GetDisplayObject(
+			this->m_toolPtr->m_selectedObject[0])->m_wireframe);
+			
+	}
 }
 
 void MFCTransformView::Update(const Subject<ToolMain>* subject, const ToolMain& data)
 {
 	VisualizeSelectionOnTreeCtrl(data);
 	UpdatePropertyGridSelection(&data.m_selectedObject);
+	UpdateWireFrameCheck(data);
 }
 
 BEGIN_MESSAGE_MAP(MFCTransformView, CFormView)
@@ -181,6 +199,7 @@ BEGIN_MESSAGE_MAP(MFCTransformView, CFormView)
 	ON_REGISTERED_MESSAGE(AFX_WM_PROPERTY_CHANGED, &MFCTransformView::OnTransformPropertyChanged)
 	ON_BN_CLICKED(IDC_BUTTON3, &MFCTransformView::OnBnClickedButton3)
 	ON_BN_CLICKED(IDC_BUTTON2, &MFCTransformView::OnBnClickedButton2)
+	ON_BN_CLICKED(IDC_CHECK1, &MFCTransformView::OnBnClickedCheck1)
 END_MESSAGE_MAP()
 
 // MFCTransformView diagnostics
@@ -238,6 +257,7 @@ void MFCTransformView::OnClickTree(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 
 	UpdatePropertyGridSelection(selection);
+	UpdateWireFrameCheck(*this->m_toolPtr);
 
 	// Handle multi-selection logic here
 	*pResult = 0;
@@ -486,4 +506,16 @@ void MFCTransformView::OnBnClickedButton3()
 void MFCTransformView::OnBnClickedButton2()
 {
 	this->m_toolPtr->CreateObject();
+}
+
+
+void MFCTransformView::OnBnClickedCheck1()
+{
+	if(this->m_toolPtr->m_selectedObject.size()==1)
+	{
+		bool wireframeNewState = m_wireframeCheck.GetCheck();
+		this->m_toolPtr->m_d3dRenderer.GetDisplayObject(
+			this->m_toolPtr->m_selectedObject[0])->m_wireframe =
+			wireframeNewState;
+	}
 }
