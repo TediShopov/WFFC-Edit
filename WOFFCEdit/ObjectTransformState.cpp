@@ -4,13 +4,15 @@
 #include "ToolMain.h"
 #include  "PostionControlHandle.h"
 
+#include "Camera.h"
+
 ObjectTransformState::ObjectTransformState()
-	:AxisBasedTransformState()
+	: AxisBasedTransformState()
 {
 }
 
 ObjectTransformState::ObjectTransformState(AXES axisType, bool a)
-	:AxisBasedTransformState(axisType)
+	: AxisBasedTransformState(axisType)
 {
 	this->move_on_axis = a;
 }
@@ -127,7 +129,7 @@ XMVECTOR ObjectTransformState::MoveOnPlane(XMVECTOR mouseWorldRay, XMVECTOR plan
 {
 	XMVECTOR intersectionPos = XMPlaneIntersectLine(
 		plane,
-		this->MainTool->m_d3dRenderer.m_camPosition,
+		this->MainTool->m_d3dRenderer.camera.m_camPosition,
 		mouseWorldRay
 	);
 	return intersectionPos;

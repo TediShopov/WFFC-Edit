@@ -12,6 +12,9 @@
 #include "InputCommands.h"
 #include <vector>
 
+#include "Camera.h"
+
+class Camera;
 //FORWARD DECLARATIONS
 class ControlHandle;
 class DisplayObject;
@@ -77,13 +80,8 @@ public:
 	DirectX::XMVECTOR GetWorldRay(float screen_x, float screen_y, float distance);
 	DirectX::XMMATRIX GetObjectLocalMatrix(int i) const;
 
-	//camera
-	DirectX::SimpleMath::Vector3 m_camPosition;
-	DirectX::SimpleMath::Vector3 m_camOrientation;
-	DirectX::SimpleMath::Vector3 m_camLookAt;
-	DirectX::SimpleMath::Vector3 m_camLookDirection;
-	DirectX::SimpleMath::Vector3 m_camRight;
 
+	Camera camera;
 	RECT m_ScreenDimensions;
 
 #ifdef DXTK_AUDIO
@@ -107,10 +105,6 @@ private:
 
 	std::unique_ptr<DirectX::BasicEffect> m_handlesEffect;
 
-	//functionality
-	float m_movespeed;
-
-	float m_camRotRate;
 
 	//control variables
 	bool m_grid; //grid rendering on / off
@@ -119,6 +113,7 @@ private:
 
 	// Rendering loop timer.
 	DX::StepTimer m_timer;
+
 
 	// Input devices.
 	std::unique_ptr<DirectX::GamePad> m_gamePad;

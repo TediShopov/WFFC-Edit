@@ -26,35 +26,6 @@ Game::Game()
 	//initial Settings
 	//modes
 	m_grid = false;
-
-	//functional
-	m_movespeed = 0.30;
-	m_camRotRate = 3.0;
-
-	//camera
-	m_camPosition.x = 0.0f;
-	m_camPosition.y = 3.7f;
-	m_camPosition.z = -3.5f;
-
-	m_camOrientation.x = 0;
-	m_camOrientation.y = 0;
-	m_camOrientation.z = 0;
-
-	m_camLookAt.x = 0.0f;
-	m_camLookAt.y = 0.0f;
-	m_camLookAt.z = 0.0f;
-
-	m_camLookDirection.x = 0.0f;
-	m_camLookDirection.y = 0.0f;
-	m_camLookDirection.z = 0.0f;
-
-	m_camRight.x = 0.0f;
-	m_camRight.y = 0.0f;
-	m_camRight.z = 0.0f;
-
-	m_camOrientation.x = 0.0f;
-	m_camOrientation.y = 0.0f;
-	m_camOrientation.z = 0.0f;
 }
 
 Game::~Game()
@@ -146,52 +117,10 @@ void Game::Tick(InputCommands* Input)
 }
 
 // Updates the world.
-void Game::Update(DX::StepTimer const& timer)
+void Game::Update(const DX::StepTimer& timer)
 {
-	//TODO  any more complex than this, and the camera should be abstracted out to somewhere else
-	//camera motion is on a plane, so kill the 7 component of the look direction
-	Vector3 planarMotionVector = m_camLookDirection;
-	planarMotionVector.y = 0.0;
-	if (m_InputCommands.rotRight)
-	{
-		m_camOrientation.y -= m_camRotRate;
-	}
-	if (m_InputCommands.rotLeft)
-	{
-		m_camOrientation.y += m_camRotRate;
-	}
-
-	//create look direction from Euler angles in m_camOrientation
-	m_camLookDirection.x = sin((m_camOrientation.y) * 3.1415 / 180);
-	m_camLookDirection.z = cos((m_camOrientation.y) * 3.1415 / 180);
-	m_camLookDirection.Normalize();
-
-	//create right vector from look Direction
-	m_camLookDirection.Cross(Vector3::UnitY, m_camRight);
-
-	//process input and update stuff
-	if (m_InputCommands.forward)
-	{
-		m_camPosition += m_camLookDirection * m_movespeed;
-	}
-	if (m_InputCommands.back)
-	{
-		m_camPosition -= m_camLookDirection * m_movespeed;
-	}
-	if (m_InputCommands.right)
-	{
-		m_camPosition += m_camRight * m_movespeed;
-	}
-	if (m_InputCommands.left)
-	{
-		m_camPosition -= m_camRight * m_movespeed;
-	}
-
-	//update lookat point
-	m_camLookAt = m_camPosition + m_camLookDirection;
-
-	//apply camera vectors
-	m_view = Matrix::CreateLookAt(m_camPosition, m_camLookAt, Vector3::UnitY);
+	camera.Update(m_InputCommands);
+	m_view = camera.GetView();
 
 	m_batchEffect->SetView(m_view);
 	m_batchEffect->SetWorld(Matrix::Identity);
@@ -250,11 +179,11 @@ void Game::Render()
 		DrawGrid(xaxis, yaxis, g_XMZero, 512, 512, Colors::Gray);
 	}
 	//CAMERA POSITION ON HUD
-	m_sprites->Begin();
-	WCHAR Buffer[256];
-	std::wstring var = L"Cam X: " + std::to_wstring(m_camPosition.x) + L"Cam Z: " + std::to_wstring(m_camPosition.z);
-	m_font->DrawString(m_sprites.get(), var.c_str(), XMFLOAT2(100, 10), Colors::Yellow);
-	m_sprites->End();
+	//	m_sprites->Begin();
+	//	WCHAR Buffer[256];
+	//	std::wstring var = L"Cam X: " + std::to_wstring(m_camPosition.x) + L"Cam Z: " + std::to_wstring(m_camPosition.z);
+	//	m_font->DrawString(m_sprites.get(), var.c_str(), XMFLOAT2(100, 10), Colors::Yellow);
+	//	m_sprites->End();
 
 	//RENDER DISPLAY HANDLES
 	//RENDER OBJECTS FROM SCENEGRAPH
@@ -429,31 +358,29 @@ bool Game::UpdateDisplayElmentModel(int index, std::vector<SceneObject>* SceneGr
 
 	DisplayObject& newDisplayObject = *this->m_displayList[index];
 	auto sceneObject = SceneGraph->at(index);
-	
+
 	auto device = m_deviceResources->GetD3DDevice();
 	//load model
-	std::wstring modelwstr = 
+	std::wstring modelwstr =
 		StringToWCHART(sceneObject.model_path); //convect string to Wchar
 	try
 	{
-	newDisplayObject.m_model = 
-		Model::CreateFromCMO(
-			device,
-			modelwstr.c_str(),
-			*m_fxFactory,
-			true);
-		
+		newDisplayObject.m_model =
+			Model::CreateFromCMO(
+				device,
+				modelwstr.c_str(),
+				*m_fxFactory,
+				true);
 	}
 	catch (...)
 	{
 		//Loading model failed
 		return false;
-
 	}
 	//get DXSDK to load model "False" for LH coordinate system (maya)
 
 	//Load Texture
-	std::wstring texturewstr = 
+	std::wstring texturewstr =
 		StringToWCHART(sceneObject.tex_diffuse_path); //convect string to Wchar
 	HRESULT rs;
 	rs = CreateDDSTextureFromFile(
@@ -467,12 +394,11 @@ bool Game::UpdateDisplayElmentModel(int index, std::vector<SceneObject>* SceneGr
 	if (rs)
 	{
 		CreateDDSTextureFromFile(device,
-			L"database/data/Error.dds",
-			nullptr,
-			&newDisplayObject.m_texture_diffuse);
+		                         L"database/data/Error.dds",
+		                         nullptr,
+		                         &newDisplayObject.m_texture_diffuse);
 		//load tex into Shader resource
 	}
-
 
 
 	newDisplayObject.m_model->UpdateEffects(
@@ -493,7 +419,6 @@ bool Game::UpdateDisplayElmentModel(int index, std::vector<SceneObject>* SceneGr
 		});
 
 	return true;
-
 }
 
 void Game::CreateHandleObject(DisplayObject* newDisplayObject, std::string model_path,
@@ -541,7 +466,7 @@ void Game::CreateHandleObject(DisplayObject* newDisplayObject, std::string model
 DisplayObject* Game::CreateDisplayObject(const SceneObject* object) const
 {
 	//create a temp display object that we will populate then append to the display list.
-	DisplayObject* newDisplayObject = new DisplayObject();
+	auto newDisplayObject = new DisplayObject();
 	auto device = m_deviceResources->GetD3DDevice();
 
 	//load model
@@ -793,14 +718,14 @@ void Game::CreateDeviceDependentResources()
 	m_handlesEffect->SetLightingEnabled(false);
 	m_handlesEffect->SetTextureEnabled(false);
 	{
-		void const* shaderByteCode;
+		const void* shaderByteCode;
 		size_t byteCodeLength;
 
 		m_handlesEffect->GetVertexShaderBytecode(&shaderByteCode, &byteCodeLength);
 	}
 
 	{
-		void const* shaderByteCode;
+		const void* shaderByteCode;
 		size_t byteCodeLength;
 
 		m_batchEffect->GetVertexShaderBytecode(&shaderByteCode, &byteCodeLength);
@@ -913,7 +838,7 @@ std::wstring StringToWCHART(std::string s)
 	int len;
 	int slength = (int)s.length() + 1;
 	len = MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, 0, 0);
-	wchar_t* buf = new wchar_t[len];
+	auto buf = new wchar_t[len];
 	MultiByteToWideChar(CP_ACP, 0, s.c_str(), slength, buf, len);
 	std::wstring r(buf);
 	delete[] buf;
