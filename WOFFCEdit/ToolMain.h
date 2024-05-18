@@ -49,7 +49,11 @@ public: //variables
 	void RemoveFromSelection(int index);
 	std::vector<DisplayObject*> GetSelectedDisplayObjects();
 	std::vector<SceneObject*> GetSelectedObjects();
-	
+
+	//Synchronize Diplsay and scene objects
+
+	void SyncDisplayAndSceneObjects(int i);
+
 private: //methods
 	void InitHandlesDefaults();
 	void ResetInputKeyBuffer();

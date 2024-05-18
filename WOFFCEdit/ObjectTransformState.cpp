@@ -50,7 +50,7 @@ void ObjectTransformState::Update(const InputCommands& input)
 		obj->posZ = newPosition.m128_f32[2];
 		
 		this->MainTool->m_d3dRenderer.UpdateDisplayElementTransform(
-			sel[0]->ID - 1, &this->MainTool->m_sceneGraph);
+			sel[0]->ID-1, &this->MainTool->m_sceneGraph);
 		//
 		this->MainTool->Notify(*this->MainTool);
 	}

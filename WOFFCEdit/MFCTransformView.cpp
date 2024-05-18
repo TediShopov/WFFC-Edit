@@ -354,13 +354,7 @@ LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpara
 
 			(*d) =relative_path;
 			(*foundObj) = sceneObjectCopy;
-
-
-
-			m_toolPtr->m_d3dRenderer.UpdateDisplayElmentModel(
-				foundObj->ID - 1, &m_toolPtr->m_sceneGraph
-			);
-
+			m_toolPtr->SyncDisplayAndSceneObjects(foundObj->ID - 1);
 		}
 		else
 		{
@@ -368,10 +362,7 @@ LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpara
 			auto test = propChanged->GetValue();
 			(*d) = test.fltVal;
 			(*foundObj) = sceneObjectCopy;
-			m_toolPtr->m_d3dRenderer.
-			           UpdateDisplayElementTransform(
-				           foundObj->ID - 1, &m_toolPtr->m_sceneGraph
-			           );
+			m_toolPtr->SyncDisplayAndSceneObjects(foundObj->ID - 1);
 		}
 	}
 	return TRUE;
@@ -427,6 +418,9 @@ void MFCTransformView::VisualizeSelectionOnTreeCtrl(const ToolMain& tool)
 		for (const SceneObject& element : sceneCopy)
 		{
 			if (element.parent_id == 0)
+
+
+
 			{
 				HTREEITEM treeitem = m_treeCtrl.InsertItem(std::to_wstring(element.ID).c_str());
 				idToTreeItems->insert({element.ID, treeitem});

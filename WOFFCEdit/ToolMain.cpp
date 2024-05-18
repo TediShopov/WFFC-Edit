@@ -479,6 +479,12 @@ std::vector<SceneObject*> ToolMain::GetSelectedObjects()
 	return selectedObjects;
 }
 
+void ToolMain::SyncDisplayAndSceneObjects(int i)
+{
+	this->m_d3dRenderer.UpdateDisplayElementTransform(i, &m_sceneGraph);
+	this->m_d3dRenderer.UpdateDisplayElmentModel(i, &m_sceneGraph);
+}
+
 void ToolMain::AddToSelection(int index)
 {
 
