@@ -91,7 +91,9 @@ PostionControlHandle::PostionControlHandle(AXES axesType, AXES axesTypeTwo, Tool
 DirectX::XMMATRIX PostionControlHandle::GetWorldMatrix() const
 {
 	const DirectX::XMVECTORF32 scale = { this->m_scale.x, this->m_scale.y, this->m_scale.z };
-	const DirectX::XMVECTORF32 translate = { this->m_position.x, this->m_position.y, this->m_position.z };
+	const DirectX::XMVECTORF32 translate = 
+
+	{ this->m_position.x, this->m_position.y, this->m_position.z };
 
 	DirectX::XMMATRIX local =
 		XMMatrixTransformation(
@@ -100,7 +102,18 @@ DirectX::XMMATRIX PostionControlHandle::GetWorldMatrix() const
 			scale, DirectX::g_XMZero, Rotation, translate);
 	if (this->parentObject != nullptr)
 	{
-		return   local * this->parentObject->GetWorldMatrix();
+
+		XMMATRIX compositeMatrix =  this->parentObject->GetWorldMatrix();
+		//An operation to remove the scaling of the matrix
+		XMVECTOR col0 = XMVector3Normalize(compositeMatrix.r[0]);
+		XMVECTOR col1 = XMVector3Normalize(compositeMatrix.r[1]);
+		XMVECTOR col2 = XMVector3Normalize(compositeMatrix.r[2]);
+		compositeMatrix = XMMATRIX(col0, col1, col2, compositeMatrix.r[3]);
+		return local * compositeMatrix;
+
+
+
+
 	}
 	return local;
 }

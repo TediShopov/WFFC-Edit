@@ -189,6 +189,9 @@ void Game::Render()
 
 	//RENDER DISPLAY HANDLES
 	//RENDER OBJECTS FROM SCENEGRAPH
+	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
+	context->OMSetDepthStencilState(m_states->DepthDefault(), 0);
+	context->RSSetState(m_states->CullNone());
 	int numRenderObjects = m_displayList.size();
 	for (int i = 0; i < numRenderObjects; i++)
 	{
@@ -198,9 +201,6 @@ void Game::Render()
 	m_deviceResources->PIXEndEvent();
 
 	//RENDER TERRAIN
-	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
-	context->OMSetDepthStencilState(m_states->DepthDefault(), 0);
-	context->RSSetState(m_states->CullNone());
 	//context->RSSetState(m_states->Wireframe());		//uncomment for wireframe
 
 	//Render the batch,  This is handled in the Display chunk becuase it has the potential to get complex
@@ -316,8 +316,6 @@ void Game::OnWindowSizeChanged(int width, int height)
 {
 	if (!m_deviceResources->WindowSizeChanged(width, height))
 		return;
-
-	CreateWindowSizeDependentResources();
 }
 
 void Game::UpdateDisplayElementTransform(int i, SceneObject* sceneObject)
