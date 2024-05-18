@@ -26,6 +26,8 @@ public: //methods
 
 	afx_msg void onActionSave(); //save the current chunk
 	afx_msg void onActionSaveTerrain(); //save chunk geometry
+	void DeleteSelected();
+	void CreateObject();
 
 	void ChangeState(ToolStateBase* newState);
 	void Notify(const ToolMain& data) override;

@@ -51,6 +51,7 @@ public:
 	DisplayObject* CreateDisplayObject(const SceneObject* object) const;
 	//tool specific
 	void RenderDisplayObject(const DisplayObject& obj) const;
+	bool arcBallMode;
 	void RenderDisplayObjectOnTop(const DisplayObject& obj) const;
 	void BuildDisplayList(std::vector<SceneObject>* SceneGraph); //note vector passed by reference
 	void BuildDisplayHierarchy(std::vector<SceneObject>* SceneGraph);

@@ -1,7 +1,6 @@
 ﻿C:\Program Files\Microsoft Visual Studio\2022\Community\MSBuild\Microsoft\VC\v170\Microsoft.CppBuild.targets(531,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (Win32SimpleSample.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   Camera.cpp
 D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Camera.cpp(8,16): warning C4305: '=': truncation from 'double' to 'float'
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Camera.cpp(104,68): warning C4244: '+=': conversion from 'double' to 'float', possible loss of data
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Camera.cpp(161,20): warning C4244: 'initializing': conversion from 'LONG' to 'float', possible loss of data
-D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Camera.cpp(162,21): warning C4244: 'initializing': conversion from 'LONG' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Camera.cpp(174,20): warning C4244: 'initializing': conversion from 'LONG' to 'float', possible loss of data
+D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Camera.cpp(175,21): warning C4244: 'initializing': conversion from 'LONG' to 'float', possible loss of data
   Win32SimpleSample.vcxproj -> D:\UniveristyProjects\CMP405\WFFC-Edit\WOFFCEdit\Debug\WoFEdit.exe

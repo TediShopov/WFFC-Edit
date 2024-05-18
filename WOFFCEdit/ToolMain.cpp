@@ -292,11 +292,9 @@ void ToolMain::onActionSaveTerrain()
 	m_d3dRenderer.SaveDisplayChunk(&m_chunk);
 }
 
-void ToolMain::Tick(MSG* msg)
+void ToolMain::DeleteSelected()
 {
-	//Put the selected object as handles transform
-
-	if (m_toolInputCommands.deleteSelected && this->m_selectedObject.size() >= 1)
+	if(this->m_selectedObject.size() >= 1)
 	{
 		for (int i = 0; i < m_selectedObject.size(); ++i)
 		{
@@ -307,15 +305,30 @@ void ToolMain::Tick(MSG* msg)
 		Notify(*this);
 		m_toolInputCommands.deleteSelected = false;
 	}
+}
+
+void ToolMain::CreateObject()
+{
+	ResetInputKeyBuffer();
+	CreateObjectDialog newD(nullptr);
+	newD.SetObjectData(this);
+	newD.DoModal();
+	m_toolInputCommands.insertObject = false;
+	//	MessageBox(NULL, L"Insert New Object", L"Notification",MB_OK);
+}
+
+void ToolMain::Tick(MSG* msg)
+{
+	//Put the selected object as handles transform
+
+	if (m_toolInputCommands.deleteSelected)
+	{
+		DeleteSelected();
+	}
 
 	if (m_toolInputCommands.insertObject)
 	{
-		ResetInputKeyBuffer();
-		CreateObjectDialog newD(nullptr);
-		newD.SetObjectData(this);
-		newD.DoModal();
-		m_toolInputCommands.insertObject = false;
-		//	MessageBox(NULL, L"Insert New Object", L"Notification",MB_OK);
+		CreateObject();
 	}
 
 
@@ -338,6 +351,15 @@ void ToolMain::Tick(MSG* msg)
 	}
 	ToolState->Update(m_toolInputCommands);
 	m_d3dRenderer.Tick(&m_toolInputCommands);
+
+	//Toggle mouse arc ball control 
+	if (this->m_selectedObject.size() == 1)
+	{
+		this->m_d3dRenderer.camera.isArcBallMode = m_toolInputCommands.CTRL_Down;
+		this->m_d3dRenderer.camera.arcBallTarget =
+			this->m_d3dRenderer.GetDisplayObject(m_selectedObject[0])->GetWorldPosition();
+		//Get the world posiiuton of the object
+	}
 }
 
 void ToolMain::UpdateInput(MSG* msg)

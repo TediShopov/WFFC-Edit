@@ -179,6 +179,8 @@ BEGIN_MESSAGE_MAP(MFCTransformView, CFormView)
 	ON_NOTIFY(NM_CLICK, IDC_TREE1, &MFCTransformView::OnClickTree)
 	ON_BN_CLICKED(IDC_BUTTON1, &MFCTransformView::OnBnClickedButton1)
 	ON_REGISTERED_MESSAGE(AFX_WM_PROPERTY_CHANGED, &MFCTransformView::OnTransformPropertyChanged)
+	ON_BN_CLICKED(IDC_BUTTON3, &MFCTransformView::OnBnClickedButton3)
+	ON_BN_CLICKED(IDC_BUTTON2, &MFCTransformView::OnBnClickedButton2)
 END_MESSAGE_MAP()
 
 // MFCTransformView diagnostics
@@ -472,4 +474,16 @@ void MFCTransformView::OnBnClickedButton1()
 	//	CMFCPropertyGridProperty* prop = m_propertyGrid.FindItemByData(reinterpret_cast<DWORD_PTR>(&testData));
 	//	prop->SetValue(testData);
 	m_propertyGrid.MarkModifiedProperties(1, 1);
+}
+
+
+void MFCTransformView::OnBnClickedButton3()
+{
+	this->m_toolPtr->DeleteSelected();
+}
+
+
+void MFCTransformView::OnBnClickedButton2()
+{
+	this->m_toolPtr->CreateObject();
 }

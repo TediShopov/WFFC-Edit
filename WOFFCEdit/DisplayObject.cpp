@@ -19,8 +19,12 @@ DisplayObject::DisplayObject()
 	m_wireframe = false;
 
 	m_light_type = 0;
-	m_light_diffuse_r = 0.0f;	m_light_diffuse_g = 0.0f;	m_light_diffuse_b = 0.0f;
-	m_light_specular_r = 0.0f;	m_light_specular_g = 0.0f;	m_light_specular_b = 0.0f;
+	m_light_diffuse_r = 0.0f;
+	m_light_diffuse_g = 0.0f;
+	m_light_diffuse_b = 0.0f;
+	m_light_specular_r = 0.0f;
+	m_light_specular_g = 0.0f;
+	m_light_specular_b = 0.0f;
 	m_light_spot_cutoff = 0.0f;
 	m_light_constant = 0.0f;
 	m_light_linear = 0.0f;
@@ -34,15 +38,15 @@ DisplayObject::~DisplayObject()
 
 DirectX::XMMATRIX DisplayObject::GetWorldMatrix() const
 {
-	const DirectX::XMVECTORF32 scale = { this->m_scale.x, this->m_scale.y, this->m_scale.z };
-	const DirectX::XMVECTORF32 translate = { this->m_position.x, this->m_position.y, this->m_position.z };
+	const DirectX::XMVECTORF32 scale = {this->m_scale.x, this->m_scale.y, this->m_scale.z};
+	const DirectX::XMVECTORF32 translate = {this->m_position.x, this->m_position.y, this->m_position.z};
 
 	//convert degrees into radians for rotation matrix
 	DirectX::XMVECTOR rotate =
 		DirectX::SimpleMath::Quaternion::
 		CreateFromYawPitchRoll(this->m_orientation.y * 3.1415 / 180,
-			this->m_orientation.x * 3.1415 / 180,
-			this->m_orientation.z * 3.1415 / 180);
+		                       this->m_orientation.x * 3.1415 / 180,
+		                       this->m_orientation.z * 3.1415 / 180);
 
 	DirectX::XMMATRIX local =
 		XMMatrixTransformation(
@@ -51,7 +55,13 @@ DirectX::XMMATRIX DisplayObject::GetWorldMatrix() const
 			scale, DirectX::g_XMZero, rotate, translate);
 	if (this->parentObject != nullptr)
 	{
-		return   local * this->parentObject->GetWorldMatrix();
+		return local * this->parentObject->GetWorldMatrix();
+		//return  this->parentObject->GetWorldMatrix() * local ;
 	}
 	return local;
+}
+
+Vector3 DisplayObject::GetWorldPosition() const
+{
+	return XMVector3TransformCoord(Vector3(0, 0, 0), GetWorldMatrix());
 }

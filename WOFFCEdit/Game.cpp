@@ -93,6 +93,7 @@ void Game::SetGridState(bool state)
 // Executes the basic game loop.
 void Game::Tick(InputCommands* Input)
 {
+	
 	//copy over the input commands so we have a local version to use elsewhere.
 	m_InputCommands = *Input;
 	m_timer.Tick([&]()
@@ -198,21 +199,21 @@ void Game::Render()
 	m_deviceResources->PIXEndEvent();
 
 	//RENDER TERRAIN
-	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
-	context->OMSetDepthStencilState(m_states->DepthDefault(), 0);
-	context->RSSetState(m_states->CullNone());
-	//context->RSSetState(m_states->Wireframe());		//uncomment for wireframe
-
-	//Render the batch,  This is handled in the Display chunk becuase it has the potential to get complex
+//	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
+//	context->OMSetDepthStencilState(m_states->DepthDefault(), 0);
+//	context->RSSetState(m_states->CullNone());
+//	//context->RSSetState(m_states->Wireframe());		//uncomment for wireframe
+//
+//	//Render the batch,  This is handled in the Display chunk becuase it has the potential to get complex
 	m_displayChunk.RenderBatch(m_deviceResources);
 
 	//m_handlesEffect->Apply(context);
-	for (const DisplayObject* handle : m_displayHandlesList)
-	{
-		//context->OMSetBlendState(m_states->Additive(), nullptr, 0xFFFFFFFF);
-
-		RenderDisplayObjectOnTop(*handle);
-	}
+//	for (const DisplayObject* handle : m_displayHandlesList)
+//	{
+//		//context->OMSetBlendState(m_states->Additive(), nullptr, 0xFFFFFFFF);
+//
+//		RenderDisplayObjectOnTop(*handle);
+//	}
 	m_deviceResources->Present();
 }
 

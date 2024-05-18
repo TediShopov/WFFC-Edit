@@ -14,6 +14,7 @@ class Camera
 public:
 	Camera();
 	~Camera();
+
 	void UpdateCameraBasedOnKeyInput(const InputCommands& m_InputCommands);
 	void UpdateCameraBasedOnMouseInput(const InputCommands& m_InputCommands);
 
@@ -21,6 +22,11 @@ public:
 	XMMATRIX GetView();
 
 public:
+	//
+	bool isArcBallMode;
+	Vector3 arcBallTarget;
+
+
 	//functionality
 	float m_movespeed;
 	float m_camRotateOnPress;

@@ -120,7 +120,7 @@ void Camera::UpdateCameraBasedOnMouseInput(const InputCommands& m_InputCommands)
 		m_camOrientation.y += delta_x * m_camRotateFromMouseDelta;
 
 		//Change in y rotate pitch
-		m_camOrientation.x -= delta_y * m_camRotateFromMouseDelta;
+		m_camOrientation.x += delta_y * m_camRotateFromMouseDelta;
 	}
 
 
@@ -144,10 +144,23 @@ void Camera::Update(const InputCommands& m_InputCommands)
 	//update lookat point
 	m_camLookAt = m_camPosition + m_camLookDirection;
 
+	if (isArcBallMode)
+	{
+		Vector3 augmentedCamPosition = m_camLookDirection * 10 + arcBallTarget;
 
-	//apply camera vectors
-	m_view =
-		Matrix::CreateLookAt(m_camPosition, m_camLookAt, DirectX::SimpleMath::Vector3::UnitY);
+
+		//apply camera vectors
+		m_view =
+			//Target is 000 for testing purposes but should be the selected object
+			Matrix::CreateLookAt(augmentedCamPosition,
+			                     arcBallTarget, DirectX::SimpleMath::Vector3::UnitY);
+	}
+	else
+	{
+		//apply camera vectors
+		m_view =
+			Matrix::CreateLookAt(m_camPosition, m_camLookAt, DirectX::SimpleMath::Vector3::UnitY);
+	}
 }
 
 DirectX::XMMATRIX Camera::GetView()
