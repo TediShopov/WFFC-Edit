@@ -2,6 +2,7 @@
 
 #include "ToolMain.h"
 #include "ObjectTransformState.h"
+#include "DisplayObject.h"
 
 void ObjectSelectionState::Init(ToolMain* tool, const InputCommands&)
 {
@@ -22,9 +23,9 @@ void ObjectSelectionState::Update(const InputCommands& commands)
 	auto sel = MainTool->GetSelectedObjects();
 	if (commands.mouse_LB_Down)
 	{
-		int selectedId =
+		auto selected =
 			MainTool->m_d3dRenderer.MousePicking();
-		if (selectedId == -1)
+		if (selected == nullptr)
 		{
 			MainTool->ClearSelection();
 			
@@ -33,12 +34,12 @@ void ObjectSelectionState::Update(const InputCommands& commands)
 		{
 			if (commands.CTRL_Down == true)
 			{
-				MainTool->AddToSelection(selectedId);
+				MainTool->AddToSelection(selected->m_ID);
 			}
 			else
 			{
 				MainTool->ClearSelection();
-				MainTool->AddToSelection(selectedId);
+				MainTool->AddToSelection(selected->m_ID);
 			}
 			
 		}

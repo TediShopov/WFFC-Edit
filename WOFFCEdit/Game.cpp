@@ -7,7 +7,6 @@
 
 #include <map>
 
-#include "DisplayObject.h"
 #include <string>
 
 #include "ControlHandle.h"
@@ -853,7 +852,7 @@ std::wstring StringToWCHART(std::string s)
 	return r;
 }
 
-int Game::MousePicking() const
+DisplayObject* Game::MousePicking() const
 {
 	return this->MousePicking(m_displayList);
 }
@@ -865,10 +864,7 @@ ControlHandle* Game::ControlHandleHitTest() const
 	{
 		baseObjectVector.push_back(handle);
 	}
-	int pickedIndex = this->MousePicking(baseObjectVector);
-	if (pickedIndex < 0 || pickedIndex >= m_displayHandlesList.size())
-		return nullptr;
-	return m_displayHandlesList[pickedIndex];
+	return static_cast<ControlHandle*>(this->MousePicking(baseObjectVector));
 }
 
 //int Game::MousePicking(std::vector<int> handleList) const
@@ -883,9 +879,9 @@ ControlHandle* Game::ControlHandleHitTest() const
 //	return this->MousePicking(objectsFromHandles);
 //}
 
-int Game::MousePicking(const std::vector<DisplayObject*>& objectList) const
+DisplayObject* Game::MousePicking(const std::vector<DisplayObject*>& objectList) const
 {
-	int selectedID = -1;
+	DisplayObject* selected =nullptr;
 	float pickedDistance = 0;
 	float closestPickedDistance = D3D11_FLOAT32_MAX;
 
@@ -925,16 +921,14 @@ int Game::MousePicking(const std::vector<DisplayObject*>& objectList) const
 				if (pickedDistance < closestPickedDistance)
 				{
 					closestPickedDistance = pickedDistance;
-					selectedID = objectList[i]->m_ID;
+					selected = objectList[i];
 				}
 			}
 		}
 	}
 
 	//if we got a hit.  return it.
-	return selectedID;
-
-	return 0;
+	return selected;
 }
 
 DirectX::XMVECTOR Game::GetWorldRay(float mouseX, float mouseY, float distance)

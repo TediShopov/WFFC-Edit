@@ -74,9 +74,9 @@ public:
 
 
 	//Mouse Selection Methods
-	int MousePicking() const;
+	DisplayObject* MousePicking() const;
 	ControlHandle* ControlHandleHitTest() const;
-	int MousePicking(const std::vector<DisplayObject*>& objectList) const;
+	DisplayObject* MousePicking(const std::vector<DisplayObject*>& objectList) const;
 
 	DirectX::XMVECTOR GetWorldRay(float screen_x, float screen_y, float distance);
 	DirectX::XMMATRIX GetObjectLocalMatrix(int i) const;
