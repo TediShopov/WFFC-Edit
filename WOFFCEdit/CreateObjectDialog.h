@@ -26,7 +26,7 @@ public:
 	void SetObjectData(ToolMain* toolMain);
 protected:
 
-bool convert_to_relative_path(const std::string& absolute_path, 
+bool ConvertToRelativePath(const std::string& absolute_path, 
 	std::string& relative_path);
 	SceneObject ObjectPrototype;
 	ToolMain* tool_main;

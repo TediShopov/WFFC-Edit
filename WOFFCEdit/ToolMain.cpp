@@ -306,8 +306,13 @@ void ToolMain::DeleteSelected()
 	{
 		for (int i = 0; i < m_selectedObject.size(); ++i)
 		{
-			//this->m_sceneGraph.erase(this->m_sceneGraph.begin() + m_selectedObject[i]);
 			this->m_d3dRenderer.RemoveDisplayObject(this->m_selectedObject[i]);
+
+			for (int j = 0; j < m_sceneGraph.size(); ++j)
+			{
+				if (m_sceneGraph[j].ID == m_selectedObject[i])
+					m_sceneGraph.erase(m_sceneGraph.begin() + j);
+			}
 		}
 		this->m_selectedObject.clear();
 		Notify(*this);
@@ -557,6 +562,7 @@ void ToolMain::RedoCommand()
 
 void ToolMain::SyncDisplayAndSceneObjects(int i)
 {
+	
 	this->m_d3dRenderer.UpdateDisplayElementTransform(i, GetById(i));
 	this->m_d3dRenderer.UpdateDisplayElmentModel(i, GetById(i));
 }

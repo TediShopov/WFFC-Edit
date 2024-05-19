@@ -115,7 +115,7 @@ void MFCTransformView::UpdateFileProp(std::string* data)
 		prop->SetValue(w);
 }
 
-bool MFCTransformView::convert_to_relative_path(const std::string& absolute_path, 
+bool MFCTransformView::ConvertToRelativePath(const std::string& absolute_path, 
 	std::string& relative_path)
 {
 	try {
@@ -352,7 +352,7 @@ LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpara
 // Get the current working directory
 			std::string absolute_path = s;
 			std::string relative_path;
-			convert_to_relative_path(absolute_path,  relative_path);
+			ConvertToRelativePath(absolute_path,  relative_path);
 			
 
 			propChanged->SetValue( CString(relative_path.c_str()));

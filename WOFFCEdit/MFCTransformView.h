@@ -66,7 +66,7 @@ public:
 	void UpdateFileProp(std::string* data);
 
 private:
-	bool convert_to_relative_path(const std::string& absolute_path,  std::string& relative_path);
+	bool ConvertToRelativePath(const std::string& absolute_path,  std::string& relative_path);
 
 	//Poistion Controls
 	DisplayObject displayObjectCopy;

@@ -6,6 +6,7 @@
 
 #include "resource.h"
 #define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
+#include "DisplayObject.h"
 #include "experimental/filesystem"
 
 namespace fs = std::experimental::filesystem;
@@ -82,7 +83,7 @@ LRESULT CreateObjectDialog::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpa
 // Get the current working directory
 	std::string absolute_path = s;
 	std::string relative_path;
-	convert_to_relative_path(absolute_path, relative_path);
+	ConvertToRelativePath(absolute_path, relative_path);
 	propChanged->SetValue(CString(relative_path.c_str()));
 	(*d) = relative_path;
 	return TRUE;
@@ -93,7 +94,7 @@ void CreateObjectDialog::SetObjectData(ToolMain* tool)
 	this->tool_main = tool;
 }
 
-bool CreateObjectDialog::convert_to_relative_path(const std::string& absolute_path, std::string& relative_path)
+bool CreateObjectDialog::ConvertToRelativePath(const std::string& absolute_path, std::string& relative_path)
 {
 	try {
 		fs::path abs_path(absolute_path);
@@ -149,11 +150,16 @@ END_MESSAGE_MAP()
 
 void CreateObjectDialog::OnBnClickedOk()
 {
+
 	auto maxID= std::max_element(this->tool_main->m_sceneGraph.begin(),
 		tool_main->m_sceneGraph.end(),
 		[](const SceneObject& obj, const SceneObject& objOther) {return obj.ID < objOther.ID; });
 	ObjectPrototype.ID = maxID->ID + 1;
 	this->tool_main->m_sceneGraph.push_back(ObjectPrototype);
+	this->tool_main->Notify(*tool_main);
+	auto displayObj =
+		this->tool_main->m_d3dRenderer.CreateDisplayObject(&tool_main->m_sceneGraph[tool_main->m_sceneGraph.size() - 1]);
+	tool_main->m_d3dRenderer.AddRootDisplayObject(displayObj);
 	CDialogEx::OnOK();
 }
 

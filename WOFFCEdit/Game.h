@@ -59,6 +59,7 @@ public:
 	void SaveDisplayChunk(ChunkObject* SceneChunk); //saves geometry et al
 	void ClearDisplayList();
 	void RemoveDisplayObject(int index);
+	void AddRootDisplayObject(DisplayObject* object);
 	DisplayObject* GetDisplayObject(int index);
 
 	//Synchronisation between scene object and display object

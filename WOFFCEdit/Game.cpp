@@ -355,15 +355,15 @@ bool Game::UpdateDisplayElmentModel(int index, SceneObject* sceneObject)
 {
 	//Rearead model and texture
 
-	DisplayObject& newDisplayObject = *this->m_displayList[index];
+	DisplayObject* newDisplayObject = GetDisplayObject(index);
 
 	auto device = m_deviceResources->GetD3DDevice();
 	//load model
 	std::wstring modelwstr =
-		StringToWCHART(newDisplayObject.model_path); //convect string to Wchar
+		StringToWCHART(newDisplayObject->model_path); //convect string to Wchar
 	try
 	{
-		newDisplayObject.m_model =
+		newDisplayObject->m_model =
 			Model::CreateFromCMO(
 				device,
 				modelwstr.c_str(),
@@ -379,13 +379,13 @@ bool Game::UpdateDisplayElmentModel(int index, SceneObject* sceneObject)
 
 	//Load Texture
 	std::wstring texturewstr =
-		StringToWCHART(newDisplayObject.texture_path); //convect string to Wchar
+		StringToWCHART(newDisplayObject->texture_path); //convect string to Wchar
 	HRESULT rs;
 	rs = CreateDDSTextureFromFile(
 		device,
 		texturewstr.c_str(),
 		nullptr,
-		&newDisplayObject.m_texture_diffuse);
+		&newDisplayObject->m_texture_diffuse);
 	//load tex into Shader resource
 
 	//if texture fails.  load error default
@@ -394,22 +394,22 @@ bool Game::UpdateDisplayElmentModel(int index, SceneObject* sceneObject)
 		CreateDDSTextureFromFile(device,
 		                         L"database/data/Error.dds",
 		                         nullptr,
-		                         &newDisplayObject.m_texture_diffuse);
+		                         &newDisplayObject->m_texture_diffuse);
 		//load tex into Shader resource
 	}
 
 
-	newDisplayObject.m_model->UpdateEffects(
+	newDisplayObject->m_model->UpdateEffects(
 		[&](IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
 		{
 			auto lights = dynamic_cast<BasicEffect*>(effect);
 			if (lights)
 			{
-				lights->SetTexture(newDisplayObject.m_texture_diffuse);
+				lights->SetTexture(newDisplayObject->m_texture_diffuse);
 				XMVECTOR diffuse{
-					newDisplayObject.m_light_diffuse_r,
-					newDisplayObject.m_light_diffuse_g,
-					newDisplayObject.m_light_diffuse_b,
+					newDisplayObject->m_light_diffuse_r,
+					newDisplayObject->m_light_diffuse_g,
+					newDisplayObject->m_light_diffuse_b,
 					1
 				};
 				lights->SetDiffuseColor(diffuse);
@@ -417,8 +417,8 @@ bool Game::UpdateDisplayElmentModel(int index, SceneObject* sceneObject)
 		});
 
 
-	sceneObject->model_path = newDisplayObject.model_path;
-	sceneObject->tex_diffuse_path = newDisplayObject.texture_path;
+	sceneObject->model_path = newDisplayObject->model_path;
+	sceneObject->tex_diffuse_path = newDisplayObject->texture_path;
 	return true;
 }
 
@@ -522,7 +522,8 @@ DisplayObject* Game::CreateDisplayObject(const SceneObject* object) const
 	newDisplayObject->m_light_constant = object->light_constant;
 	newDisplayObject->m_light_linear = object->light_linear;
 	newDisplayObject->m_light_quadratic = object->light_quadratic;
-
+	newDisplayObject->model_path = object->model_path;
+	newDisplayObject->texture_path = object->tex_diffuse_path;
 	newDisplayObject->m_model->UpdateEffects(
 		[&](IEffect* effect) //This uses a Lambda function,  if you dont understand it: Look it up.
 		{
@@ -539,6 +540,9 @@ DisplayObject* Game::CreateDisplayObject(const SceneObject* object) const
 				lights->SetDiffuseColor(diffuse);
 			}
 		});
+
+
+
 
 	return newDisplayObject;
 }
@@ -679,9 +683,26 @@ DisplayObject* Game::GetDisplayObject(int index)
 	return nullptr;
 }
 
-void Game::RemoveDisplayObject(int index)
+void Game::RemoveDisplayObject(int objectId)
 {
-	m_displayList.erase(this->m_displayList.begin() + index);
+	int indexFound = -1;
+	for (int i = 0; i < m_displayList.size(); ++i)
+	{
+		if(m_displayList[i]->m_ID == objectId)
+		{
+			indexFound = i;
+			break;
+		}
+		
+	}
+	m_displayList.erase(this->m_displayList.begin() + indexFound);
+
+
+}
+
+void Game::AddRootDisplayObject(DisplayObject* object)
+{
+	this->m_displayList.push_back(object);
 }
 
 #ifdef DXTK_AUDIO
