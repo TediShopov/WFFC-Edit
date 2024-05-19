@@ -9,6 +9,7 @@
 #include "SceneObject.h"
 #include "InputCommands.h"
 #include "Observer.h"
+//#include "DisplayObject.h"
 class SceneCommand;
 using namespace DirectX;
 enum ObjectTransformEditMode
@@ -35,7 +36,9 @@ public: //methods
 	afx_msg void onActionSave(); //save the current chunk
 	afx_msg void onActionSaveTerrain(); //save chunk geometry
 	void DeleteSelected();
+	void DeleteById(int id);
 	void CreateObject();
+	DisplayObject* InsertObject(DisplayObject* prototype);
 
 	void ChangeState(ToolStateBase* newState);
 	void Notify(const ToolMain& data) override;

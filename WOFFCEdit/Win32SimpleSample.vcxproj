@@ -165,6 +165,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AddObjectCommand.cpp" />
     <ClCompile Include="AxisBasedTransformState.cpp" />
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="ChunkObject.cpp" />
@@ -196,6 +197,7 @@
     <ClCompile Include="UpdateObjectCommand.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AddObjectCommand.h" />
     <ClInclude Include="AxisBasedTransformState.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="ChunkObject.h" />

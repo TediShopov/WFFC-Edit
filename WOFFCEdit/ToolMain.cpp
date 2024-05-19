@@ -10,6 +10,7 @@
 #include "ObjectScaleState.h"
 #include "ObjectTransformState.h"
 #include "SceneCommand.h"
+//#include "DisplayObject.h"
 
 //#include "CreateObjectDialog.h"
 const std::string DefaultArrowModel = "database/data/placeholder.cmo";
@@ -320,6 +321,20 @@ void ToolMain::DeleteSelected()
 	}
 }
 
+void ToolMain::DeleteById(int id)
+{
+	for (int i = 0; i < m_sceneGraph.size(); ++i)
+	{
+		if (m_sceneGraph[i].ID == id)
+		{
+			m_sceneGraph.erase(m_sceneGraph.begin() + i);
+			this->m_d3dRenderer.RemoveDisplayObject(id);
+			return;
+			
+		}
+	}
+}
+
 void ToolMain::CreateObject()
 {
 	ResetInputKeyBuffer();
@@ -329,6 +344,23 @@ void ToolMain::CreateObject()
 	m_toolInputCommands.insertObject = false;
 	//	MessageBox(NULL, L"Insert New Object", L"Notification",MB_OK);
 }
+
+DisplayObject* ToolMain::InsertObject(DisplayObject* prototype)
+{
+	DisplayObject* copy = new DisplayObject(*prototype);
+
+	auto maxID= std::max_element(m_sceneGraph.begin(),
+		m_sceneGraph.end(),
+		[](const SceneObject& obj, const SceneObject& objOther) {return obj.ID < objOther.ID; });
+	copy->m_ID = maxID->ID + 1;
+	m_d3dRenderer.AddRootDisplayObject(copy);
+	SceneObject sceneObjectWithSameId;
+	sceneObjectWithSameId.ID = copy->m_ID;
+	m_sceneGraph.push_back(sceneObjectWithSameId);
+	SyncDisplayAndSceneObjects(copy->m_ID);
+	return copy;
+}
+
 
 void ToolMain::Tick(MSG* msg)
 {
@@ -600,7 +632,11 @@ void ToolMain::RemoveFromSelection(int id)
 			m_selectedObject.begin()
 			, m_selectedObject.end(),
 			id);
-		m_selectedObject.erase(iter);
+		if(iter != m_selectedObject.end())
+			m_selectedObject.erase(iter);
+
+
+
 	}
 }
 

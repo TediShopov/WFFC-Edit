@@ -1,12 +1,14 @@
 // CreateObjectDialog.cpp : implementation file
 //
 
+#include "ToolMain.h"
+#include "DisplayObject.h"
 #include "afxdialogex.h"
 #include "CreateObjectDialog.h"
 
 #include "resource.h"
 #define _SILENCE_EXPERIMENTAL_FILESYSTEM_DEPRECATION_WARNING
-#include "DisplayObject.h"
+#include "AddObjectCommand.h"
 #include "experimental/filesystem"
 
 namespace fs = std::experimental::filesystem;
@@ -19,6 +21,7 @@ IMPLEMENT_DYNAMIC(CreateObjectDialog, CDialogEx)
 CreateObjectDialog::CreateObjectDialog(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_DIALOG3, pParent)
 {
+	ObjectPrototype = new DisplayObject();
 	auto modelProperties = new CMFCPropertyGridProperty("Model");
 	static TCHAR BASED_CODE modelFilter[] = _T(
 		"Visual Studio Starter Kit Files(*.cmo)|*.cmo|"
@@ -29,12 +32,12 @@ CreateObjectDialog::CreateObjectDialog(CWnd* pParent /*=nullptr*/)
 		new CMFCPropertyGridFileProperty(
 			_T("Model Mesh"),
 			TRUE,
-			ObjectPrototype.model_path.c_str(),
+			ObjectPrototype->model_path.c_str(),
 			_T("ico"),
 			0,
 			modelFilter,
 			_T("Specifies the dialog icon"),
-			reinterpret_cast<DWORD_PTR>(&ObjectPrototype.model_path)));
+			reinterpret_cast<DWORD_PTR>(&ObjectPrototype->model_path)));
 
 	//Texture Mesh Dialog
 	//----------------------------------------------path
@@ -45,12 +48,12 @@ CreateObjectDialog::CreateObjectDialog(CWnd* pParent /*=nullptr*/)
 		new CMFCPropertyGridFileProperty(
 			_T("Texture"),
 			TRUE,
-			ObjectPrototype.tex_diffuse_path.c_str(),
+			ObjectPrototype->texture_path.c_str(),
 			_T("dds"),
 			0,
 			textureFilter,
 			_T("Specifies the dialog icon"),
-			reinterpret_cast<DWORD_PTR>(&ObjectPrototype.tex_diffuse_path)));
+			reinterpret_cast<DWORD_PTR>(&ObjectPrototype->texture_path)));
 			
 			
 	this->m_grid.AddProperty(modelProperties, 1, 1);
@@ -151,15 +154,20 @@ END_MESSAGE_MAP()
 void CreateObjectDialog::OnBnClickedOk()
 {
 
-	auto maxID= std::max_element(this->tool_main->m_sceneGraph.begin(),
-		tool_main->m_sceneGraph.end(),
-		[](const SceneObject& obj, const SceneObject& objOther) {return obj.ID < objOther.ID; });
-	ObjectPrototype.ID = maxID->ID + 1;
-	this->tool_main->m_sceneGraph.push_back(ObjectPrototype);
-	this->tool_main->Notify(*tool_main);
-	auto displayObj =
-		this->tool_main->m_d3dRenderer.CreateDisplayObject(&tool_main->m_sceneGraph[tool_main->m_sceneGraph.size() - 1]);
-	tool_main->m_d3dRenderer.AddRootDisplayObject(displayObj);
+	auto command = new AddObjectCommand(ObjectPrototype);
+	command->Execute(tool_main);
+	delete ObjectPrototype;
+	ObjectPrototype = nullptr;
+	
+//.	auto maxID= std::max_element(this->tool_main->m_sceneGraph.begin(),
+//.		tool_main->m_sceneGraph.end(),
+//.		[](const SceneObject& obj, const SceneObject& objOther) {return obj.ID < objOther.ID; });
+//.	ObjectPrototype.ID = maxID->ID + 1;
+//.	this->tool_main->m_sceneGraph.push_back(ObjectPrototype);
+//.	this->tool_main->Notify(*tool_main);
+//.	auto displayObj =
+//.		this->tool_main->m_d3dRenderer.CreateDisplayObject(&tool_main->m_sceneGraph[tool_main->m_sceneGraph.size() - 1]);
+//.	tool_main->m_d3dRenderer.AddRootDisplayObject(displayObj);
 	CDialogEx::OnOK();
 }
 

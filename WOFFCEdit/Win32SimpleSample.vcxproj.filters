@@ -91,6 +91,7 @@
     <ClCompile Include="UpdateObjectCommand.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
+    <ClCompile Include="AddObjectCommand.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -165,6 +166,7 @@
     <ClInclude Include="SceneCommand.h">
       <Filter>Commands</Filter>
     </ClInclude>
+    <ClInclude Include="AddObjectCommand.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

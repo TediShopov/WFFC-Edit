@@ -2,13 +2,13 @@
 #include "afxdialogex.h"
 #include <afxpropertygridctrl.h>
 #include <map>
+#include <string>
 
-#include "ToolMain.h"
 
 // CreateObjectDialog dialog
 
 class ToolMain;
-class SceneObject;
+class DisplayObject;
 
 class CreateObjectDialog : public CDialogEx
 {
@@ -28,7 +28,7 @@ protected:
 
 bool ConvertToRelativePath(const std::string& absolute_path, 
 	std::string& relative_path);
-	SceneObject ObjectPrototype;
+	DisplayObject* ObjectPrototype;
 	ToolMain* tool_main;
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
