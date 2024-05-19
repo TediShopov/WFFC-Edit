@@ -33,6 +33,7 @@ protected:
 
 
 	XMMATRIX GetWorldPlanes(const DisplayObject* selected) const;
+	XMVECTOR GetClosestAxisIntersection(XMVECTOR mouseRay, int cardinalAxisIndex);
 XMVECTOR PlaneIntersection(XMVECTOR mouseWorldRay, XMVECTOR plane);
 XMVECTOR AxisIntersection(XMVECTOR mouseWorldRay, XMVECTOR plane, XMVECTOR rayOnPlane);
 XMVECTOR CardinalAxisIntersection(XMVECTOR mouseWorldRay, int index);

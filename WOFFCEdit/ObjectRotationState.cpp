@@ -16,6 +16,16 @@ ObjectRotationState::ObjectRotationState(AXES global_direction, bool a)
 	m_lastPosition=Vector3();
 }
 
+void ObjectRotationState::Init(ToolMain* tool, const InputCommands& input_commands)
+{
+	AxisBasedTransformState::Init(tool, input_commands);
+
+	m_rotationSpeed = 50;
+	XMVECTOR mouseWorldRay;
+	GetMouseWorldRay(input_commands, mouseWorldRay);
+	this->m_lastPosition = CardinalAxisIntersection(mouseWorldRay, axisType) - GetGlobalOrigin();
+}
+
 void ObjectRotationState::Update(const InputCommands& input)
 {
 	AxisBasedTransformState::Update(input);
@@ -40,44 +50,13 @@ void ObjectRotationState::Update(const InputCommands& input)
 		
 }
 
-void ObjectRotationState::FromInput(const InputCommands& input)
-{
-	move_on_axis = input.CTRL_Down;
-
-	if (input.plane_x)
-		axisType = X_AXIS;
-	else if (input.plane_y)
-		axisType = Y_AXIS;
-	else if (input.plane_z)
-		axisType = Z_AXIS;
-
-
-
-		if (axisType == X_AXIS)
-		{
-			global_direction = world_axes_directions.r[2];
-			plane = world_planes.r[3];
-		}
-		else if (axisType == Y_AXIS)
-		{
-			global_direction = world_axes_directions.r[1];
-			plane = world_planes.r[2];
-		}
-		else
-		{
-			global_direction = world_axes_directions.r[3];
-			plane = world_planes.r[1];
-		}
-	return;
-}
 
 float ObjectRotationState::GetWorldCoordinatesDelta(const InputCommands& commands)
 {
 	XMVECTOR mouseWorldRay;
 	GetMouseWorldRay(commands, mouseWorldRay);
 
-	XMVECTOR worldPosition = AxisIntersection(
-		mouseWorldRay, plane, GetGlobalOrigin() + global_direction);
+	XMVECTOR worldPosition = CardinalAxisIntersection(mouseWorldRay, axisType);
 
 	XMVECTOR local = worldPosition - GetGlobalOrigin();
 
@@ -120,7 +99,7 @@ XMVECTOR ObjectRotationState::RotateAroundSelectedAxis(const InputCommands& comm
 	//All other rotation use delta from X normalized device coordaintes
 //	float delta = this->MainTool->m_d3dRenderer.camera.GetDeltaXNDC();
 	float delta = GetWorldCoordinatesDelta(commands);
-	float angle = delta * 100;
+	float angle = delta *m_rotationSpeed;
 
 
 

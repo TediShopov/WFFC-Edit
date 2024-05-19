@@ -12,9 +12,10 @@ public:
 	ObjectRotationState();
 	ObjectRotationState(AXES global_direction, bool a);
 
+
+	void Init(ToolMain* tool, const InputCommands&) override;
 	void Update(const InputCommands& input)override;
 
-	void FromInput(const InputCommands& input) override;
 
 	XMVECTOR m_lastPosition;
 	float GetWorldCoordinatesDelta(const InputCommands& commands);
@@ -24,6 +25,7 @@ public:
 
 
 private:
+	float m_rotationSpeed;
 	//If moving on global_direction or on plane
 	bool move_on_axis;
 };

@@ -49,28 +49,15 @@ void AxisBasedTransformState::Init(ToolMain* tool, const InputCommands& comms)
 		release_mouse_needed = true;
 	}
 
-	//	if (on_selection_commands.CTRL_Down)
-	//	{
-	//		if (on_selection_commands.plane_x)
-	//		{
-	//			global_direction = world_axes_directions.r[1];
-	//			plane = world_planes.r[2];
-	//		}
-	//		else if (on_selection_commands.plane_y)
-	//		{
-	//			global_direction = world_axes_directions.r[2];
-	//			plane = world_planes.r[2];
-	//		}
-	//		else
-	//		{
-	//			global_direction = world_axes_directions.r[3];
-	//			plane = world_planes.r[1];
-	//		}
-	//	}
 }
 
 void AxisBasedTransformState::Update(const InputCommands& input)
 {
+
+
+
+
+
 	if (MainTool->IsTransformActionInputted() == false)
 	{
 		if (release_mouse_needed)
@@ -89,6 +76,17 @@ void AxisBasedTransformState::Update(const InputCommands& input)
 
 void AxisBasedTransformState::FromInput(const InputCommands& input)
 {
+
+	if (input.plane_x)
+		axisType = X_AXIS;
+	else if (input.plane_y)
+		axisType = Y_AXIS;
+	else if (input.plane_z)
+		axisType = Z_AXIS;
+
+
+	global_direction = world_axes_directions.r[axisType];
+	plane = world_axes_directions.r[axisType];
 }
 
 XMMATRIX AxisBasedTransformState::GetWorldAxes(const DisplayObject* selected) const
@@ -96,15 +94,7 @@ XMMATRIX AxisBasedTransformState::GetWorldAxes(const DisplayObject* selected) co
 	XMMATRIX world = selected->GetWorldMatrix();
 	XMMATRIX axes;
 
-//	axes.r[0] = XMVector3Transform(LocalAxes.r[0], world);
-//	axes.r[1] = XMVector3Transform(LocalAxes.r[1], world);
-//	axes.r[2] = XMVector3Transform(LocalAxes.r[2], world);
-//	axes.r[3] = XMVector3Transform(LocalAxes.r[3], world);
-
-
-
 	axes.r[0] = { 0,0,0,0 };
-	//axes.r[0] = XMVector3Transform(LocalAxes.r[0], world);
 	axes.r[1] = XMVector3TransformNormal(LocalAxes.r[1], world);
 	axes.r[2] = XMVector3TransformNormal(LocalAxes.r[2], world);
 	axes.r[3] = XMVector3TransformNormal(LocalAxes.r[3], world);
@@ -134,6 +124,49 @@ XMMATRIX AxisBasedTransformState::GetWorldPlanes(const DisplayObject* selected) 
 	planes.r[3] =
 		XMPlaneFromPointNormal(GetGlobalOrigin(), world_axes_directions.r[3]);
 	return planes;
+}
+
+XMVECTOR AxisBasedTransformState::GetClosestAxisIntersection(XMVECTOR mouseRay, int cardinalAxisIndex)
+{
+	auto cardinalAxis =
+		GetGlobalOrigin() + world_axes_directions.r[cardinalAxisIndex];
+
+
+	int planeIndexOne = cardinalAxisIndex+1;
+	if (planeIndexOne > 2)
+		planeIndexOne = 1;
+	int planeIndexTwo = cardinalAxisIndex-1;
+	if (planeIndexTwo <= 0)
+		planeIndexTwo = 3;
+	//Each cardinal axis lies on exactly two planes
+	auto planeOne = world_planes.r[planeIndexOne];
+	auto planeTwo = world_planes.r[planeIndexTwo];
+
+
+
+	Vector3 intersectionWithPlaneOne = 
+		PlaneIntersection(mouseRay, planeOne);
+	Vector3 intersectionWithPlaneTwo = 
+		PlaneIntersection(mouseRay, planeTwo);
+
+
+	XMVECTOR globalPlaneIntersection;
+
+	auto lengthToIntersectionOne=
+		(intersectionWithPlaneOne - (Vector3)GetGlobalOrigin()).Length();
+	auto lengthToIntersectionTwo =
+		(intersectionWithPlaneTwo - (Vector3)GetGlobalOrigin()).Length();
+
+
+
+	if (lengthToIntersectionOne < lengthToIntersectionTwo
+		|| XMVector3IsNaN(intersectionWithPlaneTwo))
+		globalPlaneIntersection = intersectionWithPlaneOne;
+	else
+		globalPlaneIntersection = intersectionWithPlaneTwo;
+
+	return globalPlaneIntersection;
+
 }
 
 XMVECTOR AxisBasedTransformState::PlaneIntersection(XMVECTOR mouseWorldRay, XMVECTOR plane)
@@ -168,52 +201,11 @@ XMVECTOR AxisBasedTransformState::CardinalAxisIntersection(XMVECTOR mouseWorldRa
 	auto cardinalAxis =
 		GetGlobalOrigin() + world_axes_directions.r[index];
 
-
-	int planeIndexOne = index+1;
-	if (planeIndexOne > 2)
-		planeIndexOne = 1;
-	int planeIndexTwo = index-1;
-	if (planeIndexTwo <= 0)
-		planeIndexTwo = 3;
-	//Each cardinal axis lies on exactly two planes
-	auto planeOne = world_planes.r[planeIndexOne];
-	auto planeTwo = world_planes.r[planeIndexTwo];
-
-
-
-	Vector3 intersectionWithPlaneOne = 
-		PlaneIntersection(mouseWorldRay, planeOne);
-	Vector3 intersectionWithPlaneTwo = 
-		PlaneIntersection(mouseWorldRay, planeTwo);
-
-
-	XMVECTOR globalPlaneIntersection;
-
-	auto lengthToIntersectionOne=
-		(intersectionWithPlaneOne - (Vector3)GetGlobalOrigin()).Length();
-	auto lengthToIntersectionTwo =
-		(intersectionWithPlaneTwo - (Vector3)GetGlobalOrigin()).Length();
-
-
-
-	if (lengthToIntersectionOne < lengthToIntersectionTwo
-		|| XMVector3IsNaN(intersectionWithPlaneTwo))
-		globalPlaneIntersection = intersectionWithPlaneOne;
-	else
-		globalPlaneIntersection = intersectionWithPlaneTwo;
+	XMVECTOR globalPlaneIntersection =
+		GetClosestAxisIntersection(mouseWorldRay, index);
 
 	if (DirectX::XMVector3IsNaN(globalPlaneIntersection))
 		return GetGlobalOrigin();
-
-
-
-
-		//Pick the plane in which intersection from the mouse ray
-		//is closes. 
-
-
-	///XMVECTOR origin = world_axes_directions.r[0];
-
 
 	XMVECTOR localVectorToPoint = globalPlaneIntersection - GetGlobalOrigin();
 	XMVECTOR localUnitAxis = XMVector3Normalize(cardinalAxis - GetGlobalOrigin());

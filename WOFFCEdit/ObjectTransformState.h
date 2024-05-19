@@ -13,8 +13,6 @@ public:
 	ObjectTransformState(AXES global_direction, bool a);
 
 	void Update(const InputCommands& input)override;
-	void Init(ToolMain* tool, const InputCommands&) override;
-	void FromInput(const InputCommands& input) override;
 
 private:
 	//If moving on global_direction or on plane
