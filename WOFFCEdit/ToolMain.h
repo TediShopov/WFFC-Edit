@@ -38,7 +38,7 @@ public: //methods
 	void Notify(const ToolMain& data) override;
 
 	bool IsTransformActionInputted() const;
-	ToolStateBase* GetNewTransformUpdateState() const;
+	ToolStateBase* GetNewTransformUpdateState() ;
 	int getCurrentSelectionID() const;
 	std::vector<int> getCurrentSelectionIDs() const; //returns the IDS of the selected objects.
 

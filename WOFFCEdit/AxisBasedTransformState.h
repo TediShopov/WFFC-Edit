@@ -12,7 +12,7 @@ public:
 
 	static XMMATRIX LocalAxes;
 	XMVECTOR plane;
-	XMVECTOR axis;
+	XMVECTOR global_direction;
 	AXES axisType;
 	InputCommands on_selection_commands;
 
@@ -26,10 +26,17 @@ public:
 
 protected:
 	DisplayObject* SelectedObject;
-	XMMATRIX  world_axes;
+	XMMATRIX  world_axes_directions;
 	XMMATRIX  world_planes;
 	XMMATRIX GetWorldAxes(const DisplayObject* selected) const;
+	XMVECTOR GetGlobalOrigin() const;
+
+
 	XMMATRIX GetWorldPlanes(const DisplayObject* selected) const;
+XMVECTOR PlaneIntersection(XMVECTOR mouseWorldRay, XMVECTOR plane);
+XMVECTOR AxisIntersection(XMVECTOR mouseWorldRay, XMVECTOR plane, XMVECTOR rayOnPlane);
+
+	void GetMouseWorldRay(const InputCommands& input, XMVECTOR& mouseWorldPos);
 
 	//	void GetWorldPlanes(
 	//		int objectIndex,

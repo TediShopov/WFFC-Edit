@@ -32,6 +32,7 @@ ToolMain::ToolMain()
 	m_toolInputCommands.CTRL_Down = false;
 	ToolState = new ObjectSelectionState();
 	EditMode = ObjectTransformEditMode::MODE_ROTATION;
+	//EditMode = ObjectTransformEditMode::MODE_POSITION;
 	ToolState->Init(this, m_toolInputCommands);
 }
 
@@ -415,7 +416,7 @@ void ToolMain::UpdateInput(MSG* msg)
 	m_toolInputCommands.rotRight = m_keyArray['E'];
 	m_toolInputCommands.rotLeft = m_keyArray['Q'];
 
-	//Plane and axis movement keys
+	//Plane and global_direction movement keys
 	m_toolInputCommands.plane_x = m_keyArray['Z'];
 	m_toolInputCommands.plane_y = m_keyArray['X'];
 	m_toolInputCommands.plane_z = m_keyArray['C'];
@@ -452,16 +453,18 @@ bool ToolMain::IsTransformActionInputted() const
 		|| m_toolInputCommands.plane_z) && m_selectedObject.size() == 1;
 }
 
-ToolStateBase* ToolMain::GetNewTransformUpdateState() const
+ToolStateBase* ToolMain::GetNewTransformUpdateState() 
 {
 	if (EditMode==ObjectTransformEditMode::MODE_POSITION)
 	{
-		return new ObjectTransformState();
+		auto s =new ObjectTransformState();
+		return s;
 		
 	}
 	else if (EditMode==ObjectTransformEditMode::MODE_ROTATION)
 	{
-		return new ObjectRotationState();
+		auto s =new ObjectRotationState();
+		return s;
 		
 	}
 	else if (EditMode==ObjectTransformEditMode::MODE_SCALE)

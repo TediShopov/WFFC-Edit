@@ -17,6 +17,7 @@ ObjectTransformState::ObjectTransformState(AXES axisType, bool a)
 	this->move_on_axis = a;
 }
 
+
 void ObjectTransformState::Update(const InputCommands& input)
 {
 	AxisBasedTransformState::Update(input);
@@ -26,23 +27,22 @@ void ObjectTransformState::Update(const InputCommands& input)
 	{
 		SceneObject* obj = sel[0];
 
-		POINT p;
-		GetCursorPos(&p);
-		XMVECTOR mouseWorldPos =
-			this->MainTool->m_d3dRenderer.GetWorldRay(
-				input.mouse_x,
-				input.mouse_y,
-				1000);
+		XMVECTOR mouseWorldPos;
+		GetMouseWorldRay(input, mouseWorldPos);
 
 		if (move_on_axis)
 		{
-			newPosition = MoveOnAxis(
-				mouseWorldPos, plane, axis);
+
+
+
+
+			newPosition = AxisIntersection(
+				mouseWorldPos, plane,GetGlobalOrigin() + global_direction);
 		}
 		else
 
 		{
-			newPosition = MoveOnPlane(
+			newPosition = PlaneIntersection(
 				mouseWorldPos, plane);
 		}
 
@@ -64,13 +64,13 @@ void ObjectTransformState::Init(ToolMain* tool, const InputCommands& input_comma
 	AxisBasedTransformState::Init(tool, input_commands);
 	if (move_on_axis)
 	{
-		axis = world_axes.r[this->axisType];
+		global_direction = world_axes_directions.r[this->axisType];
 
-		//Usually planes on the same index as an axis is
-		//constructed from selected object origin and that axis as normal
+		//Usually planes on the same index as an global_direction is
+		//constructed from selected object origin and that global_direction as normal
 
 		//Plane at 0 index is invalid by default, so get any index that
-		//is not zero or axis index
+		//is not zero or global_direction index
 		if (this->axisType == 3)
 			plane = world_planes.r[2];
 		else
@@ -95,17 +95,17 @@ void ObjectTransformState::FromInput(const InputCommands& input)
 	{
 		if (axisType == X_AXIS)
 		{
-			axis = world_axes.r[1];
+			global_direction = world_axes_directions.r[1];
 			plane = world_planes.r[2];
 		}
 		else if (axisType == Y_AXIS)
 		{
-			axis = world_axes.r[2];
+			global_direction = world_axes_directions.r[2];
 			plane = world_planes.r[2];
 		}
 		else
 		{
-			axis = world_axes.r[3];
+			global_direction = world_axes_directions.r[3];
 			plane = world_planes.r[1];
 		}
 	}
@@ -121,26 +121,4 @@ void ObjectTransformState::FromInput(const InputCommands& input)
 	return;
 }
 
-XMVECTOR ObjectTransformState::MoveOnAxis(XMVECTOR mouseWorldRay, XMVECTOR plane, XMVECTOR rayOnPlane)
-{
-	XMVECTOR origin = world_axes.r[0];
 
-	XMVECTOR globalPlaneIntersection = MoveOnPlane(mouseWorldRay, plane);
-	XMVECTOR localVectorToPoint = globalPlaneIntersection - origin;
-	XMVECTOR localUnitAxis = XMVector3Normalize(rayOnPlane - origin);
-	XMVECTOR dot = XMVector3Dot(localUnitAxis, localVectorToPoint);
-	XMVECTOR res = localUnitAxis * dot.m128_f32[0] + origin;
-
-	return res;
-	//	return XMVector3Dot(originToPoint, rayOnPlane * 1000);
-}
-
-XMVECTOR ObjectTransformState::MoveOnPlane(XMVECTOR mouseWorldRay, XMVECTOR plane)
-{
-	XMVECTOR intersectionPos = XMPlaneIntersectLine(
-		plane,
-		this->MainTool->m_d3dRenderer.camera.m_camPosition,
-		mouseWorldRay
-	);
-	return intersectionPos;
-}

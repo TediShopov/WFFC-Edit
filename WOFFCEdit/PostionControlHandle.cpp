@@ -60,7 +60,7 @@ PostionControlHandle::PostionControlHandle(AXES axesType, AXES axesTypeTwo, Tool
 {
 	move_on_axis = false;
 
-	//Get the only remaining axis
+	//Get the only remaining global_direction
 	int indexOfRemainigAxes = 0;
 	for (int i = 1; i <= 3; ++i)
 	{
