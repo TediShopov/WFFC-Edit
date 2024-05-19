@@ -77,7 +77,8 @@ private: //methods
 	SceneObject* GetById(int ID) ;
 
 private: //variables
-	std::stack<SceneCommand*> m_commandBuffer;
+	int m_commandBufferMaxSize;
+	std::vector<SceneCommand*> m_commandBuffer;
 
 	std::vector<int> m_selectedObject; //ID of current Selection
 	char m_keyArray[256];

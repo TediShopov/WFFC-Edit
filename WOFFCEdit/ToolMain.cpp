@@ -520,13 +520,22 @@ std::vector<SceneObject*> ToolMain::GetSelectedObjects()
 
 void ToolMain::AddCommandToStack(SceneCommand* command)
 {
-	m_commandBuffer.push(command);
+
+	m_commandBuffer.push_back(command);
+	if(m_commandBuffer.size() > m_commandBufferMaxSize)
+	{
+		m_commandBuffer.erase(m_commandBuffer.begin());
+	}
 }
 
 void ToolMain::UndoCommand()
 {
-	SceneCommand* last = m_commandBuffer.top();
-	last->Revert(this);
+	if(m_commandBuffer.size() != 0)
+	{
+		SceneCommand* last = m_commandBuffer[m_commandBuffer.size()-1];
+		m_commandBuffer.pop_back();
+		last->Revert(this);
+	}
 }
 
 void ToolMain::SyncDisplayAndSceneObjects(int i)
