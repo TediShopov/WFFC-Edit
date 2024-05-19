@@ -12,6 +12,7 @@
 #include <experimental/filesystem>
 
 #include "DisplayObject.h"
+#include "UpdateObjectCommand.h"
 namespace fs = std::experimental::filesystem;
 IMPLEMENT_DYNCREATE(MFCTransformView, CFormView)
 
@@ -331,10 +332,14 @@ LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpara
 	auto sceneObjects = this->m_toolPtr->GetSelectedDisplayObjects();
 	if (sceneObjects.size() == 1)
 	{
+		foundObj = sceneObjects[0];
+		//Start update command of found objects
+		UpdateObjectCommand* updateCommand = new UpdateObjectCommand(sceneObjects[0]);
+
+
+
 		m_propertyGrid.MarkModifiedProperties(1, 1);
 		m_propertyGrid.ShowWindow(SW_SHOW);
-		//foundObj = FindSceneObject((m_toolPtr->m_selectedObject)[0]);
-		foundObj = sceneObjects[0];
 		std::string s = propChanged->GetRuntimeClass()->m_lpszClassName;
 		if (s.compare("CMFCPropertyGridFileProperty") == 0)
 		{
@@ -364,6 +369,11 @@ LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpara
 			(*foundObj) = displayObjectCopy;
 			m_toolPtr->SyncDisplayAndSceneObjects(foundObj->m_ID);
 		}
+
+		//Finalize update command and append to tools command stack
+		updateCommand->FinishUpdate();
+		updateCommand->Execute(m_toolPtr);
+
 	}
 	return TRUE;
 }
