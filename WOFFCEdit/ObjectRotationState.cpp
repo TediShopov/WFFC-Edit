@@ -119,7 +119,7 @@ XMVECTOR ObjectRotationState::RotateAroundSelectedAxis(const InputCommands& comm
 	Vector3 current = SelectedObject->m_orientation;
 	//All other rotation use delta from X normalized device coordaintes
 //	float delta = this->MainTool->m_d3dRenderer.camera.GetDeltaXNDC();
-	float delta = GetMouseNDCDelta(commands);
+	float delta = GetWorldCoordinatesDelta(commands);
 	float angle = delta * 100;
 
 

@@ -21,6 +21,9 @@ ObjectTransformState::ObjectTransformState(AXES axisType, bool a)
 void ObjectTransformState::Update(const InputCommands& input)
 {
 	AxisBasedTransformState::Update(input);
+
+	world_axes_directions = GetWorldAxes(SelectedObject);
+	world_planes = GetWorldPlanes(SelectedObject);
 	XMVECTOR newPosition;
 	auto sel = MainTool->GetSelectedObjects();
 	if (sel.size() == 1)
@@ -32,12 +35,8 @@ void ObjectTransformState::Update(const InputCommands& input)
 
 		if (move_on_axis)
 		{
-
-
-
-
-			newPosition = AxisIntersection(
-				mouseWorldPos, plane,GetGlobalOrigin() + global_direction);
+			newPosition = CardinalAxisIntersection(
+				mouseWorldPos, axisType);
 		}
 		else
 
@@ -112,11 +111,11 @@ void ObjectTransformState::FromInput(const InputCommands& input)
 	else
 	{
 		if (axisType == X_AXIS)
-			plane = world_planes.r[0];
-		else if (axisType == Y_AXIS)
 			plane = world_planes.r[1];
-		else
+		else if (axisType == Y_AXIS)
 			plane = world_planes.r[2];
+		else
+			plane = world_planes.r[3];
 	}
 	return;
 }

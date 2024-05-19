@@ -31,8 +31,8 @@ ToolMain::ToolMain()
 	m_toolInputCommands.mouse_LB_Down = false;
 	m_toolInputCommands.CTRL_Down = false;
 	ToolState = new ObjectSelectionState();
-	EditMode = ObjectTransformEditMode::MODE_ROTATION;
-	//EditMode = ObjectTransformEditMode::MODE_POSITION;
+	//EditMode = ObjectTransformEditMode::MODE_ROTATION;
+	EditMode = ObjectTransformEditMode::MODE_POSITION;
 	ToolState->Init(this, m_toolInputCommands);
 }
 

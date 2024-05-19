@@ -35,6 +35,7 @@ protected:
 	XMMATRIX GetWorldPlanes(const DisplayObject* selected) const;
 XMVECTOR PlaneIntersection(XMVECTOR mouseWorldRay, XMVECTOR plane);
 XMVECTOR AxisIntersection(XMVECTOR mouseWorldRay, XMVECTOR plane, XMVECTOR rayOnPlane);
+XMVECTOR CardinalAxisIntersection(XMVECTOR mouseWorldRay, int index);
 
 	void GetMouseWorldRay(const InputCommands& input, XMVECTOR& mouseWorldPos);
 
