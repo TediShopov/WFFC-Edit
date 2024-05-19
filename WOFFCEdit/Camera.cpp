@@ -95,6 +95,8 @@ void Camera::UpdateCameraBasedOnMouseInput(const InputCommands& m_InputCommands)
 		m_InputCommands.mouse_y,
 		xNDC, yNDC
 	);
+		m_deltaXNDC = xNDC - m_previousXNDC;
+		m_deltaYNDC = yNDC - m_previousYNDC;
 	if (m_InputCommands.mouse_RB_Down)
 	{
 		//		if (m_InputCommands.scroll_wheel_delta != 0)
@@ -113,14 +115,12 @@ void Camera::UpdateCameraBasedOnMouseInput(const InputCommands& m_InputCommands)
 		//		}
 
 
-		float delta_x = xNDC - m_previousXNDC;
-		float delta_y = yNDC - m_previousYNDC;
 
 		//Change in x rotate yaw
-		m_camOrientation.y += delta_x * m_camRotateFromMouseDelta;
+		m_camOrientation.y += m_deltaXNDC * m_camRotateFromMouseDelta;
 
 		//Change in y rotate pitch
-		m_camOrientation.x += delta_y * m_camRotateFromMouseDelta;
+		m_camOrientation.x += m_deltaYNDC * m_camRotateFromMouseDelta;
 	}
 
 
@@ -167,6 +167,12 @@ DirectX::XMMATRIX Camera::GetView()
 {
 	return m_view;
 }
+
+float Camera::GetDeltaXNDC()
+{ return m_deltaXNDC; }
+
+float Camera::GetDeltaYNDC()
+{ return m_deltaYNDC; }
 
 void Camera::ConvertToNDC(int x, int y, float& xNDC, float& yNDC)
 {

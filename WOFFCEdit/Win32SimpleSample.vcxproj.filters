@@ -20,6 +20,9 @@
     <Filter Include="Utility">
       <UniqueIdentifier>{015b5248-97d7-4860-bb0f-3345de52e173}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ObjectTransformEdit">
+      <UniqueIdentifier>{965b4ca2-f22a-432a-90b5-2abfe33e6a77}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -66,13 +69,21 @@
     <ClCompile Include="Observer.cpp" />
     <ClCompile Include="ObjectSelectionState.cpp" />
     <ClCompile Include="ToolStateBase.cpp" />
-    <ClCompile Include="ObjectTransformState.cpp" />
     <ClCompile Include="ControlHandle.cpp" />
     <ClCompile Include="PostionControlHandle.cpp" />
-    <ClCompile Include="AxisBasedTransformState.cpp" />
     <ClCompile Include="ScaleControlHandle.cpp" />
     <ClCompile Include="ScaleTransformState.cpp" />
     <ClCompile Include="CreateObjectDialog.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="AxisBasedTransformState.cpp">
+      <Filter>ObjectTransformEdit</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectTransformState.cpp">
+      <Filter>ObjectTransformEdit</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectRotationState.cpp">
+      <Filter>ObjectTransformEdit</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -125,13 +136,21 @@
     <ClInclude Include="MFCTransformView.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="ToolStateBase.h" />
-    <ClInclude Include="ObjectTransformState.h" />
     <ClInclude Include="ControlHandle.h" />
     <ClInclude Include="PostionControlHandle.h" />
-    <ClInclude Include="AxisBasedTransformState.h" />
     <ClInclude Include="ScaleControlHandle.h" />
     <ClInclude Include="ScaleTransformState.h" />
     <ClInclude Include="CreateObjectDialog.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="AxisBasedTransformState.h">
+      <Filter>ObjectTransformEdit</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectTransformState.h">
+      <Filter>ObjectTransformEdit</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectRotationState.h">
+      <Filter>ObjectTransformEdit</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

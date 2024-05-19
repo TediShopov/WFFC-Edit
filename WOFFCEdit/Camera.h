@@ -42,10 +42,18 @@ public:
 	Vector3 m_camLookDirection;
 	Vector3 m_camRight;
 
+
+	float GetDeltaXNDC();
+	float GetDeltaYNDC();
+
+
+	void ConvertToNDC(int x, int y, float& xNDC, float& yNDC);
+
 private:
+	float m_deltaXNDC;
+	float m_deltaYNDC;
 	float m_previousXNDC;
 	float m_previousYNDC;
-	void ConvertToNDC(int x, int y, float& xNDC, float& yNDC);
 
 
 	XMMATRIX m_view;

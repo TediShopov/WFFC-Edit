@@ -178,6 +178,7 @@
     <ClCompile Include="MFCFrame.cpp" />
     <ClCompile Include="MFCRenderFrame.cpp" />
     <ClCompile Include="MFCTransformView.cpp" />
+    <ClCompile Include="ObjectRotationState.cpp" />
     <ClCompile Include="ObjectSelectionState.cpp" />
     <ClCompile Include="ObjectTransformState.cpp" />
     <ClCompile Include="Observer.cpp" />
@@ -206,6 +207,7 @@
     <ClInclude Include="MFCFrame.h" />
     <ClInclude Include="MFCRenderFrame.h" />
     <ClInclude Include="MFCTransformView.h" />
+    <ClInclude Include="ObjectRotationState.h" />
     <ClInclude Include="ObjectTransformState.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="pch.h" />

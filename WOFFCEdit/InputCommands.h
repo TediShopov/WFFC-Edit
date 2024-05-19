@@ -13,6 +13,7 @@ struct InputCommands
 	bool mouse_LB_Down;
 	bool mouse_RB_Down;
 	short scroll_wheel_delta;
+	bool SHIFT_Down;
 	bool CTRL_Down;
 	bool plane_x;
 	bool plane_y;

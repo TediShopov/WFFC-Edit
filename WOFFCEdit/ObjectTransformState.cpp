@@ -82,6 +82,15 @@ void ObjectTransformState::FromInput(const InputCommands& input)
 {
 	move_on_axis = input.CTRL_Down;
 
+	if (input.plane_x)
+		axisType = X_AXIS;
+	else if (input.plane_y)
+		axisType = Y_AXIS;
+	else if (input.plane_z)
+		axisType = Z_AXIS;
+
+
+
 	if (move_on_axis)
 	{
 		if (axisType == X_AXIS)

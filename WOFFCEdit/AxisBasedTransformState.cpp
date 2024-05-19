@@ -69,7 +69,7 @@ void AxisBasedTransformState::Update(const InputCommands& input)
 {
 	world_axes = GetWorldAxes(SelectedObject);
 	world_planes = GetWorldPlanes(SelectedObject);
-	if (MainTool->ShouldStartSelectDragging() == false)
+	if (MainTool->IsTransformActionInputted() == false)
 	{
 		if (release_mouse_needed)
 		{

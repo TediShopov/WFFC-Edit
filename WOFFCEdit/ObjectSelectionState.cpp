@@ -11,12 +11,12 @@ void ObjectSelectionState::Init(ToolMain* tool, const InputCommands&)
 
 void ObjectSelectionState::Update(const InputCommands& commands)
 {
-	if (MainTool->ShouldStartSelectDragging())
+	if (MainTool->IsTransformActionInputted())
 	{
 		//this->MainTool->ChangeState(new ObjectSelectionState());
-		auto newTransfomrStateHacky = new ObjectTransformState();
+		//auto newTransfomrStateHacky = new ObjectTransformState();
 		//		newTransfomrStateHacky->Init(this->MainTool, commands);
-		this->MainTool->ChangeState(newTransfomrStateHacky);
+		this->MainTool->ChangeState(this->MainTool->GetNewTransformUpdateState());
 		return;
 	}
 	//std::vector<int>& sel = MainTool->m_selectedObject;

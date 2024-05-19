@@ -8,7 +8,12 @@
 #include "InputCommands.h"
 #include "Observer.h"
 using namespace DirectX;
-
+enum ObjectTransformEditMode
+{
+	MODE_POSITION,
+	MODE_SCALE,
+	MODE_ROTATION
+};
 class ToolStateBase;
 
 class ToolMain : public Subject<ToolMain>
@@ -32,7 +37,8 @@ public: //methods
 	void ChangeState(ToolStateBase* newState);
 	void Notify(const ToolMain& data) override;
 
-	bool ShouldStartSelectDragging() const;
+	bool IsTransformActionInputted() const;
+	ToolStateBase* GetNewTransformUpdateState() const;
 	int getCurrentSelectionID() const;
 	std::vector<int> getCurrentSelectionIDs() const; //returns the IDS of the selected objects.
 
@@ -42,6 +48,7 @@ public: //variables
 	ChunkObject m_chunk; //our landscape chunk
 	ToolStateBase* ToolState;
 	std::vector<SceneObject> m_sceneGraph; //our scenegraph storing all the objects in the current chunk
+	ObjectTransformEditMode EditMode;
 
 	bool HasSelectedObject();
 	void ClearSelection();
@@ -49,6 +56,10 @@ public: //variables
 	void RemoveFromSelection(int id);
 	std::vector<DisplayObject*> GetSelectedDisplayObjects();
 	std::vector<SceneObject*> GetSelectedObjects();
+
+
+
+
 
 	//Synchronize Diplsay and scene objects
 

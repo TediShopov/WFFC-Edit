@@ -6,6 +6,8 @@
 #include "ObjectSelectionState.h"
 #include "PostionControlHandle.h"
 #include "CreateObjectDialog.h"
+#include "ObjectRotationState.h"
+#include "ObjectTransformState.h"
 
 //#include "CreateObjectDialog.h"
 const std::string DefaultArrowModel = "database/data/placeholder.cmo";
@@ -29,6 +31,7 @@ ToolMain::ToolMain()
 	m_toolInputCommands.mouse_LB_Down = false;
 	m_toolInputCommands.CTRL_Down = false;
 	ToolState = new ObjectSelectionState();
+	EditMode = ObjectTransformEditMode::MODE_ROTATION;
 	ToolState->Init(this, m_toolInputCommands);
 }
 
@@ -355,7 +358,7 @@ void ToolMain::Tick(MSG* msg)
 	//Toggle mouse arc ball control 
 	if (this->m_selectedObject.size() == 1)
 	{
-		this->m_d3dRenderer.camera.isArcBallMode = m_toolInputCommands.CTRL_Down;
+		this->m_d3dRenderer.camera.isArcBallMode = m_toolInputCommands.SHIFT_Down;
 		this->m_d3dRenderer.camera.arcBallTarget =
 			this->m_d3dRenderer.GetDisplayObject(m_selectedObject[0])->GetWorldPosition();
 		//Get the world posiiuton of the object
@@ -402,6 +405,7 @@ void ToolMain::UpdateInput(MSG* msg)
 	//WASD movement
 	m_toolInputCommands.forward = m_keyArray['W'];
 	m_toolInputCommands.CTRL_Down = m_keyArray[VK_CONTROL];
+	m_toolInputCommands.SHIFT_Down = m_keyArray[VK_SHIFT];
 
 	m_toolInputCommands.back = m_keyArray['S'];
 	m_toolInputCommands.left = m_keyArray['A'];
@@ -441,11 +445,35 @@ void ToolMain::ChangeState(ToolStateBase* newState)
 	ToolState->Init(this, m_toolInputCommands);
 }
 
-bool ToolMain::ShouldStartSelectDragging() const
+bool ToolMain::IsTransformActionInputted() const
 {
 	return (m_toolInputCommands.plane_x ||
 		m_toolInputCommands.plane_y
 		|| m_toolInputCommands.plane_z) && m_selectedObject.size() == 1;
+}
+
+ToolStateBase* ToolMain::GetNewTransformUpdateState() const
+{
+	if (EditMode==ObjectTransformEditMode::MODE_POSITION)
+	{
+		return new ObjectTransformState();
+		
+	}
+	else if (EditMode==ObjectTransformEditMode::MODE_ROTATION)
+	{
+		return new ObjectRotationState();
+		
+	}
+	else if (EditMode==ObjectTransformEditMode::MODE_SCALE)
+	{
+		return new ObjectSelectionState();
+		
+	}
+
+
+
+
+
 }
 
 bool ToolMain::HasSelectedObject()
