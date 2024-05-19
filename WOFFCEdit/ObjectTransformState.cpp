@@ -22,11 +22,11 @@ void ObjectTransformState::Update(const InputCommands& input)
 {
 	AxisBasedTransformState::Update(input);
 	move_on_axis = input.CTRL_Down;
-	world_axes_directions = GetWorldAxes(SelectedObject);
-	world_planes = GetWorldPlanes(SelectedObject);
 	auto sel = MainTool->GetSelectedDisplayObjects();
 	if (sel.size() == 1)
 	{
+		world_axes_directions = GetWorldAxes(SelectedObject);
+		world_planes = GetWorldPlanes(SelectedObject);
 		DisplayObject* obj = sel[0];
 
 		XMVECTOR newPosition;

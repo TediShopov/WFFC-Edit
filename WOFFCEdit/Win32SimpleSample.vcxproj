@@ -193,6 +193,7 @@
     <ClCompile Include="sqlite3.c" />
     <ClCompile Include="ToolMain.cpp" />
     <ClCompile Include="ToolStateBase.cpp" />
+    <ClCompile Include="UpdateObjectCommand.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AxisBasedTransformState.h" />
@@ -217,6 +218,7 @@
     <ClInclude Include="resource.h" />
     <ClInclude Include="ScaleControlHandle.h" />
     <ClInclude Include="ScaleTransformState.h" />
+    <ClInclude Include="SceneCommand.h" />
     <ClInclude Include="SceneObject.h" />
     <ClInclude Include="SelectDialogue.h" />
     <ClInclude Include="sqlite3.h" />
@@ -225,6 +227,7 @@
     <ClInclude Include="MFCMain.h" />
     <ClInclude Include="ToolMain.h" />
     <ClInclude Include="ToolStateBase.h" />
+    <ClInclude Include="UpdateObjectCommand.h" />
   </ItemGroup>
   <ItemGroup>
     <Media Include="database\data\Scene1.fbx">

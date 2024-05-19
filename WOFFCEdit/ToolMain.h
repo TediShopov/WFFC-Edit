@@ -1,12 +1,15 @@
 #pragma once
 
 #include <afxext.h>
+#include <stack>
+
 #include "pch.h"
 #include "Game.h"
 #include "sqlite3.h"
 #include "SceneObject.h"
 #include "InputCommands.h"
 #include "Observer.h"
+class SceneCommand;
 using namespace DirectX;
 enum ObjectTransformEditMode
 {
@@ -57,6 +60,8 @@ public: //variables
 	std::vector<DisplayObject*> GetSelectedDisplayObjects();
 	std::vector<SceneObject*> GetSelectedObjects();
 
+	void AddCommandToStack(SceneCommand* command);
+	void UndoCommand();
 
 
 
@@ -72,6 +77,7 @@ private: //methods
 	SceneObject* GetById(int ID) ;
 
 private: //variables
+	std::stack<SceneCommand*> m_commandBuffer;
 
 	std::vector<int> m_selectedObject; //ID of current Selection
 	char m_keyArray[256];

@@ -23,6 +23,9 @@
     <Filter Include="ObjectTransformEdit">
       <UniqueIdentifier>{965b4ca2-f22a-432a-90b5-2abfe33e6a77}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Commands">
+      <UniqueIdentifier>{b427d6e5-a02b-4cd0-8791-433f2e2385b3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -85,6 +88,9 @@
       <Filter>ObjectTransformEdit</Filter>
     </ClCompile>
     <ClCompile Include="ObjectScaleState.cpp" />
+    <ClCompile Include="UpdateObjectCommand.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -153,6 +159,12 @@
       <Filter>ObjectTransformEdit</Filter>
     </ClInclude>
     <ClInclude Include="ObjectScaleState.h" />
+    <ClInclude Include="UpdateObjectCommand.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneCommand.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

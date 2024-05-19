@@ -3,6 +3,7 @@
 #include "ObjectSelectionState.h"
 #include "ToolMain.h"
 #include  "PostionControlHandle.h"
+#include "UpdateObjectCommand.h"
 
 XMMATRIX AxisBasedTransformState::LocalAxes =
 {
@@ -23,6 +24,12 @@ AxisBasedTransformState::AxisBasedTransformState(AXES axisType)
 	this->axisType = axisType;
 }
 
+void AxisBasedTransformState::FinalizeTransformation()
+{
+	m_updateObjectCommand->FinishUpdate();
+	m_updateObjectCommand->Execute(this->MainTool);
+}
+
 void AxisBasedTransformState::Init(ToolMain* tool, const InputCommands& comms)
 {
 	this->MainTool = tool;
@@ -31,6 +38,11 @@ void AxisBasedTransformState::Init(ToolMain* tool, const InputCommands& comms)
 	SelectedObject = this->MainTool->GetSelectedDisplayObjects()[0];
 	world_axes_directions = this->GetWorldAxes(SelectedObject);
 	world_planes = this->GetWorldPlanes(SelectedObject);
+	//Create command
+	this->m_updateObjectCommand = new UpdateObjectCommand(SelectedObject);
+
+
+
 	if (!from_handle)
 	{
 		FromInput(comms);
@@ -64,11 +76,13 @@ void AxisBasedTransformState::Update(const InputCommands& input)
 		{
 			if (input.mouse_LB_Down == false)
 			{
+				this->FinalizeTransformation();
 				this->MainTool->ChangeState(new ObjectSelectionState());
 			}
 		}
 		else
 		{
+			this->FinalizeTransformation();
 			this->MainTool->ChangeState(new ObjectSelectionState());
 		}
 	}

@@ -3,6 +3,7 @@
 
 #include "ToolStateBase.h"
 
+class UpdateObjectCommand;
 class DisplayObject;
 using namespace DirectX;
 enum AXES;
@@ -16,9 +17,17 @@ public:
 	AXES axisType;
 	InputCommands on_selection_commands;
 
+	//Command to update the object
+	UpdateObjectCommand* m_updateObjectCommand;
+
+
+
 	//Base constructor when state is called from other classes
 	AxisBasedTransformState();
 	AxisBasedTransformState(AXES selected_axis);
+
+
+	void FinalizeTransformation();
 
 	void virtual Init(ToolMain* tool, const InputCommands&) override;
 	void virtual Update(const InputCommands& input)override;

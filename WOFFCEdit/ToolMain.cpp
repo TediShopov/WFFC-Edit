@@ -9,6 +9,7 @@
 #include "ObjectRotationState.h"
 #include "ObjectScaleState.h"
 #include "ObjectTransformState.h"
+#include "SceneCommand.h"
 
 //#include "CreateObjectDialog.h"
 const std::string DefaultArrowModel = "database/data/placeholder.cmo";
@@ -325,6 +326,10 @@ void ToolMain::CreateObject()
 
 void ToolMain::Tick(MSG* msg)
 {
+	if(this->m_toolInputCommands.undo)
+	{
+		this->UndoCommand();
+	}
 	//Put the selected object as handles transform
 
 	if (m_toolInputCommands.deleteSelected)
@@ -412,6 +417,7 @@ void ToolMain::UpdateInput(MSG* msg)
 
 	m_toolInputCommands.back = m_keyArray['S'];
 	m_toolInputCommands.left = m_keyArray['A'];
+	m_toolInputCommands.undo = m_keyArray['U'];
 
 	m_toolInputCommands.right = m_keyArray['D'];
 	//rotation
@@ -510,6 +516,17 @@ std::vector<SceneObject*> ToolMain::GetSelectedObjects()
 		selectedObjects.push_back(GetById(m_selectedObject[i]));
 	}
 	return selectedObjects;
+}
+
+void ToolMain::AddCommandToStack(SceneCommand* command)
+{
+	m_commandBuffer.push(command);
+}
+
+void ToolMain::UndoCommand()
+{
+	SceneCommand* last = m_commandBuffer.top();
+	last->Revert(this);
 }
 
 void ToolMain::SyncDisplayAndSceneObjects(int i)
