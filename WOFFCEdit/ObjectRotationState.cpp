@@ -30,17 +30,12 @@ void ObjectRotationState::Update(const InputCommands& input)
 {
 	AxisBasedTransformState::Update(input);
 
-	auto sel = MainTool->GetSelectedObjects();
+	auto sel = MainTool->GetSelectedDisplayObjects();
 	if (sel.size() == 1)
 	{
 		SimpleMath::Vector3 newOrientation = RotateAroundSelectedAxis(input);
-
-		sel[0]->rotX = newOrientation.x;
-		sel[0]->rotY = newOrientation.y;
-		sel[0]->rotZ = newOrientation.z;
-
-
-		this->MainTool->SyncDisplayAndSceneObjects(sel[0]->ID);
+		sel[0]->m_orientation = newOrientation;
+		this->MainTool->SyncDisplayAndSceneObjects(sel[0]->m_ID);
 		this->MainTool->Notify(*this->MainTool);
 	}
 	else

@@ -321,34 +321,33 @@ void Game::OnWindowSizeChanged(int width, int height)
 void Game::UpdateDisplayElementTransform(int i, SceneObject* sceneObject)
 {
 	DisplayObject& newDisplayObject = *GetDisplayObject(i);
-	newDisplayObject.m_position.x = sceneObject->posX;
-	newDisplayObject.m_position.y = sceneObject->posY;
-	newDisplayObject.m_position.z = sceneObject->posZ;
+	sceneObject->posX    = newDisplayObject.m_position.x ;
+	sceneObject->posY = newDisplayObject.m_position.y;
+	sceneObject->posZ = newDisplayObject.m_position.z;
 
 	//setorientation
-	newDisplayObject.m_orientation.x = sceneObject->rotX;
-	newDisplayObject.m_orientation.y = sceneObject->rotY;
-	newDisplayObject.m_orientation.z = sceneObject->rotZ;
+	sceneObject->rotX = newDisplayObject.m_orientation.x;
+	sceneObject->rotY = newDisplayObject.m_orientation.y;
+	sceneObject->rotZ = newDisplayObject.m_orientation.z;
 
 	//set scale
-	newDisplayObject.m_scale.x = sceneObject->scaX;
-	newDisplayObject.m_scale.y = sceneObject->scaY;
-	newDisplayObject.m_scale.z = sceneObject->scaZ;
+	sceneObject->scaX = newDisplayObject.m_scale.x;
+	sceneObject->scaY = newDisplayObject.m_scale.y;
+	sceneObject->scaZ = newDisplayObject.m_scale.z;
 
 	//set wireframe / render flags
-	newDisplayObject.m_render = sceneObject->editor_render;
-	newDisplayObject.m_wireframe = sceneObject->editor_wireframe;
-
-	newDisplayObject.m_light_type = sceneObject->light_type;
-	newDisplayObject.m_light_diffuse_r = sceneObject->light_diffuse_r;
-	newDisplayObject.m_light_diffuse_g = sceneObject->light_diffuse_g;
-	newDisplayObject.m_light_diffuse_b = sceneObject->light_diffuse_b;
-	newDisplayObject.m_light_specular_r = sceneObject->light_specular_r;
-	newDisplayObject.m_light_specular_g = sceneObject->light_specular_g;
-	newDisplayObject.m_light_specular_b = sceneObject->light_specular_b;
-	newDisplayObject.m_light_spot_cutoff = sceneObject->light_spot_cutoff;
-	newDisplayObject.m_light_constant = sceneObject->light_constant;
-	newDisplayObject.m_light_linear = sceneObject->light_linear;
+	sceneObject->editor_render = newDisplayObject.m_render;
+	sceneObject->editor_wireframe = newDisplayObject.m_wireframe;
+	sceneObject->light_type = newDisplayObject.m_light_type;
+	sceneObject->light_diffuse_r = newDisplayObject.m_light_diffuse_r;
+	sceneObject->light_diffuse_g = newDisplayObject.m_light_diffuse_g;
+	sceneObject->light_diffuse_b = newDisplayObject.m_light_diffuse_b;
+	sceneObject->light_specular_r = newDisplayObject.m_light_specular_r;
+	sceneObject->light_specular_g = newDisplayObject.m_light_specular_g;
+	sceneObject->light_specular_b = newDisplayObject.m_light_specular_b;
+	sceneObject->light_spot_cutoff = newDisplayObject.m_light_spot_cutoff;
+	sceneObject->light_constant = newDisplayObject.m_light_constant;
+	sceneObject->light_linear = newDisplayObject.m_light_linear;
 	newDisplayObject.m_light_quadratic = sceneObject->light_quadratic;
 }
 
@@ -361,7 +360,7 @@ bool Game::UpdateDisplayElmentModel(int index, SceneObject* sceneObject)
 	auto device = m_deviceResources->GetD3DDevice();
 	//load model
 	std::wstring modelwstr =
-		StringToWCHART(sceneObject->model_path); //convect string to Wchar
+		StringToWCHART(newDisplayObject.model_path); //convect string to Wchar
 	try
 	{
 		newDisplayObject.m_model =
@@ -380,7 +379,7 @@ bool Game::UpdateDisplayElmentModel(int index, SceneObject* sceneObject)
 
 	//Load Texture
 	std::wstring texturewstr =
-		StringToWCHART(sceneObject->tex_diffuse_path); //convect string to Wchar
+		StringToWCHART(newDisplayObject.texture_path); //convect string to Wchar
 	HRESULT rs;
 	rs = CreateDDSTextureFromFile(
 		device,
@@ -417,6 +416,9 @@ bool Game::UpdateDisplayElmentModel(int index, SceneObject* sceneObject)
 			}
 		});
 
+
+	sceneObject->model_path = newDisplayObject.model_path;
+	sceneObject->tex_diffuse_path = newDisplayObject.texture_path;
 	return true;
 }
 

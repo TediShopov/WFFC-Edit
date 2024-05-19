@@ -84,6 +84,7 @@ public:
 
 	Camera camera;
 	RECT m_ScreenDimensions;
+	std::vector<DisplayObject*> m_displayList;
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();
@@ -100,7 +101,6 @@ private:
 
 	//tool specific
 	std::vector<ControlHandle*> m_displayHandlesList;
-	std::vector<DisplayObject*> m_displayList;
 	DisplayChunk m_displayChunk;
 	InputCommands m_InputCommands;
 

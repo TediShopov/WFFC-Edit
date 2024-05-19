@@ -24,10 +24,10 @@ void ObjectTransformState::Update(const InputCommands& input)
 	move_on_axis = input.CTRL_Down;
 	world_axes_directions = GetWorldAxes(SelectedObject);
 	world_planes = GetWorldPlanes(SelectedObject);
-	auto sel = MainTool->GetSelectedObjects();
+	auto sel = MainTool->GetSelectedDisplayObjects();
 	if (sel.size() == 1)
 	{
-		SceneObject* obj = sel[0];
+		DisplayObject* obj = sel[0];
 
 		XMVECTOR newPosition;
 		XMVECTOR mouseWorldPos;
@@ -44,11 +44,8 @@ void ObjectTransformState::Update(const InputCommands& input)
 			newPosition = PlaneIntersection(
 				mouseWorldPos, plane);
 		}
-		obj->posX = newPosition.m128_f32[0];
-		obj->posY = newPosition.m128_f32[1];
-		obj->posZ = newPosition.m128_f32[2];
-		
-		this->MainTool->SyncDisplayAndSceneObjects(sel[0]->ID);
+		obj->m_position = newPosition;
+		this->MainTool->SyncDisplayAndSceneObjects(sel[0]->m_ID);
 		this->MainTool->Notify(*this->MainTool);
 	}
 	else

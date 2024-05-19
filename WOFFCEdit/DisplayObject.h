@@ -22,6 +22,10 @@ public:
 	DisplayObject();
 	~DisplayObject();
 
+
+	std::string model_path;
+	std::string texture_path;
+
 	std::shared_ptr<DirectX::Model> m_model; //main Mesh
 	ID3D11ShaderResourceView* m_texture_diffuse; //diffuse texture
 

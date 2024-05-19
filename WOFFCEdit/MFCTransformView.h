@@ -7,13 +7,14 @@
 
 #include "ToolMain.h"
 #include "Observer.h"
+#include "DisplayObject.h"
 
 //#include "TransformHirarchyTree.h"
 class ToolMain;
 
-class SceneObject;
+class DisplayObject;
 // MFCTransformView form view
-typedef std::vector<SceneObject> SceneGraph;
+typedef std::vector<DisplayObject> SceneGraph;
 
 class MFCTransformView : public CFormView, public Observer<ToolMain>
 {
@@ -50,9 +51,9 @@ public:
 
 	// Function to traverse the entire tree and uncheck all items
 	void UncheckAllTreeItems(CTreeCtrl& treeCtrl);
-	//SceneObject* FindSceneObject(int selectedItemId);
-	void UpdatePropertyGridSelection(std::vector<SceneObject*>* selection);
-	void UpdatePropertyGrid(SceneObject* obj);
+	//DisplayObject* FindSceneObject(int selectedItemId);
+	void UpdatePropertyGridSelection(std::vector<DisplayObject*>* selection);
+	void UpdatePropertyGrid(DisplayObject* obj);
 	afx_msg LRESULT OnTransformPropertyChanged(__in WPARAM wparam, __in LPARAM lparam);
 
 	CTreeCtrl m_treeCtrl;
@@ -68,7 +69,7 @@ private:
 	bool convert_to_relative_path(const std::string& absolute_path,  std::string& relative_path);
 
 	//Poistion Controls
-	SceneObject sceneObjectCopy;
+	DisplayObject displayObjectCopy;
 public:
 	afx_msg void OnBnClickedButton3();
 	afx_msg void OnBnClickedButton2();

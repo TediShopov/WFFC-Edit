@@ -20,20 +20,20 @@ MFCTransformView::MFCTransformView()
 {
 	auto transform = new CMFCPropertyGridProperty("Transform");
 	auto globalPosGroup = new CMFCPropertyGridProperty("Position");
-	globalPosGroup->AddSubItem(CreateFloatProp("X", &sceneObjectCopy.posX));
-	globalPosGroup->AddSubItem(CreateFloatProp("Y", &sceneObjectCopy.posY));
-	globalPosGroup->AddSubItem(CreateFloatProp("Z", &sceneObjectCopy.posZ));
+	globalPosGroup->AddSubItem(CreateFloatProp("X", &displayObjectCopy.m_position.x));
+	globalPosGroup->AddSubItem(CreateFloatProp("Y", &displayObjectCopy.m_position.y));
+	globalPosGroup->AddSubItem(CreateFloatProp("Z", &displayObjectCopy.m_position.z));
 
 	//Var scale group
 	auto localScaleGroup = new CMFCPropertyGridProperty("Scale");
-	localScaleGroup->AddSubItem(CreateFloatProp("X", &sceneObjectCopy.scaX));
-	localScaleGroup->AddSubItem(CreateFloatProp("Y", &sceneObjectCopy.scaY));
-	localScaleGroup->AddSubItem(CreateFloatProp("Z", &sceneObjectCopy.scaZ));
+	localScaleGroup->AddSubItem(CreateFloatProp("X", &displayObjectCopy.m_scale.x));
+	localScaleGroup->AddSubItem(CreateFloatProp("Y", &displayObjectCopy.m_scale.y));
+	localScaleGroup->AddSubItem(CreateFloatProp("Z", &displayObjectCopy.m_scale.z));
 
 	auto localOrientationGroup = new CMFCPropertyGridProperty("Rotation");
-	localOrientationGroup->AddSubItem(CreateFloatProp("X", &sceneObjectCopy.rotX));
-	localOrientationGroup->AddSubItem(CreateFloatProp("Y", &sceneObjectCopy.rotY));
-	localOrientationGroup->AddSubItem(CreateFloatProp("Z", &sceneObjectCopy.rotZ));
+	localOrientationGroup->AddSubItem(CreateFloatProp("X", &displayObjectCopy.m_orientation.x));
+	localOrientationGroup->AddSubItem(CreateFloatProp("Y", &displayObjectCopy.m_orientation.y));
+	localOrientationGroup->AddSubItem(CreateFloatProp("Z", &displayObjectCopy.m_orientation.z));
 	transform->AddSubItem(globalPosGroup);
 	transform->AddSubItem(localScaleGroup);
 	transform->AddSubItem(localOrientationGroup);
@@ -55,12 +55,12 @@ MFCTransformView::MFCTransformView()
 		new CMFCPropertyGridFileProperty(
 			_T("Model Mesh"),
 			TRUE,
-			sceneObjectCopy.model_path.c_str(),
+			displayObjectCopy.model_path.c_str(),
 			_T("ico"),
 			0,
 			modelFilter,
 			_T("Specifies the dialog icon"),
-			reinterpret_cast<DWORD_PTR>(&sceneObjectCopy.model_path)));
+			reinterpret_cast<DWORD_PTR>(&displayObjectCopy.model_path)));
 
 	//Texture Mesh Dialog
 	//----------------------------------------------path
@@ -72,12 +72,12 @@ MFCTransformView::MFCTransformView()
 		new CMFCPropertyGridFileProperty(
 			_T("Texture"),
 			TRUE,
-			sceneObjectCopy.tex_diffuse_path.c_str(),
+			displayObjectCopy.texture_path.c_str(),
 			_T("dds"),
 			0,
 			textureFilter,
 			_T("Specifies the dialog icon"),
-			reinterpret_cast<DWORD_PTR>(&sceneObjectCopy.tex_diffuse_path)));
+			reinterpret_cast<DWORD_PTR>(&displayObjectCopy.texture_path)));
 			
 			
 	//TODO(lowPriority) Add color 
@@ -184,7 +184,7 @@ void MFCTransformView::UpdateWireFrameCheck(const ToolMain& data)
 void MFCTransformView::Update(const Subject<ToolMain>* subject, const ToolMain& data)
 {
 	VisualizeSelectionOnTreeCtrl(data);
-	auto selected = this->m_toolPtr->GetSelectedObjects();
+	auto selected = this->m_toolPtr->GetSelectedDisplayObjects();
 	UpdatePropertyGridSelection(&selected);
 	UpdateWireFrameCheck(data);
 }
@@ -200,7 +200,7 @@ END_MESSAGE_MAP()
 
 // MFCTransformView diagnostics
 
-void MFCTransformView::UpdatePropertyGridSelection(std::vector<SceneObject*>* selection)
+void MFCTransformView::UpdatePropertyGridSelection(std::vector<DisplayObject*>* selection)
 {
 	if (selection->size() == 1)
 	{
@@ -245,7 +245,7 @@ void MFCTransformView::OnClickTree(NMHDR* pNMHDR, LRESULT* pResult)
 			m_toolPtr->RemoveFromSelection(actualIndex);
 		}
 	}
-	auto selection = m_toolPtr->GetSelectedObjects();
+	auto selection = m_toolPtr->GetSelectedDisplayObjects();
 	UpdatePropertyGridSelection(&selection);
 	UpdateWireFrameCheck(*this->m_toolPtr);
 
@@ -282,13 +282,13 @@ void MFCTransformView::UncheckAllTreeItems(CTreeCtrl& treeCtrl)
 	}
 }
 
-//SceneObject* MFCTransformView::FindSceneObject(int selectedItemId)
+//DisplayObject* MFCTransformView::FindSceneObject(int selectedItemId)
 //{
-//	SceneObject* obj = nullptr;
-//	std::vector<SceneObject>* objects = &m_toolPtr->m_sceneGraph;
-//	for (SceneObject& scene_object : *objects)
+//	DisplayObject* obj = nullptr;
+//	std::vector<DisplayObject>* objects = &m_toolPtr->m_sceneGraph;
+//	for (DisplayObject& scene_object : *objects)
 //	{
-//		if (scene_object.ID == selectedItemId + 1)
+//		if (scene_object.m_ID == selectedItemId + 1)
 //		{
 //			obj = &scene_object;
 //			break;
@@ -297,26 +297,26 @@ void MFCTransformView::UncheckAllTreeItems(CTreeCtrl& treeCtrl)
 //	return obj;
 //}
 
-void MFCTransformView::UpdatePropertyGrid(SceneObject* obj)
+void MFCTransformView::UpdatePropertyGrid(DisplayObject* obj)
 {
 	if (obj != nullptr)
-		sceneObjectCopy = *obj;
+		displayObjectCopy = *obj;
 	else
-		sceneObjectCopy = SceneObject();
+		displayObjectCopy =  DisplayObject();
 
 	//Update transform
-	UpdateFloatProp(&sceneObjectCopy.posX);
-	UpdateFloatProp(&sceneObjectCopy.posY);
-	UpdateFloatProp(&sceneObjectCopy.posZ);
-	UpdateFloatProp(&sceneObjectCopy.scaX);
-	UpdateFloatProp(&sceneObjectCopy.scaY);
-	UpdateFloatProp(&sceneObjectCopy.scaZ);
-	UpdateFloatProp(&sceneObjectCopy.rotX);
-	UpdateFloatProp(&sceneObjectCopy.rotY);
-	UpdateFloatProp(&sceneObjectCopy.rotZ);
+	UpdateFloatProp(&displayObjectCopy.m_position.x);
+	UpdateFloatProp(&displayObjectCopy.m_position.y);
+	UpdateFloatProp(&displayObjectCopy.m_position.z);
+	UpdateFloatProp(&displayObjectCopy.m_scale.x);
+	UpdateFloatProp(&displayObjectCopy.m_scale.y);
+	UpdateFloatProp(&displayObjectCopy.m_scale.z);
+	UpdateFloatProp(&displayObjectCopy.m_orientation.x);
+	UpdateFloatProp(&displayObjectCopy.m_orientation.y);
+	UpdateFloatProp(&displayObjectCopy.m_orientation.z);
 
-	UpdateFileProp(&sceneObjectCopy.model_path);
-	UpdateFileProp(&sceneObjectCopy.tex_diffuse_path);
+	UpdateFileProp(&displayObjectCopy.model_path);
+	UpdateFileProp(&displayObjectCopy.texture_path);
 
 	m_propertyGrid.MarkModifiedProperties(1, 1);
 }
@@ -325,10 +325,10 @@ LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpara
 {
 	CMFCPropertyGridProperty* propChanged = (CMFCPropertyGridProperty*)lparam;
 
-	SceneObject* foundObj = nullptr;
+	DisplayObject* foundObj = nullptr;
 	//IF property changed was string
 	//IF property changed was float
-	auto sceneObjects = this->m_toolPtr->GetSelectedObjects();
+	auto sceneObjects = this->m_toolPtr->GetSelectedDisplayObjects();
 	if (sceneObjects.size() == 1)
 	{
 		m_propertyGrid.MarkModifiedProperties(1, 1);
@@ -353,16 +353,16 @@ LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpara
 			propChanged->SetValue( CString(relative_path.c_str()));
 
 			(*d) =relative_path;
-			(*foundObj) = sceneObjectCopy;
-			m_toolPtr->SyncDisplayAndSceneObjects(foundObj->ID );
+			(*foundObj) = displayObjectCopy;
+			m_toolPtr->SyncDisplayAndSceneObjects(foundObj->m_ID );
 		}
 		else
 		{
 			float* d = reinterpret_cast<float*>(propChanged->GetData());
 			auto test = propChanged->GetValue();
 			(*d) = test.fltVal;
-			(*foundObj) = sceneObjectCopy;
-			m_toolPtr->SyncDisplayAndSceneObjects(foundObj->ID);
+			(*foundObj) = displayObjectCopy;
+			m_toolPtr->SyncDisplayAndSceneObjects(foundObj->m_ID);
 		}
 	}
 	return TRUE;
@@ -372,7 +372,7 @@ LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpara
 void MFCTransformView::VisualizeSelectionOnTreeCtrl(const ToolMain& tool)
 {
 	std::map<int, HTREEITEM>* idToTreeItems = &objectsTreeItems;
-	std::vector<SceneObject> sceneCopy = tool.m_sceneGraph;
+	std::vector<DisplayObject*> sceneCopy = tool.m_d3dRenderer.m_displayList;
 
 	//Update the transform tree if an object from scene was deleted
 	if(sceneCopy.size() != idToTreeItems->size())
@@ -386,7 +386,7 @@ void MFCTransformView::VisualizeSelectionOnTreeCtrl(const ToolMain& tool)
 			auto iter = std::find_if(
 				sceneCopy.begin(),
 				sceneCopy.end(),
-				[it](const SceneObject& s) {return s.ID == it->first; });
+				[it](DisplayObject* s) {return s->m_ID == it->first; });
 
 			if (iter == sceneCopy.end())
 				uncontainedIndexes.push_back(it->first);
@@ -410,30 +410,30 @@ void MFCTransformView::VisualizeSelectionOnTreeCtrl(const ToolMain& tool)
 	{
 		//Remove items which id's are already presented in object to tree map
 		auto removed = std::remove_if(sceneCopy.begin(), sceneCopy.end(),
-		                              [idToTreeItems](SceneObject v)
+		                              [idToTreeItems](DisplayObject* v)
 		                              {
-			                              return idToTreeItems->find(v.ID) != idToTreeItems->end();
+			                              return idToTreeItems->find(v->m_ID) != idToTreeItems->end();
 		                              });
 		sceneCopy.erase(removed, sceneCopy.end());
-		for (const SceneObject& element : sceneCopy)
+		for (DisplayObject* element : sceneCopy)
 		{
-			if (element.parent_id == 0)
+			if (element->parentObject == nullptr)
 
 
 
 			{
-				HTREEITEM treeitem = m_treeCtrl.InsertItem(std::to_wstring(element.ID).c_str());
-				idToTreeItems->insert({element.ID, treeitem});
+				HTREEITEM treeitem = m_treeCtrl.InsertItem(std::to_wstring(element->m_ID).c_str());
+				idToTreeItems->insert({element->m_ID, treeitem});
 			}
 			else
 			{
-				if (idToTreeItems->find(element.parent_id) != idToTreeItems->end())
+				if (idToTreeItems->find(element->parentObject->m_ID) != idToTreeItems->end())
 				{
-					HTREEITEM parentItem = idToTreeItems->at(element.parent_id);
+					HTREEITEM parentItem = idToTreeItems->at(element->parentObject->m_ID);
 					HTREEITEM treeitem = m_treeCtrl.InsertItem(
-						std::to_wstring(element.ID).c_str()
+						std::to_wstring(element->m_ID).c_str()
 						, parentItem);
-					idToTreeItems->insert({element.ID, treeitem});
+					idToTreeItems->insert({element->m_ID, treeitem});
 				}
 			}
 		}
@@ -475,7 +475,7 @@ void MFCTransformView::Dump(CDumpContext& dc) const
 void MFCTransformView::OnBnClickedButton1()
 {
 	m_toolPtr->ClearSelection();
-	UpdatePropertyGridSelection(&(m_toolPtr->GetSelectedObjects()));
+	UpdatePropertyGridSelection(&(m_toolPtr->GetSelectedDisplayObjects()));
 	// TODO: Add your control notification handler code here
 	UncheckAllTreeItems(m_treeCtrl);
 	//	CMFCPropertyGridProperty* prop = m_propertyGrid.FindItemByData(reinterpret_cast<DWORD_PTR>(&testData));
