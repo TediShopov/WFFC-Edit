@@ -26,7 +26,5 @@ public:
 
 private:
 	float m_rotationSpeed;
-	//If moving on global_direction or on plane
-	bool move_on_axis;
 };
 

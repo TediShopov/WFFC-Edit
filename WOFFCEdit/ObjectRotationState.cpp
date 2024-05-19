@@ -100,6 +100,7 @@ XMVECTOR ObjectRotationState::RotateAroundSelectedAxis(const InputCommands& comm
 //	float delta = this->MainTool->m_d3dRenderer.camera.GetDeltaXNDC();
 	float delta = GetWorldCoordinatesDelta(commands);
 	float angle = delta *m_rotationSpeed;
+	bool move_on_axis;
 
 
 

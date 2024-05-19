@@ -7,6 +7,7 @@
 #include "PostionControlHandle.h"
 #include "CreateObjectDialog.h"
 #include "ObjectRotationState.h"
+#include "ObjectScaleState.h"
 #include "ObjectTransformState.h"
 
 //#include "CreateObjectDialog.h"
@@ -31,7 +32,8 @@ ToolMain::ToolMain()
 	m_toolInputCommands.mouse_LB_Down = false;
 	m_toolInputCommands.CTRL_Down = false;
 	ToolState = new ObjectSelectionState();
-	EditMode = ObjectTransformEditMode::MODE_ROTATION;
+//	EditMode = ObjectTransformEditMode::MODE_ROTATION;
+	EditMode = ObjectTransformEditMode::MODE_SCALE;
 //	EditMode = ObjectTransformEditMode::MODE_POSITION;
 	ToolState->Init(this, m_toolInputCommands);
 }
@@ -469,7 +471,7 @@ ToolStateBase* ToolMain::GetNewTransformUpdateState()
 	}
 	else if (EditMode==ObjectTransformEditMode::MODE_SCALE)
 	{
-		return new ObjectSelectionState();
+		return new ObjectScaleState();
 		
 	}
 

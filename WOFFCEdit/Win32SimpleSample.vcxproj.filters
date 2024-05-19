@@ -84,6 +84,7 @@
     <ClCompile Include="ObjectRotationState.cpp">
       <Filter>ObjectTransformEdit</Filter>
     </ClCompile>
+    <ClCompile Include="ObjectScaleState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -151,6 +152,7 @@
     <ClInclude Include="ObjectRotationState.h">
       <Filter>ObjectTransformEdit</Filter>
     </ClInclude>
+    <ClInclude Include="ObjectScaleState.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
