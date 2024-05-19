@@ -9,6 +9,7 @@ struct InputCommands
 	bool rotRight;
 	bool rotLeft;
 	bool undo;
+	bool redo;
 	int mouse_x;
 	int mouse_y;
 	bool mouse_LB_Down;

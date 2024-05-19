@@ -37,6 +37,7 @@ ToolMain::ToolMain()
 	EditMode = ObjectTransformEditMode::MODE_SCALE;
 //	EditMode = ObjectTransformEditMode::MODE_POSITION;
 	ToolState->Init(this, m_toolInputCommands);
+	m_commandBufferMaxSize = 15;
 }
 
 ToolMain::~ToolMain()
@@ -327,20 +328,16 @@ void ToolMain::CreateObject()
 void ToolMain::Tick(MSG* msg)
 {
 	if(this->m_toolInputCommands.undo)
-	{
 		this->UndoCommand();
-	}
+	if(this->m_toolInputCommands.redo)
+		this->RedoCommand();
 	//Put the selected object as handles transform
 
 	if (m_toolInputCommands.deleteSelected)
-	{
 		DeleteSelected();
-	}
 
 	if (m_toolInputCommands.insertObject)
-	{
 		CreateObject();
-	}
 
 
 	m_toolInputCommands.handleHit = false;
@@ -418,6 +415,7 @@ void ToolMain::UpdateInput(MSG* msg)
 	m_toolInputCommands.back = m_keyArray['S'];
 	m_toolInputCommands.left = m_keyArray['A'];
 	m_toolInputCommands.undo = m_keyArray['U'];
+	m_toolInputCommands.redo = m_keyArray['R'];
 
 	m_toolInputCommands.right = m_keyArray['D'];
 	//rotation
@@ -520,12 +518,10 @@ std::vector<SceneObject*> ToolMain::GetSelectedObjects()
 
 void ToolMain::AddCommandToStack(SceneCommand* command)
 {
-
+	//Clear all command
+	m_undoedCommandBuffer.clear();
 	m_commandBuffer.push_back(command);
-	if(m_commandBuffer.size() > m_commandBufferMaxSize)
-	{
-		m_commandBuffer.erase(m_commandBuffer.begin());
-	}
+	EraseFirstIfExceeeding(&m_commandBuffer);
 }
 
 void ToolMain::UndoCommand()
@@ -533,9 +529,30 @@ void ToolMain::UndoCommand()
 	if(m_commandBuffer.size() != 0)
 	{
 		SceneCommand* last = m_commandBuffer[m_commandBuffer.size()-1];
-		m_commandBuffer.pop_back();
 		last->Revert(this);
+
+		//Add to the undoed buffer so command could be redone if needed
+		this->m_undoedCommandBuffer.push_back(last);
+		EraseFirstIfExceeeding(&m_undoedCommandBuffer);
+
+		m_commandBuffer.pop_back();
 	}
+}
+
+void ToolMain::RedoCommand()
+{
+	if(m_undoedCommandBuffer.size() != 0)
+	{
+		SceneCommand* last = m_undoedCommandBuffer[m_undoedCommandBuffer.size()-1];
+		last->ExecuteSilent(this);
+
+		//Add to the undoed buffer so command could be redone if needed
+		this->m_commandBuffer.push_back(last);
+		EraseFirstIfExceeeding(&m_commandBuffer);
+
+		m_undoedCommandBuffer.pop_back();
+	}
+
 }
 
 void ToolMain::SyncDisplayAndSceneObjects(int i)
@@ -556,11 +573,17 @@ void ToolMain::AddToSelection(int id)
 			this->m_selectedObject.push_back(id);
 		}
 	}
-	
+}
+void ToolMain::TransferCommand(std::vector<SceneCommand*>* bufferOne, std::vector<SceneCommand*>* bufferTwo)
+{
+}
 
-
-
-
+void ToolMain::EraseFirstIfExceeeding(std::vector<SceneCommand*>* buffer)
+{
+	if (buffer->size() > m_commandBufferMaxSize)
+	{
+		buffer->erase(buffer->begin());
+	}
 }
 
 void ToolMain::RemoveFromSelection(int id)

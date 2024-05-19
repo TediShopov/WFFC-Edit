@@ -62,6 +62,7 @@ public: //variables
 
 	void AddCommandToStack(SceneCommand* command);
 	void UndoCommand();
+	void RedoCommand();
 
 
 
@@ -71,6 +72,12 @@ public: //variables
 	void SyncDisplayAndSceneObjects(int i);
 
 private: //methods
+
+		void TransferCommand(std::vector<SceneCommand*>* bufferOne,
+			std::vector<SceneCommand*>* bufferTwo);
+		void EraseFirstIfExceeeding(std::vector<SceneCommand*>* buffer);
+
+
 	void InitHandlesDefaults();
 	void ResetInputKeyBuffer();
 
@@ -79,6 +86,7 @@ private: //methods
 private: //variables
 	int m_commandBufferMaxSize;
 	std::vector<SceneCommand*> m_commandBuffer;
+	std::vector<SceneCommand*> m_undoedCommandBuffer;
 
 	std::vector<int> m_selectedObject; //ID of current Selection
 	char m_keyArray[256];
@@ -93,3 +101,4 @@ private: //variables
 	ControlHandle* m_activeHandle;
 	sqlite3* m_databaseConnection; //sqldatabase handle
 };
+

@@ -15,9 +15,17 @@ void UpdateObjectCommand::FinishUpdate()
 
 void UpdateObjectCommand::Execute(ToolMain* tool)
 {
+	ExecuteSilent(tool);
+	tool->AddCommandToStack(this);
+}
+
+void UpdateObjectCommand::ExecuteSilent(ToolMain* tool)
+{
+	DisplayObject* actual =
+	tool->m_d3dRenderer.GetDisplayObject(updatedData.m_ID);
+	(*actual) = updatedData;
 	tool->SyncDisplayAndSceneObjects(updatedData.m_ID);
 	tool->Notify(*tool);
-	tool->AddCommandToStack(this);
 }
 
 void UpdateObjectCommand::Revert(ToolMain* tool)
