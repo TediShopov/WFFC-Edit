@@ -82,7 +82,7 @@ float ObjectRotationState::GetWorldCoordinatesDelta(const InputCommands& command
 
 float ObjectRotationState::GetMouseNDCDelta(const InputCommands& commands)
 {
-	float xNDC = this->MainTool->m_d3dRenderer.camera.GetDeltaXNDC();
+	float xNDC = this->MainTool->m_d3dRenderer.active_camera->GetDeltaXNDC();
 	return xNDC;
 
 
@@ -92,7 +92,7 @@ XMVECTOR ObjectRotationState::RotateAroundSelectedAxis(const InputCommands& comm
 {
 	Vector3 current = SelectedObject->m_orientation;
 	//All other rotation use delta from X normalized device coordaintes
-//	float delta = this->MainTool->m_d3dRenderer.camera.GetDeltaXNDC();
+//	float delta = this->MainTool->m_d3dRenderer.active_camera->GetDeltaXNDC();
 	float delta = GetWorldCoordinatesDelta(commands);
 	float angle = delta *m_rotationSpeed;
 	bool move_on_axis;

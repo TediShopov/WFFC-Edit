@@ -18,13 +18,14 @@ public:
 	void UpdateCameraBasedOnKeyInput(const InputCommands& m_InputCommands);
 	void UpdateCameraBasedOnMouseInput(const InputCommands& m_InputCommands);
 
-	void Update(const InputCommands& input_commands);
+	void virtual Update(const InputCommands& input_commands);
+	void virtual CalculateViewMatrix();
 	XMMATRIX GetView();
+	float GetDeltaXNDC();
+	float GetDeltaYNDC();
 
+	void ConvertToNDC(int x, int y, float& xNDC, float& yNDC);
 public:
-	//
-	bool isArcBallMode;
-	Vector3 arcBallTarget;
 
 
 	//functionality
@@ -43,11 +44,9 @@ public:
 	Vector3 m_camRight;
 
 
-	float GetDeltaXNDC();
-	float GetDeltaYNDC();
+	XMMATRIX m_view;
 
 
-	void ConvertToNDC(int x, int y, float& xNDC, float& yNDC);
 
 private:
 	float m_deltaXNDC;
@@ -56,5 +55,4 @@ private:
 	float m_previousYNDC;
 
 
-	XMMATRIX m_view;
 };

@@ -417,9 +417,17 @@ void ToolMain::Tick(MSG* msg)
 	//Toggle mouse arc ball control 
 	if (this->m_selectedObject.size() == 1)
 	{
-		this->m_d3dRenderer.camera.isArcBallMode = m_toolInputCommands.SHIFT_Down;
-		this->m_d3dRenderer.camera.arcBallTarget =
-			this->m_d3dRenderer.GetDisplayObject(m_selectedObject[0])->GetWorldPosition();
+		if (this->m_toolInputCommands.SHIFT_Down)
+		{
+			this->m_d3dRenderer.SwitchToArcBallCamera(
+				this->m_d3dRenderer.GetDisplayObject(m_selectedObject[0])
+				->GetWorldPosition());
+		}
+		else
+		{
+			this->m_d3dRenderer.SwitchToFreeFromCamera();
+		}
+			;
 		//Get the world posiiuton of the object
 	}
 }

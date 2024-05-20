@@ -58,7 +58,7 @@ XMVECTOR ObjectScaleState::ScaleOnSelectedAxis(const InputCommands& commands)
 	
 	Vector3 current = SelectedObject->m_scale;
 	//All other rotation use delta from X normalized device coordaintes
-//	float delta = this->MainTool->m_d3dRenderer.camera.GetDeltaXNDC();
+//	float delta = this->MainTool->m_d3dRenderer.active_camera->GetDeltaXNDC();
 	float delta = GetWorldCoordinatesDelta(commands);
 	float total = delta * m_scaleSpeed;
 	if (axisType == X_AXIS)

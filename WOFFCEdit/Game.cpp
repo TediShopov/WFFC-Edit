@@ -58,6 +58,9 @@ void Game::Initialize(HWND window, int width, int height)
 
 	GetClientRect(window, &m_ScreenDimensions);
 	camera.m_screenRect = m_ScreenDimensions;
+	m_arcBallCamera.m_screenRect = m_ScreenDimensions;
+	active_camera = &camera;
+
 
 #ifdef DXTK_AUDIO
 	// Create DirectXTK for Audio objects
@@ -121,8 +124,8 @@ void Game::Tick(InputCommands* Input)
 // Updates the world.
 void Game::Update(const DX::StepTimer& timer)
 {
-	camera.Update(m_InputCommands);
-	m_view = camera.GetView();
+	active_camera->Update(m_InputCommands);
+	m_view = active_camera->GetView();
 
 	m_batchEffect->SetView(m_view);
 	m_batchEffect->SetWorld(Matrix::Identity);

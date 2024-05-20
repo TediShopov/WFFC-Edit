@@ -12,6 +12,7 @@
 #include "InputCommands.h"
 #include <vector>
 
+#include "ArcBallCamera.h"
 #include "Camera.h"
 
 class Camera;
@@ -83,7 +84,25 @@ public:
 	DirectX::XMMATRIX GetObjectLocalMatrix(int i) const;
 
 
+	//Cameras
+	Camera* active_camera;
 	Camera camera;
+	ArcBallCamera m_arcBallCamera;
+
+	void SwitchToFreeFromCamera()
+	{
+		this->active_camera = &camera;
+	}
+	void SwitchToArcBallCamera(Vector3 target)
+	{
+		m_arcBallCamera.m_camPosition = camera.m_camPosition;
+		m_arcBallCamera.m_camLookDirection = camera.m_camLookDirection;
+		m_arcBallCamera.SetTarget(target);
+		this->active_camera = &m_arcBallCamera;
+
+	}
+
+
 	RECT m_ScreenDimensions;
 	std::vector<DisplayObject*> m_displayList;
 

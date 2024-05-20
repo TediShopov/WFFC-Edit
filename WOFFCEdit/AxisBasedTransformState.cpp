@@ -187,7 +187,7 @@ XMVECTOR AxisBasedTransformState::PlaneIntersection(XMVECTOR mouseWorldRay, XMVE
 {
 	XMVECTOR intersectionPos = XMPlaneIntersectLine(
 		plane,
-		this->MainTool->m_d3dRenderer.camera.m_camPosition,
+		this->MainTool->m_d3dRenderer.active_camera->m_camPosition,
 		mouseWorldRay
 	);
 	return intersectionPos;
