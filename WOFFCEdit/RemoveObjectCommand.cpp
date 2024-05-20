@@ -25,11 +25,12 @@ void RemoveObjectCommand::ExecuteSilent(ToolMain* tool)
 
 		for (int idInObjectHiearchy : ids)
 		{
-			auto subject = new DisplayObject();
+			//auto subject = new DisplayObject();
 
 			//Copy the information to hold in the command
-			(*subject) =
-			*tool->m_d3dRenderer.GetDisplayObject(idInObjectHiearchy);
+//			(*subject) =
+//			tool->m_d3dRenderer.GetDisplayObject(idInObjectHiearchy);
+			DisplayObject* subject = tool->m_d3dRenderer.GetDisplayObject(idInObjectHiearchy);
 			tool->DeleteById(idInObjectHiearchy);
 			m_subjects.push_back(subject);
 		}

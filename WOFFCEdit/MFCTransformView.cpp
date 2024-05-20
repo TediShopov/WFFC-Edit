@@ -19,6 +19,15 @@ IMPLEMENT_DYNCREATE(MFCTransformView, CFormView)
 MFCTransformView::MFCTransformView()
 	: CFormView(IDD_FORMVIEW)
 {
+	auto parentID = 
+		new CMFCPropertyGridProperty("ParentId",(long)-1,nullptr
+			,reinterpret_cast<DWORD_PTR>( &displayObjectCopy.parentObject), false);
+	//parentID->SetData( reinterpret_cast<DWORD_PTR>(& displayObjectCopy.parentObject));
+
+
+
+
+
 	auto transform = new CMFCPropertyGridProperty("Transform");
 	auto globalPosGroup = new CMFCPropertyGridProperty("Position");
 	globalPosGroup->AddSubItem(CreateFloatProp("X", &displayObjectCopy.m_position.x));
@@ -38,6 +47,7 @@ MFCTransformView::MFCTransformView()
 	transform->AddSubItem(globalPosGroup);
 	transform->AddSubItem(localScaleGroup);
 	transform->AddSubItem(localOrientationGroup);
+	
 
 	//==============================================
 	//Adding texture string search through windows
@@ -82,6 +92,7 @@ MFCTransformView::MFCTransformView()
 			
 			
 	m_propertyGrid.AddProperty(modelProperties, 1, 1);
+	m_propertyGrid.AddProperty(parentID, 1, 1);
 
 	m_propertyGrid.AddProperty(transform, 1, 1);
 }
@@ -352,6 +363,20 @@ void MFCTransformView::UpdatePropertyGrid(DisplayObject* obj)
 	else
 		displayObjectCopy =  DisplayObject();
 
+
+	
+	CMFCPropertyGridProperty* prop = m_propertyGrid.FindItemByData(
+		reinterpret_cast<DWORD_PTR>(&displayObjectCopy.parentObject), TRUE);
+	//prop->SetValue(COleVariant(displayObjectCopy.parentObject->m_ID,&displayObjectCopy.parentObject));
+	if(displayObjectCopy.parentObject != nullptr)
+		prop->SetValue((long)displayObjectCopy.parentObject->m_ID);
+	else
+		prop->SetValue((long)-1);
+
+
+
+
+
 	//Update transform
 	UpdateFloatProp(&displayObjectCopy.m_position.x);
 	UpdateFloatProp(&displayObjectCopy.m_position.y);
@@ -388,15 +413,39 @@ LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpara
 		m_propertyGrid.MarkModifiedProperties(1, 1);
 		m_propertyGrid.ShowWindow(SW_SHOW);
 		std::string s = propChanged->GetRuntimeClass()->m_lpszClassName;
-		if (s.compare("CMFCPropertyGridFileProperty") == 0)
+		if(propChanged->GetData() == reinterpret_cast<DWORD_PTR>(&displayObjectCopy.parentObject))
+		{
+			int* d = reinterpret_cast<int*>(propChanged->GetData());
+			int parentId = propChanged->GetValue().intVal;
+			DisplayObject* parent = this->m_toolPtr->m_d3dRenderer.GetDisplayObject(parentId);
+			if(parent != nullptr)
+			{
+				(*d) = parentId;
+
+				displayObjectCopy.parentObject = parent;
+				//Appyl changed
+				(*foundObj) = displayObjectCopy;
+				m_toolPtr->SyncDisplayAndSceneObjects(foundObj->m_ID);
+				
+			}
+			else
+			{
+				if(displayObjectCopy.parentObject !=  nullptr)
+					propChanged->SetValue((long)displayObjectCopy.parentObject->m_ID);
+				else
+					propChanged->SetValue((long) - 1);
+
+			}
+
+		}
+		else if (s.compare("CMFCPropertyGridFileProperty") == 0)
 		{
 			std::string* d = reinterpret_cast<std::string*>(propChanged->GetData());
 			auto test = propChanged->GetValue();
 			std::wstring ws(test.bstrVal, SysStringLen(test.bstrVal));
 			std::string s(ws.begin(),ws.end());
 
-			//TODO make to relative path
-// Get the current working directory
+			// Get the current working directory
 			std::string absolute_path = s;
 			std::string relative_path;
 			ConvertToRelativePath(absolute_path,  relative_path);
@@ -431,6 +480,7 @@ void MFCTransformView::VisualizeSelectionOnTreeCtrl(const ToolMain* tool)
 {
 	std::vector<DisplayObject*> sceneCopy = tool->m_d3dRenderer.m_displayList;
 	m_treeCtrl.DeleteAllItems();
+	m_treeItems.clear();
 
 
 	int maxTreeDepth = 0;
