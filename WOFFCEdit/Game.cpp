@@ -413,13 +413,6 @@ bool Game::UpdateDisplayElmentModel(int index, SceneObject* sceneObject)
 			if (lights)
 			{
 				lights->SetTexture(newDisplayObject->m_texture_diffuse);
-				XMVECTOR diffuse{
-					newDisplayObject->m_light_diffuse_r,
-					newDisplayObject->m_light_diffuse_g,
-					newDisplayObject->m_light_diffuse_b,
-					1
-				};
-				lights->SetDiffuseColor(diffuse);
 			}
 		});
 
@@ -538,13 +531,6 @@ DisplayObject* Game::CreateDisplayObject(const SceneObject* object) const
 			if (lights)
 			{
 				lights->SetTexture(newDisplayObject->m_texture_diffuse);
-				XMVECTOR diffuse{
-					newDisplayObject->m_light_diffuse_r,
-					newDisplayObject->m_light_diffuse_g,
-					newDisplayObject->m_light_diffuse_b,
-					1
-				};
-				lights->SetDiffuseColor(diffuse);
 			}
 		});
 
