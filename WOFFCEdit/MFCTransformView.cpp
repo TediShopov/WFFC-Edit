@@ -176,6 +176,39 @@ void MFCTransformView::UpdateWireFrameCheck(const ToolMain* data)
 		m_wireframeCheck.SetCheck(selected[0]->m_wireframe);
 }
 
+void MFCTransformView::UpdateTreeSelections(std::vector<DisplayObject*> selected)
+{
+	for (std::pair<const DisplayObject*,HTREEITEM> treeItemPair : m_treeItems)
+	{
+		m_treeCtrl.SetCheck(treeItemPair.second,false);
+				
+	}
+	//Update only the check
+	for (DisplayObject* display_object : selected)
+	{
+		HTREEITEM treeItem = m_treeItems.at(display_object);
+		m_treeCtrl.SetCheck(treeItem,true);
+
+		//Expand All parent
+		const DisplayObject* parentObject = parentObject = display_object->parentObject;
+		while (parentObject != nullptr)
+		{
+			m_treeCtrl.Expand(m_treeItems.at(parentObject),TVE_EXPAND);
+			parentObject = parentObject->parentObject;
+			
+		}
+
+
+				
+	}
+
+
+
+
+
+
+}
+
 void MFCTransformView::Update(const Subject<ToolMainChanges>* subject, const ToolMainChanges& data)
 {
 	if(data.HierarchyUpdates)
@@ -185,6 +218,13 @@ void MFCTransformView::Update(const Subject<ToolMainChanges>* subject, const Too
 		auto selected = this->m_toolPtr->GetSelectedDisplayObjects();
 		UpdatePropertyGridSelection(&selected);
 		UpdateWireFrameCheck(data.Tool);
+
+		if(data.SelectionUpdates)
+		{
+			UpdateTreeSelections(selected);
+			
+		}
+
 	}
 
 }
@@ -400,7 +440,6 @@ void MFCTransformView::VisualizeSelectionOnTreeCtrl(const ToolMain* tool)
 		if (maxTreeDepth < d)
 			maxTreeDepth = d;
 	}
-	std::map<const DisplayObject*, HTREEITEM> treeItems;
 
 	for (size_t i = 0; i <= maxTreeDepth; i++)
 	{
@@ -413,17 +452,17 @@ void MFCTransformView::VisualizeSelectionOnTreeCtrl(const ToolMain* tool)
 				if (element->parentObject == nullptr)
 				{
 					HTREEITEM treeitem = m_treeCtrl.InsertItem(std::to_wstring(element->m_ID).c_str());
-					treeItems.insert({ element, treeitem });
+					m_treeItems.insert({ element, treeitem });
 				}
 				else
 				{
-					if (treeItems.find(element->parentObject) != treeItems.end())
+					if (m_treeItems.find(element->parentObject) != m_treeItems.end())
 					{
-						HTREEITEM parentItem = treeItems.at(element->parentObject);
+						HTREEITEM parentItem = m_treeItems.at(element->parentObject);
 						HTREEITEM treeitem = m_treeCtrl.InsertItem(
 							std::to_wstring(element->m_ID).c_str()
 							, parentItem);
-						treeItems.insert({ element, treeitem });
+						m_treeItems.insert({ element, treeitem });
 					}
 				}
 			}

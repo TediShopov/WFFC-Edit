@@ -41,6 +41,7 @@ public:
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX); // DDX/DDV support
 	void UpdateWireFrameCheck(const ToolMain* data);
+	void UpdateTreeSelections(std::vector<DisplayObject*> selected);
 	//void Update(const Subject<ToolMain>* subject, const ToolMain& data) override;
 	void Update(const Subject<ToolMainChanges>* subject, const ToolMainChanges& data) override;
 
@@ -67,6 +68,7 @@ public:
 	void UpdateFileProp(std::string* data);
 
 private:
+	std::map<const DisplayObject*, HTREEITEM> m_treeItems;
 	bool ConvertToRelativePath(const std::string& absolute_path,  std::string& relative_path);
 
 	//Poistion Controls
