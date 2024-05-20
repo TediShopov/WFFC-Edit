@@ -154,7 +154,7 @@ END_MESSAGE_MAP()
 void CreateObjectDialog::OnBnClickedOk()
 {
 
-	auto command = new AddObjectCommand(ObjectPrototype);
+	auto command = new AddObjectCommand( new DisplayObject(*ObjectPrototype));
 	command->Execute(tool_main);
 	delete ObjectPrototype;
 	ObjectPrototype = nullptr;

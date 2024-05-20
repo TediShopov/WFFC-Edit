@@ -327,7 +327,7 @@ void Game::UpdateDisplayElementTransform(int i, SceneObject* sceneObject)
 	if(newDisplayObject.parentObject != nullptr)
 		sceneObject->parent_id = newDisplayObject.parentObject->m_ID;
 	else
-		sceneObject->parent_id = -1;
+		sceneObject->parent_id = 0;
 	sceneObject->posX    = newDisplayObject.m_position.x ;
 	sceneObject->posY = newDisplayObject.m_position.y;
 	sceneObject->posZ = newDisplayObject.m_position.z;
@@ -624,7 +624,7 @@ void Game::BuildDisplayHierarchy(std::vector<SceneObject>* SceneGraph)
 		sceneCopy.erase(removed, sceneCopy.end());
 		for (const SceneObject& element : sceneCopy)
 		{
-			if (element.parent_id == 0)
+			if (element.parent_id <= 0)
 			{
 				DisplayObject* object = CreateDisplayObject(&element);
 				m_displayList.push_back(object);
@@ -637,10 +637,6 @@ void Game::BuildDisplayHierarchy(std::vector<SceneObject>* SceneGraph)
 					DisplayObject* parent = idToTreeItems.at(element.parent_id);
 					DisplayObject* object = CreateDisplayObject(&element);
 					m_displayList.push_back(object);
-					if (element.parent_id == 9)
-					{
-						int c = 3;
-					}
 					object->parentObject = parent;
 					idToTreeItems.insert({element.ID, object});
 				}

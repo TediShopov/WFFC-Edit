@@ -364,9 +364,9 @@ void ToolMain::CreateObject()
 
 DisplayObject* ToolMain::InsertObject(DisplayObject* prototype)
 {
-	DisplayObject* copy = new DisplayObject(*prototype);
+	//DisplayObject* copy = new DisplayObject(*prototype);
 
-	if(copy->m_ID == -1)
+	if(prototype->m_ID <= 0)
 	{
 		auto maxID = 
 			std::max_element(
@@ -374,14 +374,14 @@ DisplayObject* ToolMain::InsertObject(DisplayObject* prototype)
 				m_sceneGraph.end(),
 				[](const SceneObject& obj, const SceneObject& objOther) 
 				{return obj.ID < objOther.ID; });
-		copy->m_ID = maxID->ID + 1;
+		prototype->m_ID = maxID->ID + 1;
 	}
-	m_d3dRenderer.AddRootDisplayObject(copy);
+	m_d3dRenderer.AddRootDisplayObject(prototype);
 	SceneObject sceneObjectWithSameId;
-	sceneObjectWithSameId.ID = copy->m_ID;
+	sceneObjectWithSameId.ID = prototype->m_ID;
 	m_sceneGraph.push_back(sceneObjectWithSameId);
-	SyncDisplayAndSceneObjects(copy->m_ID);
-	return copy;
+	SyncDisplayAndSceneObjects(prototype->m_ID);
+	return prototype;
 }
 
 

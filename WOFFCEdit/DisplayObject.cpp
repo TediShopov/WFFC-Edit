@@ -4,7 +4,7 @@
 
 DisplayObject::DisplayObject()
 {
-	m_ID = -1;
+	m_ID = 0;
 	m_model = NULL;
 	m_texture_diffuse = NULL;
 	m_orientation.x = 0.0f;

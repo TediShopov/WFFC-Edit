@@ -11,7 +11,6 @@ void RemoveObjectCommand::Execute(ToolMain* tool)
 {
 	ExecuteSilent(tool);
 	tool->AddCommandToStack(this);
-	tool->Notify(true,true,true);
 }
 
 void RemoveObjectCommand::ExecuteSilent(ToolMain* tool)
@@ -40,6 +39,7 @@ void RemoveObjectCommand::ExecuteSilent(ToolMain* tool)
 		
 	}
 	tool->ClearSelection();
+	tool->Notify(true,true,true);
 
 }
 

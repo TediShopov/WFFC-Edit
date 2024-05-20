@@ -5,19 +5,20 @@
 
 AddObjectCommand::AddObjectCommand(DisplayObject* subject)
 {
-	Subject =  new DisplayObject(*subject);
+	//Subject =  new DisplayObject(*subject);
+	Subject =  subject;
 }
 
 void AddObjectCommand::Execute(ToolMain* tool)
 {
 	ExecuteSilent(tool);
 	tool->AddCommandToStack(this);
-	tool->Notify(true,true,true);
 }
 
 void AddObjectCommand::ExecuteSilent(ToolMain* tool)
 {
 	Subject = tool->InsertObject(Subject);
+	tool->Notify(true,true,true);
 }
 
 void AddObjectCommand::Revert(ToolMain* tool)

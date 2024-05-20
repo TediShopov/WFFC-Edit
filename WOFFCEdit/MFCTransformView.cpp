@@ -20,7 +20,7 @@ MFCTransformView::MFCTransformView()
 	: CFormView(IDD_FORMVIEW)
 {
 	auto parentID = 
-		new CMFCPropertyGridProperty("ParentId",(long)-1,nullptr
+		new CMFCPropertyGridProperty("ParentId",(long)0,nullptr
 			,reinterpret_cast<DWORD_PTR>( &displayObjectCopy.parentObject), false);
 	//parentID->SetData( reinterpret_cast<DWORD_PTR>(& displayObjectCopy.parentObject));
 
@@ -371,7 +371,7 @@ void MFCTransformView::UpdatePropertyGrid(DisplayObject* obj)
 	if(displayObjectCopy.parentObject != nullptr)
 		prop->SetValue((long)displayObjectCopy.parentObject->m_ID);
 	else
-		prop->SetValue((long)-1);
+		prop->SetValue((long)0);
 
 
 
@@ -430,10 +430,16 @@ LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpara
 			}
 			else
 			{
-				if(displayObjectCopy.parentObject !=  nullptr)
-					propChanged->SetValue((long)displayObjectCopy.parentObject->m_ID);
-				else
-					propChanged->SetValue((long) - 1);
+
+				displayObjectCopy.parentObject = nullptr;
+				(*d) = 0;
+				propChanged->SetValue((long)0);
+				(*foundObj) = displayObjectCopy;
+				m_toolPtr->SyncDisplayAndSceneObjects(foundObj->m_ID);
+//				if(displayObjectCopy.parentObject !=  nullptr)
+//					propChanged->SetValue((long)displayObjectCopy.parentObject->m_ID);
+//				else
+//					propChanged->SetValue((long) 0);
 
 			}
 
