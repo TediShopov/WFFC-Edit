@@ -91,7 +91,10 @@
     <ClCompile Include="UpdateObjectCommand.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
-    <ClCompile Include="AddObjectCommand.cpp" />
+    <ClCompile Include="AddObjectCommand.cpp">
+      <Filter>Commands</Filter>
+    </ClCompile>
+    <ClCompile Include="RemoveObjectCommand.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -166,7 +169,10 @@
     <ClInclude Include="SceneCommand.h">
       <Filter>Commands</Filter>
     </ClInclude>
-    <ClInclude Include="AddObjectCommand.h" />
+    <ClInclude Include="AddObjectCommand.h">
+      <Filter>Commands</Filter>
+    </ClInclude>
+    <ClInclude Include="RemoveObjectCommand.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

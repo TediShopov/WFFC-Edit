@@ -187,6 +187,7 @@
     <ClCompile Include="pch.cpp" />
     <ClCompile Include="MFCMain.cpp" />
     <ClCompile Include="PostionControlHandle.cpp" />
+    <ClCompile Include="RemoveObjectCommand.cpp" />
     <ClCompile Include="ScaleControlHandle.cpp" />
     <ClCompile Include="ScaleTransformState.cpp" />
     <ClCompile Include="SceneObject.cpp" />
@@ -217,6 +218,7 @@
     <ClInclude Include="Observer.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="PostionControlHandle.h" />
+    <ClInclude Include="RemoveObjectCommand.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ScaleControlHandle.h" />
     <ClInclude Include="ScaleTransformState.h" />

@@ -9,6 +9,7 @@
 #include "ObjectRotationState.h"
 #include "ObjectScaleState.h"
 #include "ObjectTransformState.h"
+#include "RemoveObjectCommand.h"
 #include "SceneCommand.h"
 //#include "DisplayObject.h"
 
@@ -303,22 +304,25 @@ void ToolMain::onActionSaveTerrain()
 
 void ToolMain::DeleteSelected()
 {
-	if(this->m_selectedObject.size() >= 1)
-	{
-		for (int i = 0; i < m_selectedObject.size(); ++i)
-		{
-			this->m_d3dRenderer.RemoveDisplayObject(this->m_selectedObject[i]);
-
-			for (int j = 0; j < m_sceneGraph.size(); ++j)
-			{
-				if (m_sceneGraph[j].ID == m_selectedObject[i])
-					m_sceneGraph.erase(m_sceneGraph.begin() + j);
-			}
-		}
-		this->m_selectedObject.clear();
-		Notify(*this);
-		m_toolInputCommands.deleteSelected = false;
-	}
+	RemoveObjectCommand* deleteCommand = 
+		new RemoveObjectCommand(m_selectedObject);
+	deleteCommand->Execute(this);
+//	if(this->m_selectedObject.size() >= 1)
+//	{
+//		for (int i = 0; i < m_selectedObject.size(); ++i)
+//		{
+//			this->m_d3dRenderer.RemoveDisplayObject(this->m_selectedObject[i]);
+//
+//			for (int j = 0; j < m_sceneGraph.size(); ++j)
+//			{
+//				if (m_sceneGraph[j].ID == m_selectedObject[i])
+//					m_sceneGraph.erase(m_sceneGraph.begin() + j);
+//			}
+//		}
+//		this->m_selectedObject.clear();
+//		Notify(*this);
+//		m_toolInputCommands.deleteSelected = false;
+//	}
 }
 
 void ToolMain::DeleteById(int id)
@@ -349,10 +353,16 @@ DisplayObject* ToolMain::InsertObject(DisplayObject* prototype)
 {
 	DisplayObject* copy = new DisplayObject(*prototype);
 
-	auto maxID= std::max_element(m_sceneGraph.begin(),
-		m_sceneGraph.end(),
-		[](const SceneObject& obj, const SceneObject& objOther) {return obj.ID < objOther.ID; });
-	copy->m_ID = maxID->ID + 1;
+	if(copy->m_ID == -1)
+	{
+		auto maxID = 
+			std::max_element(
+				m_sceneGraph.begin(),
+				m_sceneGraph.end(),
+				[](const SceneObject& obj, const SceneObject& objOther) 
+				{return obj.ID < objOther.ID; });
+		copy->m_ID = maxID->ID + 1;
+	}
 	m_d3dRenderer.AddRootDisplayObject(copy);
 	SceneObject sceneObjectWithSameId;
 	sceneObjectWithSameId.ID = copy->m_ID;
