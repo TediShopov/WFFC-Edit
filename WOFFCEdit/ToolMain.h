@@ -27,6 +27,7 @@ public: //methods
 	~ToolMain() override;
 
 	void Tick(MSG* msg);
+	void AccumualteMouseWheelDelta(MSG* msg);
 	void UpdateInput(MSG* msg);
 
 	//onAction - These are the interface to MFC

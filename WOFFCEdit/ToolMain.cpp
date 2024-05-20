@@ -432,9 +432,39 @@ void ToolMain::Tick(MSG* msg)
 	}
 }
 
+void ToolMain::AccumualteMouseWheelDelta(MSG* msg)
+{
+	float zDelta =
+		GET_WHEEL_DELTA_WPARAM(msg->wParam);
+	m_toolInputCommands.scrollWheelDelta = zDelta;
+
+//	if ((m_toolInputCommands.scrollWheelDelta * zDelta) > 0)
+//	{
+//		m_toolInputCommands.scrollWheelDelta += zDelta;
+//	}
+//	else
+//	{
+//		m_toolInputCommands.scrollWheelDelta = zDelta;
+//	}
+}
+
 void ToolMain::UpdateInput(MSG* msg)
 {
 	//TODO ASSIGN MOUSE LB INPUT
+	switch (msg->message)
+	{
+	case WM_MOUSEWHEEL:
+		AccumualteMouseWheelDelta(msg);
+		break;
+		default:
+		this->m_toolInputCommands.scrollWheelDelta = 0;
+		break;
+
+		
+	}
+
+
+
 	switch (msg->message)
 	{
 	//Global inputs,  mouse position and keys etc
@@ -445,6 +475,7 @@ void ToolMain::UpdateInput(MSG* msg)
 	case WM_KEYUP:
 		m_keyArray[msg->wParam] = false;
 		break;
+
 
 	case WM_MOUSEMOVE:
 		m_toolInputCommands.mouseX = GET_X_LPARAM(msg->lParam);
@@ -464,8 +495,8 @@ void ToolMain::UpdateInput(MSG* msg)
 		m_toolInputCommands.mouseRB = false;
 		break;
 	}
-	m_toolInputCommands.scrollWheelDelta =
-		GET_WHEEL_DELTA_WPARAM(msg->wParam) / 120;
+
+
 
 
 

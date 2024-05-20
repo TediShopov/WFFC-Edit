@@ -12,5 +12,8 @@ public:
 
 private:
     Vector3 m_Target;
+
+public:
+	float offsetFromTarget;
 };
 
