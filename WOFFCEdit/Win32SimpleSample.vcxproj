@@ -189,8 +189,6 @@
     <ClCompile Include="MFCMain.cpp" />
     <ClCompile Include="PostionControlHandle.cpp" />
     <ClCompile Include="RemoveObjectCommand.cpp" />
-    <ClCompile Include="ScaleControlHandle.cpp" />
-    <ClCompile Include="ScaleTransformState.cpp" />
     <ClCompile Include="SceneObject.cpp" />
     <ClCompile Include="SelectDialogue.cpp" />
     <ClCompile Include="sqlite3.c" />
@@ -222,8 +220,6 @@
     <ClInclude Include="PostionControlHandle.h" />
     <ClInclude Include="RemoveObjectCommand.h" />
     <ClInclude Include="resource.h" />
-    <ClInclude Include="ScaleControlHandle.h" />
-    <ClInclude Include="ScaleTransformState.h" />
     <ClInclude Include="SceneCommand.h" />
     <ClInclude Include="SceneObject.h" />
     <ClInclude Include="SelectDialogue.h" />

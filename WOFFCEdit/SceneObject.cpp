@@ -41,7 +41,7 @@ SceneObject::SceneObject()
 	play_in_editor = false;
 	min_dist = 0;
 	max_dist = 0;
-	camera = false;
+	m_camera = false;
 	path_node = false;
 	path_node_start = false;
 	path_node_end = false;

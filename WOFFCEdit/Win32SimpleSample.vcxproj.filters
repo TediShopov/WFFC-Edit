@@ -29,6 +29,9 @@
     <Filter Include="Camera">
       <UniqueIdentifier>{068f5088-570b-445c-b57b-4609e33de20e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ControlHandles">
+      <UniqueIdentifier>{06c738c0-6384-4c7f-85b3-f2e4e0c538e4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="pch.cpp">
@@ -71,14 +74,7 @@
     <ClCompile Include="SelectDialogue.cpp">
       <Filter>MFC</Filter>
     </ClCompile>
-    <ClCompile Include="MFCTransformView.cpp" />
-    <ClCompile Include="Observer.cpp" />
     <ClCompile Include="ObjectSelectionState.cpp" />
-    <ClCompile Include="ToolStateBase.cpp" />
-    <ClCompile Include="ControlHandle.cpp" />
-    <ClCompile Include="PostionControlHandle.cpp" />
-    <ClCompile Include="ScaleControlHandle.cpp" />
-    <ClCompile Include="ScaleTransformState.cpp" />
     <ClCompile Include="CreateObjectDialog.cpp" />
     <ClCompile Include="AxisBasedTransformState.cpp">
       <Filter>ObjectTransformEdit</Filter>
@@ -89,7 +85,6 @@
     <ClCompile Include="ObjectRotationState.cpp">
       <Filter>ObjectTransformEdit</Filter>
     </ClCompile>
-    <ClCompile Include="ObjectScaleState.cpp" />
     <ClCompile Include="UpdateObjectCommand.cpp">
       <Filter>Commands</Filter>
     </ClCompile>
@@ -104,6 +99,24 @@
     </ClCompile>
     <ClCompile Include="ArcBallCamera.cpp">
       <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="ObjectScaleState.cpp">
+      <Filter>ObjectTransformEdit</Filter>
+    </ClCompile>
+    <ClCompile Include="ControlHandle.cpp">
+      <Filter>ControlHandles</Filter>
+    </ClCompile>
+    <ClCompile Include="PostionControlHandle.cpp">
+      <Filter>ControlHandles</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolStateBase.cpp">
+      <Filter>ObjectTransformEdit</Filter>
+    </ClCompile>
+    <ClCompile Include="Observer.cpp">
+      <Filter>Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="MFCTransformView.cpp">
+      <Filter>MFC</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -154,13 +167,6 @@
     <ClInclude Include="SelectDialogue.h">
       <Filter>MFC</Filter>
     </ClInclude>
-    <ClInclude Include="MFCTransformView.h" />
-    <ClInclude Include="Observer.h" />
-    <ClInclude Include="ToolStateBase.h" />
-    <ClInclude Include="ControlHandle.h" />
-    <ClInclude Include="PostionControlHandle.h" />
-    <ClInclude Include="ScaleControlHandle.h" />
-    <ClInclude Include="ScaleTransformState.h" />
     <ClInclude Include="CreateObjectDialog.h" />
     <ClInclude Include="AxisBasedTransformState.h">
       <Filter>ObjectTransformEdit</Filter>
@@ -171,7 +177,6 @@
     <ClInclude Include="ObjectRotationState.h">
       <Filter>ObjectTransformEdit</Filter>
     </ClInclude>
-    <ClInclude Include="ObjectScaleState.h" />
     <ClInclude Include="UpdateObjectCommand.h">
       <Filter>Commands</Filter>
     </ClInclude>
@@ -189,6 +194,24 @@
     </ClInclude>
     <ClInclude Include="ArcBallCamera.h">
       <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="ObjectScaleState.h">
+      <Filter>ObjectTransformEdit</Filter>
+    </ClInclude>
+    <ClInclude Include="ControlHandle.h">
+      <Filter>ControlHandles</Filter>
+    </ClInclude>
+    <ClInclude Include="PostionControlHandle.h">
+      <Filter>ControlHandles</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolStateBase.h">
+      <Filter>ObjectTransformEdit</Filter>
+    </ClInclude>
+    <ClInclude Include="Observer.h">
+      <Filter>Utility</Filter>
+    </ClInclude>
+    <ClInclude Include="MFCTransformView.h">
+      <Filter>MFC</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

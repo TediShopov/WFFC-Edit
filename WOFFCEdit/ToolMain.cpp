@@ -34,11 +34,11 @@ ToolMain::ToolMain()
 	m_toolInputCommands.mouseY = 0;
 	m_toolInputCommands.mouseLB = false;
 	m_toolInputCommands.ctrl = false;
-	ToolState = new ObjectSelectionState();
-//	EditMode = ObjectTransformEditMode::MODE_ROTATION;
-	EditMode = ObjectTransformEditMode::MODE_SCALE;
-//	EditMode = ObjectTransformEditMode::MODE_POSITION;
-	ToolState->Init(this, m_toolInputCommands);
+	toolState = new ObjectSelectionState();
+//	editMode = ObjectTransformEditMode::MODE_ROTATION;
+	editMode = ObjectTransformEditMode::MODE_SCALE;
+//	editMode = ObjectTransformEditMode::MODE_POSITION;
+	toolState->Init(this, m_toolInputCommands);
 	m_commandBufferMaxSize = 15;
 }
 
@@ -150,7 +150,7 @@ void ToolMain::onActionLoad()
 		newSceneObject.play_in_editor = sqlite3_column_int(pResults, 35);
 		newSceneObject.min_dist = sqlite3_column_double(pResults, 36);
 		newSceneObject.max_dist = sqlite3_column_double(pResults, 37);
-		newSceneObject.camera = sqlite3_column_int(pResults, 38);
+		newSceneObject.m_camera = sqlite3_column_int(pResults, 38);
 		newSceneObject.path_node = sqlite3_column_int(pResults, 39);
 		newSceneObject.path_node_start = sqlite3_column_int(pResults, 40);
 		newSceneObject.path_node_end = sqlite3_column_int(pResults, 41);
@@ -203,7 +203,6 @@ void ToolMain::onActionLoad()
 	m_chunk.tex_splat_4_tiling = sqlite3_column_int(pResultsChunk, 18);
 
 	//Process REsults into renderable
-	//m_d3dRenderer.BuildDisplayList(&m_sceneGraph);
 	m_d3dRenderer.BuildDisplayHierarchy(&m_sceneGraph);
 	//build the renderable chunk
 	m_d3dRenderer.BuildDisplayChunk(&m_chunk);
@@ -269,7 +268,7 @@ void ToolMain::onActionSave()
 			<< m_sceneGraph.at(i).play_in_editor << ","
 			<< m_sceneGraph.at(i).min_dist << ","
 			<< m_sceneGraph.at(i).max_dist << ","
-			<< m_sceneGraph.at(i).camera << ","
+			<< m_sceneGraph.at(i).m_camera << ","
 			<< m_sceneGraph.at(i).path_node << ","
 			<< m_sceneGraph.at(i).path_node_start << ","
 			<< m_sceneGraph.at(i).path_node_end << ","
@@ -337,7 +336,7 @@ void ToolMain::DeleteById(int id)
 	}
 }
 
- void ToolMain::GetHiearchyOf(int id, std::vector<int>* hierarchy)
+ void ToolMain::GetHiearchyOf(int id, std::vector<int>* hierarchy) const
 {
 	 for (int i = 0; i < m_sceneGraph.size(); ++i)
 	 {
@@ -376,11 +375,11 @@ DisplayObject* ToolMain::InsertObject(DisplayObject* prototype)
 				{return obj.ID < objOther.ID; });
 		prototype->m_ID = maxID->ID + 1;
 	}
-	m_d3dRenderer.AddRootDisplayObject(prototype);
+	m_d3dRenderer.AddDisplayObject(prototype);
 	SceneObject sceneObjectWithSameId;
 	sceneObjectWithSameId.ID = prototype->m_ID;
 	m_sceneGraph.push_back(sceneObjectWithSameId);
-	SyncDisplayAndSceneObjects(prototype->m_ID);
+	SynchroniseSceneToDisplayObject(prototype->m_ID);
 	return prototype;
 }
 
@@ -398,11 +397,11 @@ void ToolMain::Tick(MSG* msg)
 
 
 	if (m_toolInputCommands.switchToTranslateAction)
-		this->EditMode = ObjectTransformEditMode::MODE_POSITION;
+		this->editMode = ObjectTransformEditMode::MODE_POSITION;
 	else if (m_toolInputCommands.switchToScaleAction)
-		this->EditMode = ObjectTransformEditMode::MODE_SCALE;
+		this->editMode = ObjectTransformEditMode::MODE_SCALE;
 	else if (m_toolInputCommands.switchToRotateAction)
-		this->EditMode = ObjectTransformEditMode::MODE_ROTATION;
+		this->editMode = ObjectTransformEditMode::MODE_ROTATION;
 
 
 
@@ -424,7 +423,7 @@ void ToolMain::Tick(MSG* msg)
 	{
 		this->m_activeHandle = nullptr;
 	}
-	ToolState->Update(m_toolInputCommands);
+	toolState->Update(m_toolInputCommands);
 	m_d3dRenderer.Tick(&m_toolInputCommands);
 
 	//Toggle mouse arc ball control 
@@ -445,35 +444,17 @@ void ToolMain::Tick(MSG* msg)
 	}
 }
 
-void ToolMain::AccumualteMouseWheelDelta(MSG* msg)
-{
-	float zDelta =
-		GET_WHEEL_DELTA_WPARAM(msg->wParam);
-	m_toolInputCommands.scrollWheelDelta = zDelta;
-
-//	if ((m_toolInputCommands.scrollWheelDelta * zDelta) > 0)
-//	{
-//		m_toolInputCommands.scrollWheelDelta += zDelta;
-//	}
-//	else
-//	{
-//		m_toolInputCommands.scrollWheelDelta = zDelta;
-//	}
-}
 
 void ToolMain::UpdateInput(MSG* msg)
 {
-	//TODO ASSIGN MOUSE LB INPUT
 	switch (msg->message)
 	{
 	case WM_MOUSEWHEEL:
-		AccumualteMouseWheelDelta(msg);
+		this->m_toolInputCommands.scrollWheelDelta = GET_WHEEL_DELTA_WPARAM(msg->wParam);
 		break;
 		default:
 		this->m_toolInputCommands.scrollWheelDelta = 0;
 		break;
-
-		
 	}
 
 
@@ -586,12 +567,12 @@ void ToolMain::Notify(bool s, bool o, bool h)
 void ToolMain::ChangeState(ToolStateBase* newState)
 {
 	if (newState == nullptr) return;
-	if (ToolState != nullptr)
+	if (toolState != nullptr)
 	{
 		//Do on state end;
 	}
-	ToolState = newState;
-	ToolState->Init(this, m_toolInputCommands);
+	toolState = newState;
+	toolState->Init(this, m_toolInputCommands);
 }
 
 bool ToolMain::IsTransformActionInputted() const
@@ -601,21 +582,21 @@ bool ToolMain::IsTransformActionInputted() const
 		|| m_toolInputCommands.planeZ) && m_selectedObject.size() == 1;
 }
 
-ToolStateBase* ToolMain::GetNewTransformUpdateState() 
+ToolStateBase* ToolMain::GetToolStateFromEditType() 
 {
-	if (EditMode==ObjectTransformEditMode::MODE_POSITION)
+	if (editMode==ObjectTransformEditMode::MODE_POSITION)
 	{
 		auto s =new ObjectTransformState();
 		return s;
 		
 	}
-	else if (EditMode==ObjectTransformEditMode::MODE_ROTATION)
+	else if (editMode==ObjectTransformEditMode::MODE_ROTATION)
 	{
 		auto s =new ObjectRotationState();
 		return s;
 		
 	}
-	else if (EditMode==ObjectTransformEditMode::MODE_SCALE)
+	else if (editMode==ObjectTransformEditMode::MODE_SCALE)
 	{
 		return new ObjectScaleState();
 		
@@ -627,7 +608,7 @@ ToolStateBase* ToolMain::GetNewTransformUpdateState()
 
 }
 
-bool ToolMain::HasSelectedObject()
+bool ToolMain::HasSelectedObject() const
 {
 	return this->m_selectedObject.size() >= 1;
 }
@@ -697,11 +678,11 @@ void ToolMain::RedoCommand()
 
 }
 
-void ToolMain::SyncDisplayAndSceneObjects(int i)
+void ToolMain::SynchroniseSceneToDisplayObject(int i)
 {
 	
 	this->m_d3dRenderer.UpdateDisplayElementTransform(i, GetById(i));
-	this->m_d3dRenderer.UpdateDisplayElmentModel(i, GetById(i));
+	this->m_d3dRenderer.UpdateDisplayElementModel(i, GetById(i));
 }
 
 void ToolMain::AddToSelection(int id)

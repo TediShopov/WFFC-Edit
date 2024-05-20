@@ -20,7 +20,7 @@ Game::Game()
 {
 	m_deviceResources = std::make_unique<DX::DeviceResources>();
 	m_deviceResources->RegisterDeviceNotify(this);
-	m_displayList.clear();
+	displayList.clear();
 
 
 	//initial Settings
@@ -57,9 +57,9 @@ void Game::Initialize(HWND window, int width, int height)
 	CreateWindowSizeDependentResources();
 
 	GetClientRect(window, &m_ScreenDimensions);
-	camera.m_screenRect = m_ScreenDimensions;
+	m_camera.m_screenRect = m_ScreenDimensions;
 	m_arcBallCamera.m_screenRect = m_ScreenDimensions;
-	active_camera = &camera;
+	activeCamera = &m_camera;
 
 
 #ifdef DXTK_AUDIO
@@ -124,8 +124,8 @@ void Game::Tick(InputCommands* Input)
 // Updates the world.
 void Game::Update(const DX::StepTimer& timer)
 {
-	active_camera->Update(m_InputCommands);
-	m_view = active_camera->GetView();
+	activeCamera->Update(m_InputCommands);
+	m_view = activeCamera->GetView();
 
 	m_batchEffect->SetView(m_view);
 	m_batchEffect->SetWorld(Matrix::Identity);
@@ -195,10 +195,10 @@ void Game::Render()
 	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
 	context->OMSetDepthStencilState(m_states->DepthDefault(), 0);
 	context->RSSetState(m_states->CullNone());
-	int numRenderObjects = m_displayList.size();
+	int numRenderObjects = displayList.size();
 	for (int i = 0; i < numRenderObjects; i++)
 	{
-		RenderDisplayObject(*m_displayList[i]);
+		RenderDisplayObject(*displayList[i]);
 	}
 
 	m_deviceResources->PIXEndEvent();
@@ -358,7 +358,7 @@ void Game::UpdateDisplayElementTransform(int i, SceneObject* sceneObject)
 	newDisplayObject.m_light_quadratic = sceneObject->light_quadratic;
 }
 
-bool Game::UpdateDisplayElmentModel(int index, SceneObject* sceneObject)
+bool Game::UpdateDisplayElementModel(int index, SceneObject* sceneObject)
 {
 	//Rearead model and texture
 
@@ -577,23 +577,6 @@ void Game::RenderDisplayObjectOnTop(const DisplayObject& obj) const
 	m_deviceResources->PIXEndEvent();
 }
 
-void Game::BuildDisplayList(std::vector<SceneObject>* SceneGraph)
-{
-	auto device = m_deviceResources->GetD3DDevice();
-	auto devicecontext = m_deviceResources->GetD3DDeviceContext();
-
-	if (!m_displayList.empty()) //is the vector empty
-	{
-		m_displayList.clear(); //if not, empty it
-	}
-
-	//for every item in the scenegraph
-	int numObjects = SceneGraph->size();
-	for (int i = 0; i < numObjects; i++)
-	{
-		m_displayList.push_back(CreateDisplayObject(&SceneGraph->at(i)));
-	}
-}
 
 void Game::BuildDisplayHierarchy(std::vector<SceneObject>* SceneGraph)
 {
@@ -613,7 +596,7 @@ void Game::BuildDisplayHierarchy(std::vector<SceneObject>* SceneGraph)
 			if (element.parent_id <= 0)
 			{
 				DisplayObject* object = CreateDisplayObject(&element);
-				m_displayList.push_back(object);
+				displayList.push_back(object);
 				idToTreeItems.insert({element.ID, object});
 			}
 			else
@@ -622,7 +605,7 @@ void Game::BuildDisplayHierarchy(std::vector<SceneObject>* SceneGraph)
 				{
 					DisplayObject* parent = idToTreeItems.at(element.parent_id);
 					DisplayObject* object = CreateDisplayObject(&element);
-					m_displayList.push_back(object);
+					displayList.push_back(object);
 					object->parentObject = parent;
 					idToTreeItems.insert({element.ID, object});
 				}
@@ -652,8 +635,8 @@ int Game::AddVisualHandle(ControlHandle* display_object)
 	this->m_displayHandlesList.push_back(display_object);
 	//Returns local object
 	return m_displayHandlesList.size() - 1;
-	//	return &this->m_displayList[m_displayList.size() - 1];
-	//	return &this->m_displayList.at(this->m_displayList.size() - 1);
+	//	return &this->displayList[displayList.size() - 1];
+	//	return &this->displayList.at(this->displayList.size() - 1);
 }
 
 //std::vector<DisplayObject*> Game::GetHandles()
@@ -661,13 +644,13 @@ int Game::AddVisualHandle(ControlHandle* display_object)
 //	return std::vector<DisplayObject*>(m_displayHandlesList);
 //}
 
-DisplayObject* Game::GetDisplayObject(int index)
+DisplayObject* Game::GetDisplayObject(int objectId) const
 {
 
-	for (int i = 0; i < m_displayList.size(); ++i)
+	for (int i = 0; i < displayList.size(); ++i)
 	{
-		if(m_displayList[i]->m_ID == index)
-			return m_displayList[i];
+		if(displayList[i]->m_ID == objectId)
+			return displayList[i];
 	}
 	return nullptr;
 }
@@ -675,23 +658,23 @@ DisplayObject* Game::GetDisplayObject(int index)
 void Game::RemoveDisplayObject(int objectId)
 {
 	int indexFound = -1;
-	for (int i = 0; i < m_displayList.size(); ++i)
+	for (int i = 0; i < displayList.size(); ++i)
 	{
-		if(m_displayList[i]->m_ID == objectId)
+		if(displayList[i]->m_ID == objectId)
 		{
 			indexFound = i;
 			break;
 		}
 		
 	}
-	m_displayList.erase(this->m_displayList.begin() + indexFound);
+	displayList.erase(this->displayList.begin() + indexFound);
 
 
 }
 
-void Game::AddRootDisplayObject(DisplayObject* object)
+void Game::AddDisplayObject(DisplayObject* object)
 {
-	this->m_displayList.push_back(object);
+	this->displayList.push_back(object);
 }
 
 #ifdef DXTK_AUDIO
@@ -815,17 +798,6 @@ void Game::CreateWindowSizeDependentResources()
 	m_batchEffect->SetProjection(m_projection);
 }
 
-XMMATRIX Game::GetObjectLocalMatrix(int i) const
-{
-	//	const XMVECTORF32 scale = { m_displayList[i]->m_scale.x, m_displayList[i]->m_scale.y, m_displayList[i]->m_scale.z };
-	//	const XMVECTORF32 translate = { m_displayList[i]->m_position.x, m_displayList[i]->m_position.y, m_displayList[i]->m_position.z };
-	//	//convert degrees into radians for rotation matrix
-	//	XMVECTOR rotate = Quaternion::CreateFromYawPitchRoll(m_displayList[i]->m_orientation.y * 3.1415 / 180,
-	//		m_displayList[i]->m_orientation.x * 3.1415 / 180,
-	//		m_displayList[i]->m_orientation.z * 3.1415 / 180);
-	//	XMMATRIX local = m_world * XMMatrixTransformation(g_XMZero, Quaternion::Identity, scale, g_XMZero, rotate, translate);
-	return m_world * m_displayList[i]->GetWorldMatrix();
-}
 
 void Game::OnDeviceLost()
 {
@@ -864,7 +836,7 @@ std::wstring StringToWCHART(std::string s)
 
 DisplayObject* Game::MousePicking() const
 {
-	return this->MousePicking(m_displayList);
+	return this->MousePicking(displayList);
 }
 
 ControlHandle* Game::ControlHandleHitTest() const
@@ -883,7 +855,7 @@ ControlHandle* Game::ControlHandleHitTest() const
 //	for (int i = 0; i < handleList.size(); ++i)
 //	{
 //		//For each index in the handle list get the corresponding object
-//		objectsFromHandles.push_back(m_displayList[handleList[i]]);
+//		objectsFromHandles.push_back(displayList[handleList[i]]);
 //	}
 //	//Loop through gathered object to check selection;
 //	return this->MousePicking(objectsFromHandles);
@@ -941,7 +913,7 @@ DisplayObject* Game::MousePicking(const std::vector<DisplayObject*>& objectList)
 	return selected;
 }
 
-DirectX::XMVECTOR Game::GetWorldRay(float mouseX, float mouseY, float distance)
+DirectX::XMVECTOR Game::CreateRayToPointedPosition(float mouseX, float mouseY, float distance) const
 {
 	//Define screen dimensions
 	float screenWidth = m_ScreenDimensions.right - m_ScreenDimensions.left;
@@ -971,4 +943,18 @@ DirectX::XMVECTOR Game::GetWorldRay(float mouseX, float mouseY, float distance)
 	mouseInWorldSpace.m128_f32[3] = 0;;
 
 	return mouseInWorldSpace;
+}
+
+void Game::SwitchToFreeFromCamera()
+{
+	this->activeCamera = &m_camera;
+}
+
+void Game::SwitchToArcBallCamera(Vector3 target)
+{
+	m_arcBallCamera.m_camPosition = m_camera.m_camPosition;
+	m_arcBallCamera.m_camLookDirection = m_camera.m_camLookDirection;
+	m_arcBallCamera.SetTarget(target);
+	this->activeCamera = &m_arcBallCamera;
+
 }

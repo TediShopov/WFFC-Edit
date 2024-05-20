@@ -37,7 +37,7 @@ public:
 	bool play_in_editor;
 	int min_dist;
 	int max_dist;
-	bool camera;
+	bool m_camera;
 	bool path_node;
 	bool path_node_start;
 	bool path_node_end;

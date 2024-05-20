@@ -8,7 +8,7 @@ Camera::Camera()
 	m_movespeed = 0.30;
 	m_camRotateOnPress = 3.0;
 
-	//camera
+	//m_camera
 	m_camPosition.x = 0.0f;
 	m_camPosition.y = 3.7f;
 	m_camPosition.z = -3.5f;
@@ -136,7 +136,7 @@ void Camera::Update(const InputCommands& m_InputCommands)
 	UpdateCameraBasedOnMouseInput(m_InputCommands);
 
 
-	//camera motion is on a plane, so kill the 7 component of the look direction
+	//m_camera motion is on a plane, so kill the 7 component of the look direction
 	DirectX::SimpleMath::Vector3 planarMotionVector = m_camLookDirection;
 	planarMotionVector.y = 0.0;
 	UpdateCameraBasedOnKeyInput(m_InputCommands);

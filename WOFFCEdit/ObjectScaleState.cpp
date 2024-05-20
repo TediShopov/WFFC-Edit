@@ -42,7 +42,7 @@ void ObjectScaleState::Update(const InputCommands& input)
 	{
 		SimpleMath::Vector3 newScale = ScaleOnSelectedAxis(input);
 		sel[0]->m_scale = newScale;
-		this->MainTool->SyncDisplayAndSceneObjects(sel[0]->m_ID);
+		this->MainTool->SynchroniseSceneToDisplayObject(sel[0]->m_ID);
 		this->MainTool->Notify(false,true,false);
 	}
 	else
@@ -58,7 +58,7 @@ XMVECTOR ObjectScaleState::ScaleOnSelectedAxis(const InputCommands& commands)
 	
 	Vector3 current = SelectedObject->m_scale;
 	//All other rotation use delta from X normalized device coordaintes
-//	float delta = this->MainTool->m_d3dRenderer.active_camera->GetDeltaXNDC();
+//	float delta = this->MainTool->m_d3dRenderer.activeCamera->GetDeltaXNDC();
 	float delta = GetWorldCoordinatesDelta(commands);
 	float total = delta * m_scaleSpeed;
 	if (axisType == X_AXIS)

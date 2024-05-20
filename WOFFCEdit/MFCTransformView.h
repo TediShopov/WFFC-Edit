@@ -27,7 +27,7 @@ protected:
 public:
 	std::map<int, HTREEITEM> objectsTreeItems;
 	ToolMain* m_toolPtr;
-	void VisualizeSelectionOnTreeCtrl(const ToolMain* tool);
+	void VisualizeSelectionOnTreeCtrl(ToolMain* tool);
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_FORMVIEW };
 #endif

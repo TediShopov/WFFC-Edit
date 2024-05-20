@@ -425,7 +425,7 @@ LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpara
 				displayObjectCopy.parentObject = parent;
 				//Appyl changed
 				(*foundObj) = displayObjectCopy;
-				m_toolPtr->SyncDisplayAndSceneObjects(foundObj->m_ID);
+				m_toolPtr->SynchroniseSceneToDisplayObject(foundObj->m_ID);
 				
 			}
 			else
@@ -435,7 +435,7 @@ LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpara
 				(*d) = 0;
 				propChanged->SetValue((long)0);
 				(*foundObj) = displayObjectCopy;
-				m_toolPtr->SyncDisplayAndSceneObjects(foundObj->m_ID);
+				m_toolPtr->SynchroniseSceneToDisplayObject(foundObj->m_ID);
 //				if(displayObjectCopy.parentObject !=  nullptr)
 //					propChanged->SetValue((long)displayObjectCopy.parentObject->m_ID);
 //				else
@@ -461,7 +461,7 @@ LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpara
 
 			(*d) =relative_path;
 			(*foundObj) = displayObjectCopy;
-			m_toolPtr->SyncDisplayAndSceneObjects(foundObj->m_ID );
+			m_toolPtr->SynchroniseSceneToDisplayObject(foundObj->m_ID );
 		}
 		else
 		{
@@ -469,7 +469,7 @@ LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpara
 			auto test = propChanged->GetValue();
 			(*d) = test.fltVal;
 			(*foundObj) = displayObjectCopy;
-			m_toolPtr->SyncDisplayAndSceneObjects(foundObj->m_ID);
+			m_toolPtr->SynchroniseSceneToDisplayObject(foundObj->m_ID);
 		}
 
 		//Finalize update command and append to tools command stack
@@ -482,9 +482,9 @@ LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpara
 
 #ifdef _DEBUG
 
-void MFCTransformView::VisualizeSelectionOnTreeCtrl(const ToolMain* tool)
+void MFCTransformView::VisualizeSelectionOnTreeCtrl(ToolMain* tool)
 {
-	std::vector<DisplayObject*> sceneCopy = tool->m_d3dRenderer.m_displayList;
+	std::vector<DisplayObject*> sceneCopy = tool->m_d3dRenderer.displayList;
 	m_treeCtrl.DeleteAllItems();
 	m_treeItems.clear();
 

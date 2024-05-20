@@ -16,7 +16,7 @@ void ObjectSelectionState::Update(const InputCommands& commands)
 		//this->MainTool->ChangeState(new ObjectSelectionState());
 		//auto newTransfomrStateHacky = new ObjectTransformState();
 		//		newTransfomrStateHacky->Init(this->MainTool, commands);
-		this->MainTool->ChangeState(this->MainTool->GetNewTransformUpdateState());
+		this->MainTool->ChangeState(this->MainTool->GetToolStateFromEditType());
 		return;
 	}
 	//std::vector<int>& sel = MainTool->m_selectedObject;

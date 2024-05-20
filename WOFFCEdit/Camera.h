@@ -9,7 +9,7 @@ using namespace DirectX::SimpleMath;
 
 class Camera
 {
-	//camera
+	//m_camera
 
 public:
 	Camera();

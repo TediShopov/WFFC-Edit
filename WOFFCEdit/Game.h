@@ -49,62 +49,43 @@ public:
 	void OnResuming();
 	void OnWindowSizeChanged(int width, int height);
 
-	DisplayObject* CreateDisplayObject(const SceneObject* object) const;
+
 	//tool specific
 	void RenderDisplayObject(const DisplayObject& obj) const;
-	bool arcBallMode;
-	void RenderDisplayObjectOnTop(const DisplayObject& obj) const;
-	void BuildDisplayList(std::vector<SceneObject>* SceneGraph); //note vector passed by reference
-	void BuildDisplayHierarchy(std::vector<SceneObject>* SceneGraph);
+	void RenderDisplayObjectOnTop(const DisplayObject& obj) const;//Renders object but ignores depths
+	void BuildDisplayHierarchy(std::vector<SceneObject>* SceneGraph);//Build display objects and assign their parents
 	void BuildDisplayChunk(ChunkObject* SceneChunk);
 	void SaveDisplayChunk(ChunkObject* SceneChunk); //saves geometry et al
-	void ClearDisplayList();
-	void RemoveDisplayObject(int index);
-	void AddRootDisplayObject(DisplayObject* object);
-	DisplayObject* GetDisplayObject(int index);
+	void AddDisplayObject(DisplayObject* object);
+	void RemoveDisplayObject(int objectId);
+	DisplayObject* GetDisplayObject(int objectId) const;
+	DisplayObject* CreateDisplayObject(const SceneObject* object) const;
 
 	//Synchronisation between scene object and display object
 	void UpdateDisplayElementTransform(int index, SceneObject* sceneObj);
-	bool UpdateDisplayElmentModel(int index, SceneObject* sceneObj);
+	bool UpdateDisplayElementModel(int index, SceneObject* sceneObj);
 
 	//Tool Control Handles
-	std::vector<DisplayObject*> GetHandles();
 	void CreateHandleObject(DisplayObject*, std::string model_path, DirectX::SimpleMath::Color) const;
-	//Adds a certain prototype of a display object and returns
-	// the pointer of the object actually added
 	int AddVisualHandle(ControlHandle* display_object);
 
-
 	//Mouse Selection Methods
-	DisplayObject* MousePicking() const;
-	ControlHandle* ControlHandleHitTest() const;
+	DisplayObject* MousePicking() const; //Select a rendered scene object
+	//Select a rendered scene object form a constrain set of objects
 	DisplayObject* MousePicking(const std::vector<DisplayObject*>& objectList) const;
-
-	DirectX::XMVECTOR GetWorldRay(float screen_x, float screen_y, float distance);
-	DirectX::XMMATRIX GetObjectLocalMatrix(int i) const;
+	ControlHandle* ControlHandleHitTest() const; //Mouse picking control handles
 
 
-	//Cameras
-	Camera* active_camera;
-	Camera camera;
-	ArcBallCamera m_arcBallCamera;
+	//Creates a ray from the m_camera origin to the pointed position on screen
+	DirectX::XMVECTOR CreateRayToPointedPosition(float mouseX, float mouseY, float distance) const;
 
-	void SwitchToFreeFromCamera()
-	{
-		this->active_camera = &camera;
-	}
-	void SwitchToArcBallCamera(Vector3 target)
-	{
-		m_arcBallCamera.m_camPosition = camera.m_camPosition;
-		m_arcBallCamera.m_camLookDirection = camera.m_camLookDirection;
-		m_arcBallCamera.SetTarget(target);
-		this->active_camera = &m_arcBallCamera;
+	//Camera switching
+	void SwitchToFreeFromCamera();
+	void SwitchToArcBallCamera(Vector3 target);
 
-	}
-
-
+	Camera* activeCamera;
 	RECT m_ScreenDimensions;
-	std::vector<DisplayObject*> m_displayList;
+	std::vector<DisplayObject*> displayList;
 
 #ifdef DXTK_AUDIO
 	void NewAudioDevice();
@@ -123,6 +104,8 @@ private:
 	std::vector<ControlHandle*> m_displayHandlesList;
 	DisplayChunk m_displayChunk;
 	InputCommands m_InputCommands;
+	Camera m_camera;
+	ArcBallCamera m_arcBallCamera;
 
 	std::unique_ptr<DirectX::BasicEffect> m_handlesEffect;
 

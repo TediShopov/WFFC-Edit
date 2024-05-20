@@ -167,7 +167,7 @@ void CreateObjectDialog::OnBnClickedOk()
 //.	this->tool_main->Notify(*tool_main);
 //.	auto displayObj =
 //.		this->tool_main->m_d3dRenderer.CreateDisplayObject(&tool_main->m_sceneGraph[tool_main->m_sceneGraph.size() - 1]);
-//.	tool_main->m_d3dRenderer.AddRootDisplayObject(displayObj);
+//.	tool_main->m_d3dRenderer.AddDisplayObject(displayObj);
 	CDialogEx::OnOK();
 }
 

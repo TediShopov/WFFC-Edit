@@ -24,7 +24,7 @@ void UpdateObjectCommand::ExecuteSilent(ToolMain* tool)
 	DisplayObject* actual =
 	tool->m_d3dRenderer.GetDisplayObject(updatedData.m_ID);
 	(*actual) = updatedData;
-	tool->SyncDisplayAndSceneObjects(updatedData.m_ID);
+	tool->SynchroniseSceneToDisplayObject(updatedData.m_ID);
 	bool hierarchyUpdated = oldData.parentObject != updatedData.parentObject;
 	tool->Notify(false,true,hierarchyUpdated);
 }
@@ -35,7 +35,7 @@ void UpdateObjectCommand::Revert(ToolMain* tool)
 	DisplayObject* actual =
 	tool->m_d3dRenderer.GetDisplayObject(updatedData.m_ID);
 	(*actual) = oldData;
-	tool->SyncDisplayAndSceneObjects(updatedData.m_ID);
+	tool->SynchroniseSceneToDisplayObject(updatedData.m_ID);
 	bool hierarchyUpdated = oldData.parentObject != updatedData.parentObject;
 	tool->Notify(false,true,hierarchyUpdated);
 }

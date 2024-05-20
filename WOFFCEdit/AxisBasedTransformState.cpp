@@ -187,7 +187,7 @@ XMVECTOR AxisBasedTransformState::PlaneIntersection(XMVECTOR mouseWorldRay, XMVE
 {
 	XMVECTOR intersectionPos = XMPlaneIntersectLine(
 		plane,
-		this->MainTool->m_d3dRenderer.active_camera->m_camPosition,
+		this->MainTool->m_d3dRenderer.activeCamera->m_camPosition,
 		mouseWorldRay
 	);
 	return intersectionPos;
@@ -234,7 +234,7 @@ void AxisBasedTransformState::GetMouseWorldRay(const InputCommands& input, XMVEC
 {
 	POINT p;
 	GetCursorPos(&p);
-	mouseWorldPos = this->MainTool->m_d3dRenderer.GetWorldRay(
+	mouseWorldPos = this->MainTool->m_d3dRenderer.CreateRayToPointedPosition(
 		input.mouseX,
 		input.mouseY,
 		1000);
