@@ -70,6 +70,7 @@ public: //variables
 
 
 
+
 	//Synchronize Diplsay and scene objects
 
 	void SyncDisplayAndSceneObjects(int i);
@@ -83,6 +84,7 @@ private: //methods
 
 	void InitHandlesDefaults();
 	void ResetInputKeyBuffer();
+	bool KeyReleased(char key) const;
 
 	SceneObject* GetById(int ID) ;
 
@@ -93,6 +95,7 @@ private: //variables
 
 	std::vector<int> m_selectedObject; //ID of current Selection
 	char m_keyArray[256];
+	char m_PrevFramekeyArray[256];
 	bool m_handlesInitialized = false; //If handle default are already constructed
 	int m_width; //dimensions passed to directX
 	int m_height;

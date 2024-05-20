@@ -21,7 +21,7 @@ void ObjectSelectionState::Update(const InputCommands& commands)
 	}
 	//std::vector<int>& sel = MainTool->m_selectedObject;
 	auto sel = MainTool->GetSelectedObjects();
-	if (commands.mouse_LB_Down)
+	if (commands.mouseLB)
 	{
 		auto selected =
 			MainTool->m_d3dRenderer.MousePicking();
@@ -32,7 +32,7 @@ void ObjectSelectionState::Update(const InputCommands& commands)
 		}
 		else
 		{
-			if (commands.CTRL_Down == true)
+			if (commands.ctrl == true)
 			{
 				MainTool->AddToSelection(selected->m_ID);
 			}

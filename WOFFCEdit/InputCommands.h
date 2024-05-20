@@ -2,28 +2,31 @@
 
 struct InputCommands
 {
+	//States - based on actual state of button
 	bool forward;
 	bool back;
 	bool right;
 	bool left;
 	bool rotRight;
 	bool rotLeft;
-	bool undo;
-	bool redo;
-	bool translateState;
-	bool scaleState;
-	bool rotateState;
-	int mouse_x;
-	int mouse_y;
-	bool mouse_LB_Down;
-	bool mouse_RB_Down;
-	short scroll_wheel_delta;
-	bool SHIFT_Down;
-	bool CTRL_Down;
-	bool plane_x;
-	bool plane_y;
-	bool plane_z;
+	int mouseX;
+	int mouseY;
+	bool mouseLB;
+	bool mouseRB;
+	short scrollWheelDelta;
+	bool shift;
+	bool ctrl;
+	bool planeX;
+	bool planeY;
+	bool planeZ;
 	bool handleHit;
-	bool insertObject;
-	bool deleteSelected;
+
+	//Actions - triggered only for a frame after RELEASE
+	bool undoAction;
+	bool redoAction;
+	bool switchToTranslateAction;
+	bool switchToScaleAction;
+	bool switchToRotateAction;
+	bool insertObjectAction;
+	bool deleteSelectedAction;
 };

@@ -91,26 +91,26 @@ void Camera::UpdateCameraBasedOnMouseInput(const InputCommands& m_InputCommands)
 	float yNDC;
 	//Convert mouse coordinate to normalize device coordinates
 	ConvertToNDC(
-		m_InputCommands.mouse_x,
-		m_InputCommands.mouse_y,
+		m_InputCommands.mouseX,
+		m_InputCommands.mouseY,
 		xNDC, yNDC
 	);
 		m_deltaXNDC = xNDC - m_previousXNDC;
 		m_deltaYNDC = yNDC - m_previousYNDC;
-	if (m_InputCommands.mouse_RB_Down)
+	if (m_InputCommands.mouseRB)
 	{
-		//		if (m_InputCommands.scroll_wheel_delta != 0)
+		//		if (m_InputCommands.scrollWheelDelta != 0)
 		//		{
-		//			if (m_InputCommands.mouse_RB_Down && m_InputCommands.CTRL_Down)
+		//			if (m_InputCommands.mouseRB && m_InputCommands.ctrl)
 		//			{
-		//				this->m_movespeed += (float)m_InputCommands.scroll_wheel_delta * 0.1;
+		//				this->m_movespeed += (float)m_InputCommands.scrollWheelDelta * 0.1;
 		//				if (m_movespeed <= 0)
 		//					m_movespeed = 0;
 		//			}
-		//			else if (m_InputCommands.mouse_RB_Down)
+		//			else if (m_InputCommands.mouseRB)
 		//			{
 		//				this->m_camRotateFromMouseDelta +=
-		//					(float)m_InputCommands.scroll_wheel_delta * 0.001f;
+		//					(float)m_InputCommands.scrollWheelDelta * 0.001f;
 		//			}
 		//		}
 

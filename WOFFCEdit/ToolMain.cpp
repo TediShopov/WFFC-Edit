@@ -30,10 +30,10 @@ ToolMain::ToolMain()
 	m_toolInputCommands.back = false;
 	m_toolInputCommands.left = false;
 	m_toolInputCommands.right = false;
-	m_toolInputCommands.mouse_x = 0;
-	m_toolInputCommands.mouse_y = 0;
-	m_toolInputCommands.mouse_LB_Down = false;
-	m_toolInputCommands.CTRL_Down = false;
+	m_toolInputCommands.mouseX = 0;
+	m_toolInputCommands.mouseY = 0;
+	m_toolInputCommands.mouseLB = false;
+	m_toolInputCommands.ctrl = false;
 	ToolState = new ObjectSelectionState();
 //	EditMode = ObjectTransformEditMode::MODE_ROTATION;
 	EditMode = ObjectTransformEditMode::MODE_SCALE;
@@ -321,7 +321,7 @@ void ToolMain::DeleteSelected()
 //		}
 //		this->m_selectedObject.clear();
 //		Notify(*this);
-//		m_toolInputCommands.deleteSelected = false;
+//		m_toolInputCommands.deleteSelectedAction = false;
 //	}
 }
 
@@ -345,7 +345,7 @@ void ToolMain::CreateObject()
 	CreateObjectDialog newD(nullptr);
 	newD.SetObjectData(this);
 	newD.DoModal();
-	m_toolInputCommands.insertObject = false;
+	m_toolInputCommands.insertObjectAction = false;
 	//	MessageBox(NULL, L"Insert New Object", L"Notification",MB_OK);
 }
 
@@ -374,21 +374,21 @@ DisplayObject* ToolMain::InsertObject(DisplayObject* prototype)
 
 void ToolMain::Tick(MSG* msg)
 {
-	if(this->m_toolInputCommands.undo)
+	if(this->m_toolInputCommands.undoAction)
 		this->UndoCommand();
-	if(this->m_toolInputCommands.redo)
+	if(this->m_toolInputCommands.redoAction)
 		this->RedoCommand();
-	if (m_toolInputCommands.deleteSelected)
+	if (m_toolInputCommands.deleteSelectedAction)
 		DeleteSelected();
-	if (m_toolInputCommands.insertObject)
+	if (m_toolInputCommands.insertObjectAction)
 		CreateObject();
 
 
-	if (m_toolInputCommands.translateState)
+	if (m_toolInputCommands.switchToTranslateAction)
 		this->EditMode = ObjectTransformEditMode::MODE_POSITION;
-	else if (m_toolInputCommands.scaleState)
+	else if (m_toolInputCommands.switchToScaleAction)
 		this->EditMode = ObjectTransformEditMode::MODE_SCALE;
-	else if (m_toolInputCommands.rotateState)
+	else if (m_toolInputCommands.switchToRotateAction)
 		this->EditMode = ObjectTransformEditMode::MODE_ROTATION;
 
 
@@ -397,7 +397,7 @@ void ToolMain::Tick(MSG* msg)
 	m_toolInputCommands.handleHit = false;
 	//If hanle is picked by mouse
 
-	if (m_toolInputCommands.mouse_LB_Down)
+	if (m_toolInputCommands.mouseLB)
 	{
 		if (this->m_activeHandle == nullptr)
 		{
@@ -417,7 +417,7 @@ void ToolMain::Tick(MSG* msg)
 	//Toggle mouse arc ball control 
 	if (this->m_selectedObject.size() == 1)
 	{
-		if (this->m_toolInputCommands.SHIFT_Down)
+		if (this->m_toolInputCommands.shift)
 		{
 			this->m_d3dRenderer.SwitchToArcBallCamera(
 				this->m_d3dRenderer.GetDisplayObject(m_selectedObject[0])
@@ -447,54 +447,71 @@ void ToolMain::UpdateInput(MSG* msg)
 		break;
 
 	case WM_MOUSEMOVE:
-		m_toolInputCommands.mouse_x = GET_X_LPARAM(msg->lParam);
-		m_toolInputCommands.mouse_y = GET_Y_LPARAM(msg->lParam);
+		m_toolInputCommands.mouseX = GET_X_LPARAM(msg->lParam);
+		m_toolInputCommands.mouseY = GET_Y_LPARAM(msg->lParam);
 		break;
 
 	case WM_LBUTTONDOWN: //mouse button down,  you will probably need to check when its up too
-		m_toolInputCommands.mouse_LB_Down = true;
+		m_toolInputCommands.mouseLB = true;
 		break;
 	case WM_LBUTTONUP: //mouse button down,  you will probably need to check when its up too
-		m_toolInputCommands.mouse_LB_Down = false;
+		m_toolInputCommands.mouseLB = false;
 		break;
 	case WM_RBUTTONDOWN:
-		m_toolInputCommands.mouse_RB_Down = true;
+		m_toolInputCommands.mouseRB = true;
 		break;
 	case WM_RBUTTONUP:
-		m_toolInputCommands.mouse_RB_Down = false;
+		m_toolInputCommands.mouseRB = false;
 		break;
 	}
-	m_toolInputCommands.scroll_wheel_delta =
+	m_toolInputCommands.scrollWheelDelta =
 		GET_WHEEL_DELTA_WPARAM(msg->wParam) / 120;
+
+
+
+
 
 
 	//here we update all the actual app functionality that we want.  This information will either be used int toolmain, or sent down to the renderer (Camera movement etc
 	//WASD movement
 	m_toolInputCommands.forward = m_keyArray['W'];
-	m_toolInputCommands.CTRL_Down = m_keyArray[VK_CONTROL];
-	m_toolInputCommands.SHIFT_Down = m_keyArray[VK_SHIFT];
+	m_toolInputCommands.ctrl = m_keyArray[VK_CONTROL];
+	m_toolInputCommands.shift = m_keyArray[VK_SHIFT];
 
 	m_toolInputCommands.back = m_keyArray['S'];
 	m_toolInputCommands.left = m_keyArray['A'];
-	m_toolInputCommands.undo = m_keyArray['U'];
-	m_toolInputCommands.redo = m_keyArray['R'];
-	m_toolInputCommands.translateState = m_keyArray['1'];
-	m_toolInputCommands.scaleState = m_keyArray['2'];
-	m_toolInputCommands.rotateState = m_keyArray['3'];
 	m_toolInputCommands.right = m_keyArray['D'];
 	//rotation
 	m_toolInputCommands.rotRight = m_keyArray['E'];
 	m_toolInputCommands.rotLeft = m_keyArray['Q'];
 
 	//Plane and global_direction movement keys
-	m_toolInputCommands.plane_x = m_keyArray['Z'];
-	m_toolInputCommands.plane_y = m_keyArray['X'];
-	m_toolInputCommands.plane_z = m_keyArray['C'];
+	m_toolInputCommands.planeX = m_keyArray['Z'];
+	m_toolInputCommands.planeY = m_keyArray['X'];
+	m_toolInputCommands.planeZ = m_keyArray['C'];
+
+
+	//Action
+	m_toolInputCommands.undoAction = KeyReleased('U');
+	m_toolInputCommands.redoAction = KeyReleased('R');
+	m_toolInputCommands.switchToTranslateAction = KeyReleased('1');
+	m_toolInputCommands.switchToScaleAction = KeyReleased('2');
+	m_toolInputCommands.switchToRotateAction = KeyReleased('3');
 
 	//Insert Key Pressed
-	m_toolInputCommands.insertObject = m_keyArray[45];
+	m_toolInputCommands.insertObjectAction = KeyReleased(45);
 	//Delete1 Key Pressed
-	m_toolInputCommands.deleteSelected = m_keyArray[46];
+	m_toolInputCommands.deleteSelectedAction = KeyReleased(46);
+
+
+
+	//Assign previous frame array
+	for (int i = 0; i < sizeof(m_keyArray); ++i)
+	{
+		m_PrevFramekeyArray[i] = m_keyArray[i];
+	}
+
+
 }
 
 void ToolMain::Notify(const ToolMain& data)
@@ -518,9 +535,9 @@ void ToolMain::ChangeState(ToolStateBase* newState)
 
 bool ToolMain::IsTransformActionInputted() const
 {
-	return (m_toolInputCommands.plane_x ||
-		m_toolInputCommands.plane_y
-		|| m_toolInputCommands.plane_z) && m_selectedObject.size() == 1;
+	return (m_toolInputCommands.planeX ||
+		m_toolInputCommands.planeY
+		|| m_toolInputCommands.planeZ) && m_selectedObject.size() == 1;
 }
 
 ToolStateBase* ToolMain::GetNewTransformUpdateState() 
@@ -725,6 +742,11 @@ void ToolMain::ResetInputKeyBuffer()
 	{
 		m_keyArray[i] = false;
 	}
+}
+
+bool ToolMain::KeyReleased(char key) const
+{
+	return m_PrevFramekeyArray[key] == true && m_keyArray[key] == false;
 }
 
 SceneObject* ToolMain::GetById(int ID) 

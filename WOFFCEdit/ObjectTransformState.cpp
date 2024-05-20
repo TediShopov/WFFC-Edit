@@ -21,7 +21,7 @@ ObjectTransformState::ObjectTransformState(AXES axisType, bool a)
 void ObjectTransformState::Update(const InputCommands& input)
 {
 	AxisBasedTransformState::Update(input);
-	move_on_axis = input.CTRL_Down;
+	move_on_axis = input.ctrl;
 	auto sel = MainTool->GetSelectedDisplayObjects();
 	if (sel.size() == 1)
 	{

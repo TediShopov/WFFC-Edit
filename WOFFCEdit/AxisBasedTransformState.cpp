@@ -74,7 +74,7 @@ void AxisBasedTransformState::Update(const InputCommands& input)
 	{
 		if (release_mouse_needed)
 		{
-			if (input.mouse_LB_Down == false)
+			if (input.mouseLB == false)
 			{
 				this->FinalizeTransformation();
 				this->MainTool->ChangeState(new ObjectSelectionState());
@@ -91,11 +91,11 @@ void AxisBasedTransformState::Update(const InputCommands& input)
 void AxisBasedTransformState::FromInput(const InputCommands& input)
 {
 
-	if (input.plane_x)
+	if (input.planeX)
 		axisType = X_AXIS;
-	else if (input.plane_y)
+	else if (input.planeY)
 		axisType = Y_AXIS;
-	else if (input.plane_z)
+	else if (input.planeZ)
 		axisType = Z_AXIS;
 
 
@@ -235,7 +235,7 @@ void AxisBasedTransformState::GetMouseWorldRay(const InputCommands& input, XMVEC
 	POINT p;
 	GetCursorPos(&p);
 	mouseWorldPos = this->MainTool->m_d3dRenderer.GetWorldRay(
-		input.mouse_x,
-		input.mouse_y,
+		input.mouseX,
+		input.mouseY,
 		1000);
 }

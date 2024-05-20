@@ -911,8 +911,8 @@ DisplayObject* Game::MousePicking(const std::vector<DisplayObject*>& objectList)
 
 	//setup near and far planes of frustum with mouse X and mouse y passed down from Toolmain.
 	//they may look the same but note, the difference in Z
-	const XMVECTOR nearSource = XMVectorSet(m_InputCommands.mouse_x, m_InputCommands.mouse_y, 0.0f, 1.0f);
-	const XMVECTOR farSource = XMVectorSet(m_InputCommands.mouse_x, m_InputCommands.mouse_y, 1.0f, 1.0f);
+	const XMVECTOR nearSource = XMVectorSet(m_InputCommands.mouseX, m_InputCommands.mouseY, 0.0f, 1.0f);
+	const XMVECTOR farSource = XMVectorSet(m_InputCommands.mouseX, m_InputCommands.mouseY, 1.0f, 1.0f);
 
 	//Loop through entire display list of objects and pick with each in turn.
 	for (int i = 0; i < objectList.size(); i++)

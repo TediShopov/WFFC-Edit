@@ -102,7 +102,9 @@
     <ClCompile Include="Camera.cpp">
       <Filter>Camera</Filter>
     </ClCompile>
-    <ClCompile Include="ArcBallCamera.cpp" />
+    <ClCompile Include="ArcBallCamera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DeviceResources.h">
@@ -185,7 +187,9 @@
     <ClInclude Include="Camera.h">
       <Filter>Camera</Filter>
     </ClInclude>
-    <ClInclude Include="ArcBallCamera.h" />
+    <ClInclude Include="ArcBallCamera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
