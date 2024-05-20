@@ -324,6 +324,10 @@ void Game::OnWindowSizeChanged(int width, int height)
 void Game::UpdateDisplayElementTransform(int i, SceneObject* sceneObject)
 {
 	DisplayObject& newDisplayObject = *GetDisplayObject(i);
+	if(newDisplayObject.parentObject != nullptr)
+		sceneObject->parent_id = newDisplayObject.parentObject->m_ID;
+	else
+		sceneObject->parent_id = -1;
 	sceneObject->posX    = newDisplayObject.m_position.x ;
 	sceneObject->posY = newDisplayObject.m_position.y;
 	sceneObject->posZ = newDisplayObject.m_position.z;

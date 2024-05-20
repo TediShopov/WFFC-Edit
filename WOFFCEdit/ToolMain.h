@@ -38,6 +38,7 @@ public: //methods
 	afx_msg void onActionSaveTerrain(); //save chunk geometry
 	void DeleteSelected();
 	void DeleteById(int id);
+	void GetHiearchyOf(int id, std::vector<int>* hierarchy);
 	void CreateObject();
 	DisplayObject* InsertObject(DisplayObject* prototype);
 

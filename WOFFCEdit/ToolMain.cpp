@@ -333,10 +333,23 @@ void ToolMain::DeleteById(int id)
 		{
 			m_sceneGraph.erase(m_sceneGraph.begin() + i);
 			this->m_d3dRenderer.RemoveDisplayObject(id);
-			return;
-			
 		}
 	}
+}
+
+ void ToolMain::GetHiearchyOf(int id, std::vector<int>* hierarchy)
+{
+	 for (int i = 0; i < m_sceneGraph.size(); ++i)
+	 {
+		 if (m_sceneGraph[i].ID == id)
+		 {
+			 hierarchy->push_back(m_sceneGraph[i].ID);
+		 }
+		 if (m_sceneGraph[i].parent_id == id)
+		 {
+			 GetHiearchyOf(m_sceneGraph[i].ID, hierarchy);
+		 }
+	 }
 }
 
 void ToolMain::CreateObject()

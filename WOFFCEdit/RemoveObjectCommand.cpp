@@ -19,14 +19,22 @@ void RemoveObjectCommand::ExecuteSilent(ToolMain* tool)
 	//For each of the presented ids
 	for (int id : m_objectIds)
 	{
-		auto subject = new DisplayObject();
 
-		//Copy the information to hold in the command
-		(*subject) =
-			*tool->m_d3dRenderer.GetDisplayObject(id);
+		std::vector<int> ids;
+		tool->GetHiearchyOf(id, &ids);
 
-		tool->DeleteById(id);
-		m_subjects.push_back(subject);
+		for (int idInObjectHiearchy : ids)
+		{
+			auto subject = new DisplayObject();
+
+			//Copy the information to hold in the command
+			(*subject) =
+			*tool->m_d3dRenderer.GetDisplayObject(idInObjectHiearchy);
+			tool->DeleteById(idInObjectHiearchy);
+			m_subjects.push_back(subject);
+		}
+
+
 
 		
 	}
@@ -41,5 +49,6 @@ void RemoveObjectCommand::Revert(ToolMain* tool)
 		tool->InsertObject(subject);
 		tool->AddToSelection(subject->m_ID);
 	}
+	m_subjects.clear();
 	tool->Notify(*tool);
 }
