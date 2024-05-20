@@ -27,6 +27,9 @@ void ObjectTransformState::Update(const InputCommands& input)
 	{
 		world_axes_directions = GetWorldAxes(SelectedObject);
 		world_planes = GetWorldPlanes(SelectedObject);
+
+		plane = world_planes.r[axisType];
+
 		DisplayObject* obj = sel[0];
 
 		XMVECTOR newPosition;
