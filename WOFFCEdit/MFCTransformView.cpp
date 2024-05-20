@@ -81,12 +81,6 @@ MFCTransformView::MFCTransformView()
 			reinterpret_cast<DWORD_PTR>(&displayObjectCopy.texture_path)));
 			
 			
-	//TODO(lowPriority) Add color 
-	//Color 
-	//----------------------------------------------
-			
-
-	//TODO Add Control For Object Color
 	m_propertyGrid.AddProperty(modelProperties, 1, 1);
 
 	m_propertyGrid.AddProperty(transform, 1, 1);
@@ -379,90 +373,55 @@ LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpara
 }
 
 #ifdef _DEBUG
+
 void MFCTransformView::VisualizeSelectionOnTreeCtrl(const ToolMain& tool)
 {
-	std::map<int, HTREEITEM>* idToTreeItems = &objectsTreeItems;
 	std::vector<DisplayObject*> sceneCopy = tool.m_d3dRenderer.m_displayList;
+	m_treeCtrl.DeleteAllItems();
 
-	//Update the transform tree if an object from scene was deleted
-	if(sceneCopy.size() != idToTreeItems->size())
+
+	int maxTreeDepth = 0;
+	for (DisplayObject* object : sceneCopy)
 	{
-		std::vector<int> uncontainedIndexes;
-
-		for (std::map<int, HTREEITEM>::iterator it = idToTreeItems->begin(); it != idToTreeItems->end(); ++it)
-		{
-
-
-			auto iter = std::find_if(
-				sceneCopy.begin(),
-				sceneCopy.end(),
-				[it](DisplayObject* s) {return s->m_ID == it->first; });
-
-			if (iter == sceneCopy.end())
-				uncontainedIndexes.push_back(it->first);
-		}
-
-
-		for (int uncontained_index : uncontainedIndexes)
-		{
-			m_treeCtrl.DeleteItem(idToTreeItems->at(uncontained_index));
-			
-			idToTreeItems->erase(uncontained_index);
-			
-		}
-		
-		
+		int d = object->GetDepth();
+		if (maxTreeDepth < d)
+			maxTreeDepth = d;
 	}
+	std::map<const DisplayObject*, HTREEITEM> treeItems;
 
-
-
-	while (sceneCopy.size() != 0)
+	for (size_t i = 0; i < maxTreeDepth; i++)
 	{
-		//Remove items which id's are already presented in object to tree map
-		auto removed = std::remove_if(sceneCopy.begin(), sceneCopy.end(),
-		                              [idToTreeItems](DisplayObject* v)
-		                              {
-			                              return idToTreeItems->find(v->m_ID) != idToTreeItems->end();
-		                              });
-		sceneCopy.erase(removed, sceneCopy.end());
-		for (DisplayObject* element : sceneCopy)
+		for (int j = 0; j < sceneCopy.size(); ++j)
 		{
-			if (element->parentObject == nullptr)
 
-
-
+			if(sceneCopy[j]->GetDepth() == i)
 			{
-				HTREEITEM treeitem = m_treeCtrl.InsertItem(std::to_wstring(element->m_ID).c_str());
-				idToTreeItems->insert({element->m_ID, treeitem});
-			}
-			else
-			{
-				if (idToTreeItems->find(element->parentObject->m_ID) != idToTreeItems->end())
+				auto element = sceneCopy[j];
+				if (element->parentObject == nullptr)
 				{
-					HTREEITEM parentItem = idToTreeItems->at(element->parentObject->m_ID);
-					HTREEITEM treeitem = m_treeCtrl.InsertItem(
-						std::to_wstring(element->m_ID).c_str()
-						, parentItem);
-					idToTreeItems->insert({element->m_ID, treeitem});
+					HTREEITEM treeitem = m_treeCtrl.InsertItem(std::to_wstring(element->m_ID).c_str());
+					treeItems.insert({ element, treeitem });
+				}
+				else
+				{
+					if (treeItems.find(element->parentObject) != treeItems.end())
+					{
+						HTREEITEM parentItem = treeItems.at(element->parentObject);
+						HTREEITEM treeitem = m_treeCtrl.InsertItem(
+							std::to_wstring(element->m_ID).c_str()
+							, parentItem);
+						treeItems.insert({ element, treeitem });
+					}
 				}
 			}
 		}
 	}
 
+
+
 	//Reset all checkboxes to false
 	UncheckAllTreeItems(m_treeCtrl);
 
-	//Update selection state of the tree ctrl
-
-	for (int selectionId : tool.getCurrentSelectionIDs())
-	{
-		auto objectTreeMap = idToTreeItems->find(selectionId);
-		if (objectTreeMap != idToTreeItems->end())
-		{
-			HTREEITEM& treeitem = objectTreeMap->second;
-			m_treeCtrl.SetCheck(treeitem, true);
-		}
-	}
 }
 
 // Function to uncheck a tree item and its children recursively

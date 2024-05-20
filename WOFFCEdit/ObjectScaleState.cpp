@@ -43,7 +43,6 @@ void ObjectScaleState::Update(const InputCommands& input)
 		SimpleMath::Vector3 newScale = ScaleOnSelectedAxis(input);
 		sel[0]->m_scale = newScale;
 		this->MainTool->SyncDisplayAndSceneObjects(sel[0]->m_ID);
-		this->MainTool->Notify(*this->MainTool);
 	}
 	else
 	{

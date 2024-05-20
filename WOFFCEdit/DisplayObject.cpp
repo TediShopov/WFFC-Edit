@@ -37,6 +37,14 @@ DisplayObject::~DisplayObject()
 	//	delete m_texture_diffuse;
 }
 
+int DisplayObject::GetDepth() const
+{ 
+	if (parentObject != nullptr)
+		return parentObject->GetDepth() + 1;
+	else
+		return 0;
+}
+
 DirectX::XMMATRIX DisplayObject::GetWorldMatrix() const
 {
 	const DirectX::XMVECTORF32 scale = {this->m_scale.x, this->m_scale.y, this->m_scale.z};

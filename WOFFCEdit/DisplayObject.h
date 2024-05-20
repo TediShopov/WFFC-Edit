@@ -23,6 +23,9 @@ public:
 	~DisplayObject();
 
 
+	int GetDepth()const ;
+
+
 	std::string model_path;
 	std::string texture_path;
 
