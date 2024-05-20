@@ -368,13 +368,20 @@ void ToolMain::Tick(MSG* msg)
 		this->UndoCommand();
 	if(this->m_toolInputCommands.redo)
 		this->RedoCommand();
-	//Put the selected object as handles transform
-
 	if (m_toolInputCommands.deleteSelected)
 		DeleteSelected();
-
 	if (m_toolInputCommands.insertObject)
 		CreateObject();
+
+
+	if (m_toolInputCommands.translateState)
+		this->EditMode = ObjectTransformEditMode::MODE_POSITION;
+	else if (m_toolInputCommands.scaleState)
+		this->EditMode = ObjectTransformEditMode::MODE_SCALE;
+	else if (m_toolInputCommands.rotateState)
+		this->EditMode = ObjectTransformEditMode::MODE_ROTATION;
+
+
 
 
 	m_toolInputCommands.handleHit = false;
@@ -453,7 +460,9 @@ void ToolMain::UpdateInput(MSG* msg)
 	m_toolInputCommands.left = m_keyArray['A'];
 	m_toolInputCommands.undo = m_keyArray['U'];
 	m_toolInputCommands.redo = m_keyArray['R'];
-
+	m_toolInputCommands.translateState = m_keyArray['1'];
+	m_toolInputCommands.scaleState = m_keyArray['2'];
+	m_toolInputCommands.rotateState = m_keyArray['3'];
 	m_toolInputCommands.right = m_keyArray['D'];
 	//rotation
 	m_toolInputCommands.rotRight = m_keyArray['E'];
