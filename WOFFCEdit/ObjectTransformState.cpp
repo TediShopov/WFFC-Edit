@@ -57,7 +57,7 @@ void ObjectTransformState::Update(const InputCommands& input)
 
 
 		this->MainTool->SyncDisplayAndSceneObjects(sel[0]->m_ID);
-		//this->MainTool->Notify(*this->MainTool);
+		this->MainTool->Notify(false,true,false);
 	}
 	else
 	{

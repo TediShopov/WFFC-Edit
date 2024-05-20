@@ -25,7 +25,7 @@ void UpdateObjectCommand::ExecuteSilent(ToolMain* tool)
 	tool->m_d3dRenderer.GetDisplayObject(updatedData.m_ID);
 	(*actual) = updatedData;
 	tool->SyncDisplayAndSceneObjects(updatedData.m_ID);
-	tool->Notify(*tool);
+	tool->Notify(false,true,false);
 }
 
 void UpdateObjectCommand::Revert(ToolMain* tool)
@@ -35,5 +35,5 @@ void UpdateObjectCommand::Revert(ToolMain* tool)
 	tool->m_d3dRenderer.GetDisplayObject(updatedData.m_ID);
 	(*actual) = oldData;
 	tool->SyncDisplayAndSceneObjects(updatedData.m_ID);
-	tool->Notify(*tool);
+	tool->Notify(false,true,false);
 }

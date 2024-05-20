@@ -558,12 +558,29 @@ void ToolMain::UpdateInput(MSG* msg)
 
 }
 
-void ToolMain::Notify(const ToolMain& data)
+//void ToolMain::Notify(const ToolMain& data)
+//{
+//	for (Observer<ToolMain>* observer : observers_)
+//	{
+//		observer->Update(this, data);
+//	}
+//}
+void ToolMain::Notify(const ToolMainChanges& data)
 {
-	for (Observer<ToolMain>* observer : observers_)
+
+	for (Observer<ToolMainChanges>* observer : observers_)
 	{
 		observer->Update(this, data);
 	}
+}
+
+void ToolMain::Notify(bool s, bool o, bool h)
+{
+	ToolMainChanges changes
+	{
+		s,o,h,this
+	};
+	this->Notify(changes);
 }
 
 void ToolMain::ChangeState(ToolStateBase* newState)

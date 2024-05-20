@@ -44,6 +44,6 @@ void ObjectSelectionState::Update(const InputCommands& commands)
 			
 		}
 
-		this->MainTool->Notify(*MainTool);
+		this->MainTool->Notify(true,false,false);
 	}
 }

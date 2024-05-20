@@ -16,7 +16,7 @@ class DisplayObject;
 // MFCTransformView form view
 typedef std::vector<DisplayObject> SceneGraph;
 
-class MFCTransformView : public CFormView, public Observer<ToolMain>
+class MFCTransformView : public CFormView, public Observer<ToolMainChanges>
 {
 	DECLARE_DYNCREATE(MFCTransformView)
 
@@ -27,7 +27,7 @@ protected:
 public:
 	std::map<int, HTREEITEM> objectsTreeItems;
 	ToolMain* m_toolPtr;
-	void VisualizeSelectionOnTreeCtrl(const ToolMain& tool);
+	void VisualizeSelectionOnTreeCtrl(const ToolMain* tool);
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_FORMVIEW };
 #endif
@@ -40,8 +40,9 @@ public:
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX); // DDX/DDV support
-	void UpdateWireFrameCheck(const ToolMain& data);
-	void Update(const Subject<ToolMain>* subject, const ToolMain& data) override;
+	void UpdateWireFrameCheck(const ToolMain* data);
+	//void Update(const Subject<ToolMain>* subject, const ToolMain& data) override;
+	void Update(const Subject<ToolMainChanges>* subject, const ToolMainChanges& data) override;
 
 	DECLARE_MESSAGE_MAP()
 

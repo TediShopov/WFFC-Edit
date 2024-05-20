@@ -167,7 +167,7 @@ void MFCTransformView::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_MFCPROPERTYGRID2, m_propertyGrid);
 }
 
-void MFCTransformView::UpdateWireFrameCheck(const ToolMain& data)
+void MFCTransformView::UpdateWireFrameCheck(const ToolMain* data)
 {
 	auto selected = this->m_toolPtr->GetSelectedDisplayObjects();
 	if(selected.size()!=1)
@@ -176,13 +176,26 @@ void MFCTransformView::UpdateWireFrameCheck(const ToolMain& data)
 		m_wireframeCheck.SetCheck(selected[0]->m_wireframe);
 }
 
-void MFCTransformView::Update(const Subject<ToolMain>* subject, const ToolMain& data)
+void MFCTransformView::Update(const Subject<ToolMainChanges>* subject, const ToolMainChanges& data)
 {
-	VisualizeSelectionOnTreeCtrl(data);
-	auto selected = this->m_toolPtr->GetSelectedDisplayObjects();
-	UpdatePropertyGridSelection(&selected);
-	UpdateWireFrameCheck(data);
+	if(data.HierarchyUpdates)
+		VisualizeSelectionOnTreeCtrl(data.Tool);
+	if(data.SelectionUpdates || data.ObjectUpdates)
+	{
+		auto selected = this->m_toolPtr->GetSelectedDisplayObjects();
+		UpdatePropertyGridSelection(&selected);
+		UpdateWireFrameCheck(data.Tool);
+	}
+
 }
+
+//void MFCTransformView::Update(const Subject<ToolMain>* subject, const ToolMain& data)
+//{
+//	VisualizeSelectionOnTreeCtrl(data);
+//	auto selected = this->m_toolPtr->GetSelectedDisplayObjects();
+//	UpdatePropertyGridSelection(&selected);
+//	UpdateWireFrameCheck(data);
+//}
 
 BEGIN_MESSAGE_MAP(MFCTransformView, CFormView)
 	ON_NOTIFY(NM_CLICK, IDC_TREE1, &MFCTransformView::OnClickTree)
@@ -242,7 +255,7 @@ void MFCTransformView::OnClickTree(NMHDR* pNMHDR, LRESULT* pResult)
 	}
 	auto selection = m_toolPtr->GetSelectedDisplayObjects();
 	UpdatePropertyGridSelection(&selection);
-	UpdateWireFrameCheck(*this->m_toolPtr);
+	UpdateWireFrameCheck(this->m_toolPtr);
 
 	// Handle multi-selection logic here
 	*pResult = 0;
@@ -374,9 +387,9 @@ LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpara
 
 #ifdef _DEBUG
 
-void MFCTransformView::VisualizeSelectionOnTreeCtrl(const ToolMain& tool)
+void MFCTransformView::VisualizeSelectionOnTreeCtrl(const ToolMain* tool)
 {
-	std::vector<DisplayObject*> sceneCopy = tool.m_d3dRenderer.m_displayList;
+	std::vector<DisplayObject*> sceneCopy = tool->m_d3dRenderer.m_displayList;
 	m_treeCtrl.DeleteAllItems();
 
 
@@ -389,7 +402,7 @@ void MFCTransformView::VisualizeSelectionOnTreeCtrl(const ToolMain& tool)
 	}
 	std::map<const DisplayObject*, HTREEITEM> treeItems;
 
-	for (size_t i = 0; i < maxTreeDepth; i++)
+	for (size_t i = 0; i <= maxTreeDepth; i++)
 	{
 		for (int j = 0; j < sceneCopy.size(); ++j)
 		{

@@ -36,6 +36,7 @@ void ObjectRotationState::Update(const InputCommands& input)
 		SimpleMath::Vector3 newOrientation = RotateAroundSelectedAxis(input);
 		sel[0]->m_orientation = newOrientation;
 		this->MainTool->SyncDisplayAndSceneObjects(sel[0]->m_ID);
+		this->MainTool->Notify(false,true,false);
 	}
 	else
 	{

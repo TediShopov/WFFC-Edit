@@ -18,9 +18,22 @@ enum ObjectTransformEditMode
 	MODE_SCALE,
 	MODE_ROTATION
 };
+class ToolMain;
+struct ToolMainChanges
+{
+	bool SelectionUpdates;
+	bool ObjectUpdates;
+	bool HierarchyUpdates;
+
+	ToolMain* Tool;
+
+};
+
+
+
 class ToolStateBase;
 
-class ToolMain : public Subject<ToolMain>
+class ToolMain : public Subject<ToolMainChanges>
 {
 public: //methods
 	ToolMain();
@@ -43,7 +56,9 @@ public: //methods
 	DisplayObject* InsertObject(DisplayObject* prototype);
 
 	void ChangeState(ToolStateBase* newState);
-	void Notify(const ToolMain& data) override;
+	//void Notify(const ToolMain& data) override;
+	void Notify(const ToolMainChanges& data) override;
+	void Notify(bool selection =false, bool objects = false, bool hierarchy = false) ;
 
 	bool IsTransformActionInputted() const;
 	ToolStateBase* GetNewTransformUpdateState() ;

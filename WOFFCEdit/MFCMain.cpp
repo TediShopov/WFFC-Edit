@@ -44,7 +44,7 @@ BOOL MFCMain::InitInstance()
 	m_ToolSystem.onActionInitialise(m_toolHandle, m_width, m_height);
 	//Give tools as a reference to other classes/views
 	m_frame->m_transformTreeView->m_toolPtr = &m_ToolSystem;
-	m_frame->m_transformTreeView->VisualizeSelectionOnTreeCtrl(m_ToolSystem);
+	m_frame->m_transformTreeView->VisualizeSelectionOnTreeCtrl(&m_ToolSystem);
 
 	//Add reference to from view to the actual render so it
 	//updated on window restore
