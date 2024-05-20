@@ -44,7 +44,18 @@ void ObjectTransformState::Update(const InputCommands& input)
 			newPosition = PlaneIntersection(
 				mouseWorldPos, plane);
 		}
-		obj->m_position = newPosition;
+
+		if(obj->parentObject == nullptr)
+			obj->m_position = newPosition;
+		else
+		{
+			XMMATRIX parentInverseMatrix = 
+				XMMatrixInverse(nullptr,obj->parentObject->GetWorldMatrix()); 
+			newPosition = XMVector3Transform(newPosition, parentInverseMatrix);
+			obj->m_position = newPosition;
+		}
+
+
 		this->MainTool->SyncDisplayAndSceneObjects(sel[0]->m_ID);
 		this->MainTool->Notify(*this->MainTool);
 	}
