@@ -13,10 +13,6 @@ Camera::Camera()
 	m_camPosition.y = 3.7f;
 	m_camPosition.z = -3.5f;
 
-	m_camOrientation.x = 0;
-	m_camOrientation.y = 0;
-	m_camOrientation.z = 0;
-
 	m_camLookAt.x = 0.0f;
 	m_camLookAt.y = 0.0f;
 	m_camLookAt.z = 0.0f;
@@ -57,10 +53,6 @@ void Camera::UpdateCameraBasedOnKeyInput(const InputCommands& m_InputCommands)
 	m_camLookDirection.y = sinf(XMConvertToRadians(m_camOrientation.x));
 	m_camLookDirection.z = sinf(XMConvertToRadians(m_camOrientation.y)) * cosf(XMConvertToRadians(m_camOrientation.x));
 
-
-	//create look direction from Euler angles in m_camOrientation
-	//	m_camLookDirection.x = sin((m_camOrientation.y) * 3.1415 / 180);
-	//	m_camLookDirection.z = cos((m_camOrientation.y) * 3.1415 / 180);
 	m_camLookDirection.Normalize();
 
 	//create right vector from look Direction
@@ -99,23 +91,6 @@ void Camera::UpdateCameraBasedOnMouseInput(const InputCommands& m_InputCommands)
 		m_deltaYNDC = yNDC - m_previousYNDC;
 	if (m_InputCommands.mouseRB)
 	{
-		//		if (m_InputCommands.scrollWheelDelta != 0)
-		//		{
-		//			if (m_InputCommands.mouseRB && m_InputCommands.ctrl)
-		//			{
-		//				this->m_movespeed += (float)m_InputCommands.scrollWheelDelta * 0.1;
-		//				if (m_movespeed <= 0)
-		//					m_movespeed = 0;
-		//			}
-		//			else if (m_InputCommands.mouseRB)
-		//			{
-		//				this->m_camRotateFromMouseDelta +=
-		//					(float)m_InputCommands.scrollWheelDelta * 0.001f;
-		//			}
-		//		}
-
-
-
 		//Change in x rotate yaw
 		m_camOrientation.y += m_deltaXNDC * m_camRotateFromMouseDelta;
 

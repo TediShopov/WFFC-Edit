@@ -9,31 +9,31 @@ using namespace DirectX::SimpleMath;
 
 class Camera
 {
-	//m_camera
-
 public:
 	Camera();
 	~Camera();
 
-	void UpdateCameraBasedOnKeyInput(const InputCommands& m_InputCommands);
-	void UpdateCameraBasedOnMouseInput(const InputCommands& m_InputCommands);
-
 	void virtual Update(const InputCommands& input_commands);
-	void virtual CalculateViewMatrix();
+
+	//Retrieve the calculated view matrx
 	XMMATRIX GetView();
+
+	//Get the difference between this frames normalized device coordinates and last frames
 	float GetDeltaXNDC();
 	float GetDeltaYNDC();
 
+protected:
+	void UpdateCameraBasedOnKeyInput(const InputCommands& m_InputCommands);
+	void UpdateCameraBasedOnMouseInput(const InputCommands& m_InputCommands);
+	void virtual CalculateViewMatrix();
 	void ConvertToNDC(int x, int y, float& xNDC, float& yNDC);
 public:
-
-
 	//functionality
 	float m_movespeed;
 	float m_camRotateOnPress;
 	float m_camRotateFromMouseDelta;
 
-
+	//Window rect that camera project to
 	RECT m_screenRect;
 
 	//Camera State
@@ -43,7 +43,7 @@ public:
 	Vector3 m_camLookDirection;
 	Vector3 m_camRight;
 
-
+	//The cached view matrix
 	XMMATRIX m_view;
 
 
