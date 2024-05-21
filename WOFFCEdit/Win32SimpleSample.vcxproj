@@ -179,7 +179,7 @@
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MFCFrame.cpp" />
     <ClCompile Include="MFCRenderFrame.cpp" />
-    <ClCompile Include="MFCTransformView.cpp" />
+    <ClCompile Include="MFCObjectHierarchyView.cpp" />
     <ClCompile Include="ObjectRotationState.cpp" />
     <ClCompile Include="ObjectScaleState.cpp" />
     <ClCompile Include="ObjectSelectionState.cpp" />
@@ -211,7 +211,7 @@
     <ClInclude Include="InputCommands.h" />
     <ClInclude Include="MFCFrame.h" />
     <ClInclude Include="MFCRenderFrame.h" />
-    <ClInclude Include="MFCTransformView.h" />
+    <ClInclude Include="MFCObjectHierarchyView.h" />
     <ClInclude Include="ObjectRotationState.h" />
     <ClInclude Include="ObjectScaleState.h" />
     <ClInclude Include="ObjectTransformState.h" />

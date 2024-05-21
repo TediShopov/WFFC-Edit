@@ -1,6 +1,6 @@
 #include "MFCMain.h"
 
-#include "MFCTransformView.h"
+#include "MFCObjectHierarchyView.h"
 #include "resource.h"
 
 BEGIN_MESSAGE_MAP(MFCMain, CWinApp)
@@ -44,7 +44,7 @@ BOOL MFCMain::InitInstance()
 	m_ToolSystem.onActionInitialise(m_toolHandle, m_width, m_height);
 	//Give tools as a reference to other classes/views
 	m_frame->m_transformTreeView->m_toolPtr = &m_ToolSystem;
-	m_frame->m_transformTreeView->VisualizeSelectionOnTreeCtrl(&m_ToolSystem);
+
 
 	//Add reference to from view to the actual render so it
 	//updated on window restore
@@ -53,6 +53,7 @@ BOOL MFCMain::InitInstance()
 	//Register all observers of ToolMain
 	m_ToolSystem.RegisterObserver(m_frame->m_transformTreeView);
 
+	m_frame->m_transformTreeView->m_toolPtr->Notify(true,true,true);
 	return TRUE;
 }
 

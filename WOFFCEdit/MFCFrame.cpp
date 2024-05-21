@@ -1,6 +1,6 @@
 #include "MFCFrame.h"
 
-#include "MFCTransformView.h"
+#include "MFCObjectHierarchyView.h"
 #include "resource.h"
 
 BEGIN_MESSAGE_MAP(CMyFrame, CFrameWnd)

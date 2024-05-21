@@ -115,7 +115,7 @@
     <ClCompile Include="Observer.cpp">
       <Filter>Utility</Filter>
     </ClCompile>
-    <ClCompile Include="MFCTransformView.cpp">
+    <ClCompile Include="MFCObjectHierarchyView.cpp">
       <Filter>MFC</Filter>
     </ClCompile>
   </ItemGroup>
@@ -210,7 +210,7 @@
     <ClInclude Include="Observer.h">
       <Filter>Utility</Filter>
     </ClInclude>
-    <ClInclude Include="MFCTransformView.h">
+    <ClInclude Include="MFCObjectHierarchyView.h">
       <Filter>MFC</Filter>
     </ClInclude>
   </ItemGroup>

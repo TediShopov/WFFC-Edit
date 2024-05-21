@@ -183,15 +183,6 @@ void Game::Render()
 		const XMVECTORF32 yaxis = {0.f, 0.f, 512.f};
 		DrawGrid(xaxis, yaxis, g_XMZero, 512, 512, Colors::Gray);
 	}
-	//CAMERA POSITION ON HUD
-	//	m_sprites->Begin();
-	//	WCHAR Buffer[256];
-	//	std::wstring var = L"Cam X: " + std::to_wstring(m_camPosition.x) + L"Cam Z: " + std::to_wstring(m_camPosition.z);
-	//	m_font->DrawString(m_sprites.get(), var.c_str(), XMFLOAT2(100, 10), Colors::Yellow);
-	//	m_sprites->End();
-
-	//RENDER DISPLAY HANDLES
-	//RENDER OBJECTS FROM SCENEGRAPH
 	context->OMSetBlendState(m_states->Opaque(), nullptr, 0xFFFFFFFF);
 	context->OMSetDepthStencilState(m_states->DepthDefault(), 0);
 	context->RSSetState(m_states->CullNone());
@@ -202,18 +193,11 @@ void Game::Render()
 	}
 
 	m_deviceResources->PIXEndEvent();
-
-	//RENDER TERRAIN
-	//context->RSSetState(m_states->Wireframe());		//uncomment for wireframe
-
-	//Render the batch,  This is handled in the Display chunk becuase it has the potential to get complex
 	m_displayChunk.RenderBatch(m_deviceResources);
 
-	//m_handlesEffect->Apply(context);
+	//Render the handles ignoring dpeths
 	for (const DisplayObject* handle : m_displayHandlesList)
 	{
-		//context->OMSetBlendState(m_states->Additive(), nullptr, 0xFFFFFFFF);
-
 		RenderDisplayObjectOnTop(*handle);
 	}
 	m_deviceResources->Present();
@@ -635,14 +619,8 @@ int Game::AddVisualHandle(ControlHandle* display_object)
 	this->m_displayHandlesList.push_back(display_object);
 	//Returns local object
 	return m_displayHandlesList.size() - 1;
-	//	return &this->displayList[displayList.size() - 1];
-	//	return &this->displayList.at(this->displayList.size() - 1);
 }
 
-//std::vector<DisplayObject*> Game::GetHandles()
-//{
-//	return std::vector<DisplayObject*>(m_displayHandlesList);
-//}
 
 DisplayObject* Game::GetDisplayObject(int objectId) const
 {
@@ -848,18 +826,6 @@ ControlHandle* Game::ControlHandleHitTest() const
 	}
 	return static_cast<ControlHandle*>(this->MousePicking(baseObjectVector));
 }
-
-//int Game::MousePicking(std::vector<int> handleList) const
-//{
-//	std::vector<DisplayObject> objectsFromHandles;
-//	for (int i = 0; i < handleList.size(); ++i)
-//	{
-//		//For each index in the handle list get the corresponding object
-//		objectsFromHandles.push_back(displayList[handleList[i]]);
-//	}
-//	//Loop through gathered object to check selection;
-//	return this->MousePicking(objectsFromHandles);
-//}
 
 DisplayObject* Game::MousePicking(const std::vector<DisplayObject*>& objectList) const
 {

@@ -13,8 +13,7 @@
 class ToolMain;
 
 class DisplayObject;
-// MFCTransformView form view
-typedef std::vector<DisplayObject> SceneGraph;
+//typedef std::vector<DisplayObject> SceneGraph;
 
 class MFCTransformView : public CFormView, public Observer<ToolMainChanges>
 {
@@ -25,9 +24,11 @@ protected:
 	virtual ~MFCTransformView();
 
 public:
-	std::map<int, HTREEITEM> objectsTreeItems;
 	ToolMain* m_toolPtr;
-	void VisualizeSelectionOnTreeCtrl(ToolMain* tool);
+
+
+
+
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_FORMVIEW };
 #endif
@@ -40,41 +41,39 @@ public:
 
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX); // DDX/DDV support
-	void UpdateWireFrameCheck(const ToolMain* data);
-	void UpdateTreeSelections(std::vector<DisplayObject*> selected);
-	//void Update(const Subject<ToolMain>* subject, const ToolMain& data) override;
+
+	//Update method invoked on when tool notifies change
 	void Update(const Subject<ToolMainChanges>* subject, const ToolMainChanges& data) override;
+
+	//Selective update methods to invoke only part of the visuals
+	void UpdateTreeSelections(std::vector<DisplayObject*> selected);
+	void UpdatePropertyGrid(DisplayObject* obj);
+	void UpdatePropertyGridSelection(std::vector<DisplayObject*>* selection);
+	void UpdateWireFrameCheck(const ToolMain* data);
+	void RebuildTreeHierarchy(ToolMain* tool);
 
 	DECLARE_MESSAGE_MAP()
 
 public:
-	void OnClickTree(NMHDR* pNMHDR, LRESULT* pResult);
-	void UncheckTreeItemAndChildren(CTreeCtrl& treeCtrl, HTREEITEM item);
-
-	// Function to traverse the entire tree and uncheck all items
-	void UncheckAllTreeItems(CTreeCtrl& treeCtrl);
-	//DisplayObject* FindSceneObject(int selectedItemId);
-	void UpdatePropertyGridSelection(std::vector<DisplayObject*>* selection);
-	void UpdatePropertyGrid(DisplayObject* obj);
+	afx_msg void OnClickTree(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg LRESULT OnTransformPropertyChanged(__in WPARAM wparam, __in LPARAM lparam);
-
-	CTreeCtrl m_treeCtrl;
-	CMFCPropertyGridCtrl m_propertyGrid;
-	CButton m_wireframeCheck;
-	afx_msg void OnBnClickedButton1();
-	CMFCPropertyGridProperty* CreateFloatProp(
-		const CString name, float* data);
+	afx_msg void DeselectAllButton();
+	afx_msg void ToggleWireframeMode();
+	afx_msg void CreateObjectFromDialog();
+	afx_msg void DeleteSelected();
 	void UpdateFloatProp(float* data);
 	void UpdateFileProp(std::string* data);
 
 private:
+	CTreeCtrl m_treeCtrl;
+	CMFCPropertyGridCtrl m_propertyGrid;
+	CButton m_wireframeCheck;
+	DisplayObject m_displayObjectCopy;
+
+	//Map from scene object to items in transform hierarchy
 	std::map<const DisplayObject*, HTREEITEM> m_treeItems;
 	bool ConvertToRelativePath(const std::string& absolute_path,  std::string& relative_path);
 
-	//Poistion Controls
-	DisplayObject displayObjectCopy;
+	CMFCPropertyGridProperty* CreateFloatProp(const CString name, float* data);
 public:
-	afx_msg void OnBnClickedButton3();
-	afx_msg void OnBnClickedButton2();
-	afx_msg void OnBnClickedCheck1();
 };
