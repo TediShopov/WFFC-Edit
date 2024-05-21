@@ -11,21 +11,18 @@ class AxisBasedTransformState : public ToolStateBase
 {
 public:
 
-	static XMMATRIX LocalAxes;
+	static XMMATRIX localCardinalAxes;
 	XMVECTOR plane;
-	XMVECTOR global_direction;
+	XMVECTOR globalDirection;
 	AXES axisType;
 	InputCommands on_selection_commands;
 
 	//Command to update the object
 	UpdateObjectCommand* m_updateObjectCommand;
 
-
-
 	//Base constructor when state is called from other classes
 	AxisBasedTransformState();
 	AxisBasedTransformState(AXES selected_axis);
-
 
 	void FinalizeTransformation();
 
@@ -43,15 +40,11 @@ protected:
 
 	XMMATRIX GetWorldPlanes(const DisplayObject* selected) const;
 	XMVECTOR GetClosestAxisIntersection(XMVECTOR mouseRay, int cardinalAxisIndex);
-XMVECTOR PlaneIntersection(XMVECTOR mouseWorldRay, XMVECTOR plane);
-XMVECTOR AxisIntersection(XMVECTOR mouseWorldRay, XMVECTOR plane, XMVECTOR rayOnPlane);
-XMVECTOR CardinalAxisIntersection(XMVECTOR mouseWorldRay, int index);
+	XMVECTOR PlaneIntersection(XMVECTOR mouseWorldRay, XMVECTOR plane);
+	XMVECTOR AxisIntersection(XMVECTOR mouseWorldRay, XMVECTOR plane, XMVECTOR rayOnPlane);
+	XMVECTOR CardinalAxisIntersection(XMVECTOR mouseWorldRay, int index);
 
 	void GetMouseWorldRay(const InputCommands& input, XMVECTOR& mouseWorldPos);
-
-	//	void GetWorldPlanes(
-	//		int objectIndex,
-	//		DirectX::XMVECTOR planes[3]);
 
 	bool release_mouse_needed = false;
 	//If from handle or from input

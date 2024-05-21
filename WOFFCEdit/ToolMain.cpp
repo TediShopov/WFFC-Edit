@@ -510,7 +510,7 @@ void ToolMain::UpdateInput(MSG* msg)
 	m_toolInputCommands.rotRight = m_keyArray['E'];
 	m_toolInputCommands.rotLeft = m_keyArray['Q'];
 
-	//Plane and global_direction movement keys
+	//Plane and globalDirection movement keys
 	m_toolInputCommands.planeX = m_keyArray['Z'];
 	m_toolInputCommands.planeY = m_keyArray['X'];
 	m_toolInputCommands.planeZ = m_keyArray['C'];

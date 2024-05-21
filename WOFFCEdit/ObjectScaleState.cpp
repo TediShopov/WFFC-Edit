@@ -8,10 +8,13 @@
 
 ObjectScaleState::ObjectScaleState()
 {
+	m_scaleRatio = 0.1f;
 }
 
-ObjectScaleState::ObjectScaleState(AXES global_direction, bool a)
+ObjectScaleState::ObjectScaleState(AXES globalDirection, bool a)
 {
+	m_scaleRatio = 0.1f;
+	axisType = globalDirection;
 }
 
 void ObjectScaleState::Init(ToolMain* tool, const InputCommands& input_commands)
@@ -57,8 +60,6 @@ XMVECTOR ObjectScaleState::ScaleOnSelectedAxis(const InputCommands& commands)
 {
 	
 	Vector3 current = SelectedObject->m_scale;
-	//All other rotation use delta from X normalized device coordaintes
-//	float delta = this->MainTool->m_d3dRenderer.activeCamera->GetDeltaXNDC();
 	float delta = GetWorldCoordinatesDelta(commands);
 	float total = delta * m_scaleSpeed;
 	if (axisType == X_AXIS)
@@ -68,9 +69,6 @@ XMVECTOR ObjectScaleState::ScaleOnSelectedAxis(const InputCommands& commands)
 	else
 		current.z += total;
 
-//	float angle = delta * 10;
-//	XMMATRIX matrixOfRotationAroundAxis=  XMMatrixRotationAxis(global_direction, angle);
-//	current = XMVector3TransformNormal(current, matrixOfRotationAroundAxis);
 	return current;
 }
 
@@ -80,29 +78,16 @@ float ObjectScaleState::GetWorldCoordinatesDelta(const InputCommands& commands)
 	GetMouseWorldRay(commands, mouseWorldRay);
 
 	XMVECTOR worldPosition = CardinalAxisIntersection(mouseWorldRay, axisType);
-
 	XMVECTOR local = worldPosition - GetGlobalOrigin();
-
-
-
-	//cos() to project one vector to the other and find delta
-	//	XMVECTOR dot = XMVector3Dot(worldPosition, m_lastPosition);
-	//	float d = dot.m128_f32[0];
 	XMVECTOR direction = local - m_lastPosition;
 	float d = XMVector3Length(direction).m128_f32[0];
 
 
-	XMVECTOR projectToAxis = XMVector3Dot(direction, GetGlobalOrigin() + global_direction);
+	XMVECTOR projectToAxis = XMVector3Dot(direction, GetGlobalOrigin() + globalDirection);
 	if(projectToAxis.m128_f32[0]<0)
 	{
 		d = -d;
 	}
-
-
-
-
-
-
 	//Update the last position
 	m_lastPosition = local;
 	return d;

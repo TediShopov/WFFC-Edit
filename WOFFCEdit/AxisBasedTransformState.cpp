@@ -5,7 +5,7 @@
 #include  "PostionControlHandle.h"
 #include "UpdateObjectCommand.h"
 
-XMMATRIX AxisBasedTransformState::LocalAxes =
+XMMATRIX AxisBasedTransformState::localCardinalAxes =
 {
 	XMVECTOR{ 0,0,0,0 },
 	XMVECTOR{ 1,0,0,0 },
@@ -99,7 +99,7 @@ void AxisBasedTransformState::FromInput(const InputCommands& input)
 		axisType = Z_AXIS;
 
 
-	global_direction = world_axes_directions.r[axisType];
+	globalDirection = world_axes_directions.r[axisType];
 	plane = world_axes_directions.r[axisType];
 }
 
@@ -109,11 +109,11 @@ XMMATRIX AxisBasedTransformState::GetWorldAxes(const DisplayObject* selected) co
 	XMMATRIX axes;
 
 	axes.r[0] = { 0,0,0,0 };
-	axes.r[1] = XMVector3TransformNormal(LocalAxes.r[1], world);
-	axes.r[2] = XMVector3TransformNormal(LocalAxes.r[2], world);
-	axes.r[3] = XMVector3TransformNormal(LocalAxes.r[3], world);
+	axes.r[1] = XMVector3TransformNormal(localCardinalAxes.r[1], world);
+	axes.r[2] = XMVector3TransformNormal(localCardinalAxes.r[2], world);
+	axes.r[3] = XMVector3TransformNormal(localCardinalAxes.r[3], world);
 	return axes;
-	//return XMMatrixMultiply(LocalAxes, world);
+	//return XMMatrixMultiply(localCardinalAxes, world);
 }
 
 XMVECTOR AxisBasedTransformState::GetGlobalOrigin() const

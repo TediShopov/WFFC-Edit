@@ -10,11 +10,11 @@ class ObjectTransformState : public AxisBasedTransformState
 {
 public:
 	ObjectTransformState();
-	ObjectTransformState(AXES global_direction, bool a);
+	ObjectTransformState(AXES globalDirection, bool a);
 
 	void Update(const InputCommands& input)override;
 
 private:
-	//If moving on global_direction or on plane
+	//If moving on globalDirection or on plane
 	bool move_on_axis;
 };

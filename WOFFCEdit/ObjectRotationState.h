@@ -10,14 +10,13 @@ class ObjectRotationState : public AxisBasedTransformState
 { 
 public:
 	ObjectRotationState();
-	ObjectRotationState(AXES global_direction, bool a);
+	ObjectRotationState(AXES globalDirection, bool a);
 
 
 	void Init(ToolMain* tool, const InputCommands&) override;
 	void Update(const InputCommands& input)override;
 
 
-	XMVECTOR m_lastPosition;
 	float GetWorldCoordinatesDelta(const InputCommands& commands);
 	float GetMouseNDCDelta(const InputCommands& commands);
 
@@ -26,5 +25,6 @@ public:
 
 private:
 	float m_rotationSpeed;
+	XMVECTOR m_lastPosition;
 };
 

@@ -51,8 +51,8 @@ PostionControlHandle::PostionControlHandle(AXES axesType, ToolMain* tool, std::s
 
 	//Orient handle to the correct direction using Quaternions
 	// the expected direction of the object is X positive
-	XMVECTOR localDirection = ObjectTransformState::LocalAxes.r[((int)(this->Type))];
-	Rotation = FromToQuaternion(ObjectTransformState::LocalAxes.r[1], localDirection);
+	XMVECTOR localDirection = ObjectTransformState::localCardinalAxes.r[((int)(this->Type))];
+	Rotation = FromToQuaternion(ObjectTransformState::localCardinalAxes.r[1], localDirection);
 }
 
 PostionControlHandle::PostionControlHandle(AXES axesType, AXES axesTypeTwo, ToolMain* tool, std::string model_path,
@@ -60,7 +60,7 @@ PostionControlHandle::PostionControlHandle(AXES axesType, AXES axesTypeTwo, Tool
 {
 	move_on_axis = false;
 
-	//Get the only remaining global_direction
+	//Get the only remaining globalDirection
 	int indexOfRemainigAxes = 0;
 	for (int i = 1; i <= 3; ++i)
 	{
@@ -78,7 +78,7 @@ PostionControlHandle::PostionControlHandle(AXES axesType, AXES axesTypeTwo, Tool
 	this->mainTool->m_d3dRenderer
 		.CreateHandleObject(this, model_path, Color);
 
-	auto axes = ObjectTransformState::LocalAxes;
+	auto axes = ObjectTransformState::localCardinalAxes;
 
 	this->m_scale = (axes.r[axesType] + axes.r[axesTypeTwo]);
 	this->m_scale *= 0.6;

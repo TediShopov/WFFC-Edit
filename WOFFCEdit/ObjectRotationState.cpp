@@ -10,7 +10,7 @@ ObjectRotationState::ObjectRotationState()
 	m_lastPosition=Vector3();
 }
 
-ObjectRotationState::ObjectRotationState(AXES global_direction, bool a)
+ObjectRotationState::ObjectRotationState(AXES globalDirection, bool a)
 	:AxisBasedTransformState(axisType)
 {
 	m_lastPosition=Vector3();
@@ -50,43 +50,21 @@ float ObjectRotationState::GetWorldCoordinatesDelta(const InputCommands& command
 {
 	XMVECTOR mouseWorldRay;
 	GetMouseWorldRay(commands, mouseWorldRay);
-
 	XMVECTOR worldPosition = CardinalAxisIntersection(mouseWorldRay, axisType);
-
 	XMVECTOR local = worldPosition - GetGlobalOrigin();
-
-
-
-	//cos() to project one vector to the other and find delta
-//	XMVECTOR dot = XMVector3Dot(worldPosition, m_lastPosition);
-//	float d = dot.m128_f32[0];
 	XMVECTOR direction = local - m_lastPosition;
 	float d = XMVector3Length(direction).m128_f32[0];
 
-
-	XMVECTOR projectToAxis = XMVector3Dot(direction, GetGlobalOrigin() + global_direction);
+	XMVECTOR projectToAxis = XMVector3Dot(direction, GetGlobalOrigin() + globalDirection);
 	if(projectToAxis.m128_f32[0]<0)
 	{
 		d = -d;
 	}
-
-
-
-
-
-
 	//Update the last position
 	m_lastPosition = local;
 	return d;
 }
 
-float ObjectRotationState::GetMouseNDCDelta(const InputCommands& commands)
-{
-	float xNDC = this->MainTool->m_d3dRenderer.activeCamera->GetDeltaXNDC();
-	return xNDC;
-
-
-}
 
 XMVECTOR ObjectRotationState::RotateAroundSelectedAxis(const InputCommands& commands)
 {
@@ -95,12 +73,6 @@ XMVECTOR ObjectRotationState::RotateAroundSelectedAxis(const InputCommands& comm
 //	float delta = this->MainTool->m_d3dRenderer.activeCamera->GetDeltaXNDC();
 	float delta = GetWorldCoordinatesDelta(commands);
 	float angle = delta *m_rotationSpeed;
-	bool move_on_axis;
-
-
-
-
-
 	if (axisType == X_AXIS)
 		current.x += angle;
 	else if (axisType == Y_AXIS)
@@ -109,7 +81,7 @@ XMVECTOR ObjectRotationState::RotateAroundSelectedAxis(const InputCommands& comm
 		current.z += angle;
 
 //	float angle = delta * 10;
-//	XMMATRIX matrixOfRotationAroundAxis=  XMMatrixRotationAxis(global_direction, angle);
+//	XMMATRIX matrixOfRotationAroundAxis=  XMMatrixRotationAxis(globalDirection, angle);
 //	current = XMVector3TransformNormal(current, matrixOfRotationAroundAxis);
 	return current;
 }
