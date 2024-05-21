@@ -18,27 +18,10 @@ class DisplayObject;
 class MFCTransformView : public CFormView, public Observer<ToolMainChanges>
 {
 	DECLARE_DYNCREATE(MFCTransformView)
-
-protected:
-	MFCTransformView(); // protected constructor used by dynamic creation
-	virtual ~MFCTransformView();
-
 public:
 	ToolMain* m_toolPtr;
-
-
-
-
-#ifdef AFX_DESIGN_TIME
-	enum { IDD = IDD_FORMVIEW };
-#endif
-#ifdef _DEBUG
-	virtual void AssertValid() const;
-#ifndef _WIN32_WCE
-	virtual void Dump(CDumpContext& dc) const;
-#endif
-#endif
-
+	MFCTransformView(); // protected constructor used by dynamic creation
+	virtual ~MFCTransformView();
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX); // DDX/DDV support
 
@@ -52,28 +35,58 @@ protected:
 	void UpdateWireFrameCheck(const ToolMain* data);
 	void RebuildTreeHierarchy(ToolMain* tool);
 
+
+	//Methods to alter temporary objects from propery changed event
+	void AlterTemporaryObjectsParentAndParentId(CMFCPropertyGridProperty* propChanged);
+	void AlterTemporaryObjectsFilePaths(CMFCPropertyGridProperty* propChanged);
+	void AlterTemporaryObjectsFloatProperty(CMFCPropertyGridProperty* propChanged);
+
 	DECLARE_MESSAGE_MAP()
 
 public:
+	//Event from interacting with the tree
 	afx_msg void OnClickTree(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg LRESULT OnTransformPropertyChanged(__in WPARAM wparam, __in LPARAM lparam);
+
+	//Button and checkbox events
 	afx_msg void DeselectAllButton();
 	afx_msg void ToggleWireframeMode();
 	afx_msg void CreateObjectFromDialog();
 	afx_msg void DeleteSelected();
-	void UpdateFloatProp(float* data);
-	void UpdateFileProp(std::string* data);
+
 
 private:
-	CTreeCtrl m_treeCtrl;
-	CMFCPropertyGridCtrl m_propertyGrid;
-	CButton m_wireframeCheck;
-	DisplayObject m_displayObjectCopy;
+	//The stored temporary copy of an object.
+	//This is the object that all properties data pointers point to
+	//Data is copied from and to actual objects.
+	DisplayObject m_displayObjectCopy; 
 
+	CMFCPropertyGridCtrl m_propertyGrid; // The inspector property grid
+	CButton m_wireframeCheck; //Checkbox for toggling wireframe mode
+
+	// The transform hierarchy  
+	CTreeCtrl m_treeCtrl;
 	//Map from scene object to items in transform hierarchy
 	std::map<const DisplayObject*, HTREEITEM> m_treeItems;
+
+	//Convert an absolute path to relative path
 	bool ConvertToRelativePath(const std::string& absolute_path,  std::string& relative_path);
 
+
 	CMFCPropertyGridProperty* CreateFloatProp(const CString name, float* data);
+	//Update properties to match temporary object
+	void UpdateFloatProp(float* data) const;
+	void UpdateFileProp(std::string* data) const;
+	void UpdateIDProp(CMFCPropertyGridProperty* prop) const;
 public:
+
+#ifdef AFX_DESIGN_TIME
+	enum { IDD = IDD_FORMVIEW };
+#endif
+#ifdef _DEBUG
+	virtual void AssertValid() const;
+#ifndef _WIN32_WCE
+	virtual void Dump(CDumpContext& dc) const;
+#endif
+#endif
 };

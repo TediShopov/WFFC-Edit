@@ -19,13 +19,9 @@ IMPLEMENT_DYNCREATE(MFCTransformView, CFormView)
 MFCTransformView::MFCTransformView()
 	: CFormView(IDD_FORMVIEW)
 {
-	auto parentID = 
-		new CMFCPropertyGridProperty("ParentId",(long)0,nullptr
-			,reinterpret_cast<DWORD_PTR>( &m_displayObjectCopy.parentObject), false);
-	//parentID->SetData( reinterpret_cast<DWORD_PTR>(& m_displayObjectCopy.parentObject));
-
-
-
+	auto parentID =
+		new CMFCPropertyGridProperty("ParentId", (long)0, nullptr
+		                             , reinterpret_cast<DWORD_PTR>(&m_displayObjectCopy.parentObject), false);
 
 
 	auto transform = new CMFCPropertyGridProperty("Transform");
@@ -47,12 +43,10 @@ MFCTransformView::MFCTransformView()
 	transform->AddSubItem(globalPosGroup);
 	transform->AddSubItem(localScaleGroup);
 	transform->AddSubItem(localOrientationGroup);
-	
+
 
 	//==============================================
 	//Adding texture string search through windows
-
-	//NULL, reinterpret_cast<DWORD_PTR>(data));
 	auto modelProperties = new CMFCPropertyGridProperty("Model");
 	//Model Mesh File Dialog
 	//----------------------------------------------
@@ -89,11 +83,10 @@ MFCTransformView::MFCTransformView()
 			textureFilter,
 			_T("Specifies the dialog icon"),
 			reinterpret_cast<DWORD_PTR>(&m_displayObjectCopy.texture_path)));
-			
-			
+
+
 	m_propertyGrid.AddProperty(modelProperties, 1, 1);
 	m_propertyGrid.AddProperty(parentID, 1, 1);
-
 	m_propertyGrid.AddProperty(transform, 1, 1);
 }
 
@@ -104,14 +97,14 @@ CMFCPropertyGridProperty* MFCTransformView::CreateFloatProp(
 	                                    NULL, reinterpret_cast<DWORD_PTR>(data));
 }
 
-void MFCTransformView::UpdateFloatProp(float* data)
+void MFCTransformView::UpdateFloatProp(float* data) const
 {
 	CMFCPropertyGridProperty* prop = m_propertyGrid.FindItemByData(
 		reinterpret_cast<DWORD_PTR>(data), TRUE);
 	prop->SetValue(*data);
 }
 
-void MFCTransformView::UpdateFileProp(std::string* data)
+void MFCTransformView::UpdateFileProp(std::string* data) const
 {
 	CStringW w(data->c_str());
 	CMFCPropertyGridProperty* prop = m_propertyGrid.FindItemByData(
@@ -120,10 +113,11 @@ void MFCTransformView::UpdateFileProp(std::string* data)
 		prop->SetValue(w);
 }
 
-bool MFCTransformView::ConvertToRelativePath(const std::string& absolute_path, 
-	std::string& relative_path)
+bool MFCTransformView::ConvertToRelativePath(const std::string& absolute_path,
+                                             std::string& relative_path)
 {
-	try {
+	try
+	{
 		fs::path abs_path(absolute_path);
 		fs::path base_path = fs::current_path();
 
@@ -136,22 +130,26 @@ bool MFCTransformView::ConvertToRelativePath(const std::string& absolute_path,
 		auto base_iter = base_path.begin();
 
 		// Find common prefix
-		while (abs_iter != abs_path.end() && base_iter != base_path.end() && (*abs_iter) == (*base_iter)) {
+		while (abs_iter != abs_path.end() && base_iter != base_path.end() && (*abs_iter) == (*base_iter))
+		{
 			++abs_iter;
 			++base_iter;
 		}
 
-		if (base_iter != base_path.end()) {
+		if (base_iter != base_path.end())
+		{
 			relative_path = "database/data/placeholder.dds";
 			return false;
 		}
 
 		fs::path rel_path;
-		while (base_iter != base_path.end()) {
+		while (base_iter != base_path.end())
+		{
 			rel_path /= "..";
 			++base_iter;
 		}
-		while (abs_iter != abs_path.end()) {
+		while (abs_iter != abs_path.end())
+		{
 			rel_path /= *abs_iter;
 			++abs_iter;
 		}
@@ -159,7 +157,8 @@ bool MFCTransformView::ConvertToRelativePath(const std::string& absolute_path,
 		relative_path = rel_path.string();
 		return true;
 	}
-	catch (const fs::filesystem_error& e) {
+	catch (const fs::filesystem_error& e)
+	{
 		relative_path = "database/data/placeholder.dds";
 		return false;
 	}
@@ -181,7 +180,7 @@ void MFCTransformView::DoDataExchange(CDataExchange* pDX)
 void MFCTransformView::UpdateWireFrameCheck(const ToolMain* data)
 {
 	auto selected = this->m_toolPtr->GetSelectedDisplayObjects();
-	if(selected.size()!=1)
+	if (selected.size() != 1)
 		m_wireframeCheck.SetCheck(false);
 	else
 		m_wireframeCheck.SetCheck(selected[0]->m_wireframe);
@@ -189,16 +188,15 @@ void MFCTransformView::UpdateWireFrameCheck(const ToolMain* data)
 
 void MFCTransformView::UpdateTreeSelections(std::vector<DisplayObject*> selected)
 {
-	for (std::pair<const DisplayObject*,HTREEITEM> treeItemPair : m_treeItems)
+	for (std::pair<const DisplayObject*, HTREEITEM> treeItemPair : m_treeItems)
 	{
-		m_treeCtrl.SetCheck(treeItemPair.second,false);
-				
+		m_treeCtrl.SetCheck(treeItemPair.second, false);
 	}
 	//Update only the check
 	for (DisplayObject* display_object : selected)
 	{
 		HTREEITEM treeItem = m_treeItems.at(display_object);
-		m_treeCtrl.SetCheck(treeItem,true);
+		m_treeCtrl.SetCheck(treeItem, true);
 
 		//Expand All parent
 		const DisplayObject* parentObject = parentObject = display_object->parentObject;
@@ -206,47 +204,26 @@ void MFCTransformView::UpdateTreeSelections(std::vector<DisplayObject*> selected
 		{
 			m_treeCtrl.Expand(m_treeItems.at(parentObject),TVE_EXPAND);
 			parentObject = parentObject->parentObject;
-			
 		}
-
-
-				
 	}
-
-
-
-
-
-
 }
 
 void MFCTransformView::Update(const Subject<ToolMainChanges>* subject, const ToolMainChanges& data)
 {
-	if(data.HierarchyUpdates)
+	if (data.HierarchyUpdates)
 		RebuildTreeHierarchy(data.Tool);
-	if(data.SelectionUpdates || data.ObjectUpdates)
+	if (data.SelectionUpdates || data.ObjectUpdates)
 	{
 		auto selected = this->m_toolPtr->GetSelectedDisplayObjects();
 		UpdatePropertyGridSelection(&selected);
 		UpdateWireFrameCheck(data.Tool);
 
-		if(data.SelectionUpdates)
+		if (data.SelectionUpdates)
 		{
 			UpdateTreeSelections(selected);
-			
 		}
-
 	}
-
 }
-
-//void MFCTransformView::Update(const Subject<ToolMain>* subject, const ToolMain& data)
-//{
-//	RebuildTreeHierarchy(data);
-//	auto selected = this->m_toolPtr->GetSelectedDisplayObjects();
-//	UpdatePropertyGridSelection(&selected);
-//	UpdateWireFrameCheck(data);
-//}
 
 BEGIN_MESSAGE_MAP(MFCTransformView, CFormView)
 	ON_NOTIFY(NM_CLICK, IDC_TREE1, &MFCTransformView::OnClickTree)
@@ -277,13 +254,12 @@ void MFCTransformView::OnClickTree(NMHDR* pNMHDR, LRESULT* pResult)
 	NM_TREEVIEW* pNMTreeView = (NM_TREEVIEW*)pNMHDR;
 
 	// Get the selected item
-	//	HTREEITEM hItem = this->Transfo0rmSelections.m_currentSelections.GetSelectedItem();
 	TVHITTESTINFO ht = {0};
 
 	DWORD dwpos = GetMessagePos();
 	ht.pt.x = GET_X_LPARAM(dwpos);
 	ht.pt.y = GET_Y_LPARAM(dwpos);
-	LPNMHDR lpnmh = (LPNMHDR)pNMHDR;
+	auto lpnmh = (LPNMHDR)pNMHDR;
 	CWnd* pWnd = CWnd::FromHandle(pNMHDR->hwndFrom);
 	//MapWindowPoints(pWnd, &ht.pt, 1);
 	m_treeCtrl.ScreenToClient(&ht.pt);
@@ -312,69 +288,27 @@ void MFCTransformView::OnClickTree(NMHDR* pNMHDR, LRESULT* pResult)
 	*pResult = 0;
 }
 
-//void MFCTransformView::UncheckTreeItemAndChildren(CTreeCtrl& treeCtrl, HTREEITEM item)
-//{
-//	// Set the check state to unchecked
-//	treeCtrl.SetCheck(item, FALSE);
-//
-//	// Get the child item
-//	HTREEITEM childItem = treeCtrl.GetChildItem(item);
-//
-//	// Recursively uncheck children until no more child is found
-//	while (childItem)
-//	{
-//		UncheckTreeItemAndChildren(treeCtrl, childItem);
-//		childItem = treeCtrl.GetNextItem(childItem, TVGN_NEXT);
-//	}
-//}
-//
-//void MFCTransformView::UncheckAllTreeItems(CTreeCtrl& treeCtrl)
-//{
-//	// Get the root item
-//	HTREEITEM treeItem = treeCtrl.GetRootItem();
-//
-//	while (treeItem)
-//	{
-//		// Call the recursive function to uncheck the root and its children
-//		UncheckTreeItemAndChildren(treeCtrl, treeItem);
-//		treeItem = treeCtrl.GetNextSiblingItem(treeItem);
-//	}
-//}
 
-//DisplayObject* MFCTransformView::FindSceneObject(int selectedItemId)
-//{
-//	DisplayObject* obj = nullptr;
-//	std::vector<DisplayObject>* objects = &m_toolPtr->m_sceneGraph;
-//	for (DisplayObject& scene_object : *objects)
-//	{
-//		if (scene_object.m_ID == selectedItemId + 1)
-//		{
-//			obj = &scene_object;
-//			break;
-//		}
-//	}
-//	return obj;
-//}
+void MFCTransformView::UpdateIDProp(CMFCPropertyGridProperty* prop) const
+{
+	if (m_displayObjectCopy.parentObject != nullptr)
+		prop->SetValue((long)m_displayObjectCopy.parentObject->m_ID);
+	else
+		prop->SetValue((long)0);
+}
 
 void MFCTransformView::UpdatePropertyGrid(DisplayObject* obj)
 {
 	if (obj != nullptr)
 		m_displayObjectCopy = *obj;
 	else
-		m_displayObjectCopy =  DisplayObject();
+		m_displayObjectCopy = DisplayObject();
 
 
-	
 	CMFCPropertyGridProperty* prop = m_propertyGrid.FindItemByData(
 		reinterpret_cast<DWORD_PTR>(&m_displayObjectCopy.parentObject), TRUE);
 	//prop->SetValue(COleVariant(m_displayObjectCopy.parentObject->m_ID,&m_displayObjectCopy.parentObject));
-	if(m_displayObjectCopy.parentObject != nullptr)
-		prop->SetValue((long)m_displayObjectCopy.parentObject->m_ID);
-	else
-		prop->SetValue((long)0);
-
-
-
+	UpdateIDProp(prop);
 
 
 	//Update transform
@@ -394,9 +328,50 @@ void MFCTransformView::UpdatePropertyGrid(DisplayObject* obj)
 	m_propertyGrid.MarkModifiedProperties(1, 1);
 }
 
+void MFCTransformView::AlterTemporaryObjectsParentAndParentId(CMFCPropertyGridProperty* propChanged)
+{
+	auto d = reinterpret_cast<int*>(propChanged->GetData());
+	int parentId = propChanged->GetValue().intVal;
+	DisplayObject* parent = this->m_toolPtr->m_d3dRenderer.GetDisplayObject(parentId);
+	if (parent != nullptr)
+	{
+		(*d) = parentId;
+		m_displayObjectCopy.parentObject = parent;
+		//Appyl changed
+	}
+	else
+	{
+		m_displayObjectCopy.parentObject = nullptr;
+		(*d) = 0;
+		propChanged->SetValue((long)0);
+	}
+}
+
+void MFCTransformView::AlterTemporaryObjectsFilePaths(CMFCPropertyGridProperty* propChanged)
+{
+	auto d = reinterpret_cast<std::string*>(propChanged->GetData());
+	auto test = propChanged->GetValue();
+	std::wstring ws(test.bstrVal, SysStringLen(test.bstrVal));
+	std::string s(ws.begin(), ws.end());
+
+	// Get the current working directory
+	std::string absolute_path = s;
+	std::string relative_path;
+	ConvertToRelativePath(absolute_path, relative_path);
+	propChanged->SetValue(CString(relative_path.c_str()));
+	(*d) = relative_path;
+}
+
+void MFCTransformView::AlterTemporaryObjectsFloatProperty(CMFCPropertyGridProperty* propChanged)
+{
+	auto d = reinterpret_cast<float*>(propChanged->GetData());
+	auto test = propChanged->GetValue();
+	(*d) = test.fltVal;
+}
+
 LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lparam)
 {
-	CMFCPropertyGridProperty* propChanged = (CMFCPropertyGridProperty*)lparam;
+	auto propChanged = (CMFCPropertyGridProperty*)lparam;
 
 	DisplayObject* foundObj = nullptr;
 	//IF property changed was string
@@ -406,76 +381,33 @@ LRESULT MFCTransformView::OnTransformPropertyChanged(WPARAM wparam, LPARAM lpara
 	{
 		foundObj = sceneObjects[0];
 		//Start update command of found objects
-		UpdateObjectCommand* updateCommand = new UpdateObjectCommand(sceneObjects[0]);
-
+		auto updateCommand = new UpdateObjectCommand(sceneObjects[0]);
 
 
 		m_propertyGrid.MarkModifiedProperties(1, 1);
 		m_propertyGrid.ShowWindow(SW_SHOW);
 		std::string s = propChanged->GetRuntimeClass()->m_lpszClassName;
-		if(propChanged->GetData() == reinterpret_cast<DWORD_PTR>(&m_displayObjectCopy.parentObject))
+		if (propChanged->GetData() == 
+			reinterpret_cast<DWORD_PTR>(&m_displayObjectCopy.parentObject))
 		{
-			int* d = reinterpret_cast<int*>(propChanged->GetData());
-			int parentId = propChanged->GetValue().intVal;
-			DisplayObject* parent = this->m_toolPtr->m_d3dRenderer.GetDisplayObject(parentId);
-			if(parent != nullptr)
-			{
-				(*d) = parentId;
-
-				m_displayObjectCopy.parentObject = parent;
-				//Appyl changed
-				(*foundObj) = m_displayObjectCopy;
-				m_toolPtr->SynchroniseSceneToDisplayObject(foundObj->m_ID);
-				
-			}
-			else
-			{
-
-				m_displayObjectCopy.parentObject = nullptr;
-				(*d) = 0;
-				propChanged->SetValue((long)0);
-				(*foundObj) = m_displayObjectCopy;
-				m_toolPtr->SynchroniseSceneToDisplayObject(foundObj->m_ID);
-//				if(m_displayObjectCopy.parentObject !=  nullptr)
-//					propChanged->SetValue((long)m_displayObjectCopy.parentObject->m_ID);
-//				else
-//					propChanged->SetValue((long) 0);
-
-			}
-
+			AlterTemporaryObjectsParentAndParentId(propChanged);
 		}
 		else if (s.compare("CMFCPropertyGridFileProperty") == 0)
 		{
-			std::string* d = reinterpret_cast<std::string*>(propChanged->GetData());
-			auto test = propChanged->GetValue();
-			std::wstring ws(test.bstrVal, SysStringLen(test.bstrVal));
-			std::string s(ws.begin(),ws.end());
-
-			// Get the current working directory
-			std::string absolute_path = s;
-			std::string relative_path;
-			ConvertToRelativePath(absolute_path,  relative_path);
-			
-
-			propChanged->SetValue( CString(relative_path.c_str()));
-
-			(*d) =relative_path;
-			(*foundObj) = m_displayObjectCopy;
-			m_toolPtr->SynchroniseSceneToDisplayObject(foundObj->m_ID );
+			AlterTemporaryObjectsFilePaths(propChanged);
 		}
 		else
 		{
-			float* d = reinterpret_cast<float*>(propChanged->GetData());
-			auto test = propChanged->GetValue();
-			(*d) = test.fltVal;
-			(*foundObj) = m_displayObjectCopy;
-			m_toolPtr->SynchroniseSceneToDisplayObject(foundObj->m_ID);
+			AlterTemporaryObjectsFloatProperty(propChanged);
 		}
 
+		//Assign temporary object to actual object
+		(*foundObj) = m_displayObjectCopy;
+		//Synchronize display and scene objects
+		m_toolPtr->SynchroniseSceneToDisplayObject(foundObj->m_ID);
 		//Finalize update command and append to tools command stack
 		updateCommand->FinishUpdate();
 		updateCommand->Execute(m_toolPtr);
-
 	}
 	return TRUE;
 }
@@ -501,14 +433,13 @@ void MFCTransformView::RebuildTreeHierarchy(ToolMain* tool)
 	{
 		for (int j = 0; j < sceneCopy.size(); ++j)
 		{
-
-			if(sceneCopy[j]->GetDepth() == i)
+			if (sceneCopy[j]->GetDepth() == i)
 			{
 				auto element = sceneCopy[j];
 				if (element->parentObject == nullptr)
 				{
 					HTREEITEM treeitem = m_treeCtrl.InsertItem(std::to_wstring(element->m_ID).c_str());
-					m_treeItems.insert({ element, treeitem });
+					m_treeItems.insert({element, treeitem});
 				}
 				else
 				{
@@ -518,18 +449,12 @@ void MFCTransformView::RebuildTreeHierarchy(ToolMain* tool)
 						HTREEITEM treeitem = m_treeCtrl.InsertItem(
 							std::to_wstring(element->m_ID).c_str()
 							, parentItem);
-						m_treeItems.insert({ element, treeitem });
+						m_treeItems.insert({element, treeitem});
 					}
 				}
 			}
 		}
 	}
-
-
-
-	//Reset all checkboxes to false
-	//UncheckAllTreeItems(m_treeCtrl);
-
 }
 
 // Function to uncheck a tree item and its children recursively
@@ -572,10 +497,9 @@ void MFCTransformView::CreateObjectFromDialog()
 void MFCTransformView::ToggleWireframeMode()
 {
 	auto sel = m_toolPtr->GetSelectedDisplayObjects();
-	if(sel.size()==1)
+	if (sel.size() == 1)
 	{
 		bool wireframeNewState = m_wireframeCheck.GetCheck();
 		sel[0]->m_wireframe = wireframeNewState;
-
 	}
 }
