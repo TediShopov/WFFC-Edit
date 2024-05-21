@@ -33,7 +33,7 @@ struct ToolMainChanges
 
 class ToolStateBase;
 
-class ToolMain : public Subject<ToolMainChanges>
+class ToolMain : public m_Subject<ToolMainChanges>
 {
 public: //methods
 	ToolMain();

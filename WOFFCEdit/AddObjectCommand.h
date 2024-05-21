@@ -1,6 +1,5 @@
 #pragma once
 #include "SceneCommand.h"
-//#include "DisplayObject.h"
 
 class DisplayObject;
 class AddObjectCommand : public SceneCommand
@@ -11,7 +10,7 @@ public:
 	void ExecuteSilent(ToolMain* tool) override;
 	void Revert(ToolMain* tool) override;
 private:
-	DisplayObject* Subject;
+	DisplayObject* m_Subject;
 
 };
 

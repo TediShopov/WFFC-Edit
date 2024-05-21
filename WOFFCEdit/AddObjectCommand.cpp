@@ -5,8 +5,7 @@
 
 AddObjectCommand::AddObjectCommand(DisplayObject* subject)
 {
-	//Subject =  new DisplayObject(*subject);
-	Subject =  subject;
+	m_Subject =  subject;
 }
 
 void AddObjectCommand::Execute(ToolMain* tool)
@@ -17,14 +16,14 @@ void AddObjectCommand::Execute(ToolMain* tool)
 
 void AddObjectCommand::ExecuteSilent(ToolMain* tool)
 {
-	Subject = tool->InsertObject(Subject);
+	m_Subject = tool->InsertObject(m_Subject);
 	tool->Notify(true,true,true);
 }
 
 void AddObjectCommand::Revert(ToolMain* tool)
 {
-	tool->RemoveFromSelection(Subject->m_ID);
-	tool->DeleteById(Subject->m_ID);
+	tool->RemoveFromSelection(m_Subject->m_ID);
+	tool->DeleteById(m_Subject->m_ID);
 	tool->Notify(true,true,true);
 
 }

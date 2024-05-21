@@ -19,11 +19,16 @@ IMPLEMENT_DYNCREATE(MFCTransformView, CFormView)
 MFCTransformView::MFCTransformView()
 	: CFormView(IDD_FORMVIEW)
 {
+
+
+
 	auto parentID =
 		new CMFCPropertyGridProperty("ParentId", (long)0, nullptr
 		                             , reinterpret_cast<DWORD_PTR>(&m_displayObjectCopy.parentObject), false);
 
 
+	//Transform property
+	//----------------------------------------------
 	auto transform = new CMFCPropertyGridProperty("Transform");
 	auto globalPosGroup = new CMFCPropertyGridProperty("Position");
 	globalPosGroup->AddSubItem(CreateFloatProp("X", &m_displayObjectCopy.m_position.x));
@@ -46,11 +51,9 @@ MFCTransformView::MFCTransformView()
 
 
 	//==============================================
-	//Adding texture string search through windows
 	auto modelProperties = new CMFCPropertyGridProperty("Model");
 	//Model Mesh File Dialog
 	//----------------------------------------------
-	//TODO Add a single option for all supported files
 	static TCHAR BASED_CODE modelFilter[] = _T(
 		"Visual Studio Starter Kit Files(*.cmo)|*.cmo|"
 		"Direct X SDK(*.sdkmesh)|*.sdkmesh|"
@@ -198,7 +201,7 @@ void MFCTransformView::UpdateTreeSelections(std::vector<DisplayObject*> selected
 		HTREEITEM treeItem = m_treeItems.at(display_object);
 		m_treeCtrl.SetCheck(treeItem, true);
 
-		//Expand All parent
+		//Expand All parents
 		const DisplayObject* parentObject = parentObject = display_object->parentObject;
 		while (parentObject != nullptr)
 		{
@@ -208,7 +211,7 @@ void MFCTransformView::UpdateTreeSelections(std::vector<DisplayObject*> selected
 	}
 }
 
-void MFCTransformView::Update(const Subject<ToolMainChanges>* subject, const ToolMainChanges& data)
+void MFCTransformView::Update(const m_Subject<ToolMainChanges>* subject, const ToolMainChanges& data)
 {
 	if (data.HierarchyUpdates)
 		RebuildTreeHierarchy(data.Tool);

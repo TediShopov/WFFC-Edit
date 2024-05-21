@@ -4,13 +4,13 @@
 
 UpdateObjectCommand::UpdateObjectCommand(DisplayObject* old)
 {
-	oldData = *old;
-	ptrToUnfinished = old;
+	m_oldData = *old;
+	m_ptrToUnfinished = old;
 }
 
 void UpdateObjectCommand::FinishUpdate()
 {
-	updatedData = *ptrToUnfinished;
+	m_updatedData = *m_ptrToUnfinished;
 }
 
 void UpdateObjectCommand::Execute(ToolMain* tool)
@@ -22,10 +22,10 @@ void UpdateObjectCommand::Execute(ToolMain* tool)
 void UpdateObjectCommand::ExecuteSilent(ToolMain* tool)
 {
 	DisplayObject* actual =
-	tool->m_d3dRenderer.GetDisplayObject(updatedData.m_ID);
-	(*actual) = updatedData;
-	tool->SynchroniseSceneToDisplayObject(updatedData.m_ID);
-	bool hierarchyUpdated = oldData.parentObject != updatedData.parentObject;
+	tool->m_d3dRenderer.GetDisplayObject(m_updatedData.m_ID);
+	(*actual) = m_updatedData;
+	tool->SynchroniseSceneToDisplayObject(m_updatedData.m_ID);
+	bool hierarchyUpdated = m_oldData.parentObject != m_updatedData.parentObject;
 	tool->Notify(false,true,hierarchyUpdated);
 }
 
@@ -33,9 +33,9 @@ void UpdateObjectCommand::Revert(ToolMain* tool)
 {
 	//Find by id
 	DisplayObject* actual =
-	tool->m_d3dRenderer.GetDisplayObject(updatedData.m_ID);
-	(*actual) = oldData;
-	tool->SynchroniseSceneToDisplayObject(updatedData.m_ID);
-	bool hierarchyUpdated = oldData.parentObject != updatedData.parentObject;
+	tool->m_d3dRenderer.GetDisplayObject(m_updatedData.m_ID);
+	(*actual) = m_oldData;
+	tool->SynchroniseSceneToDisplayObject(m_updatedData.m_ID);
+	bool hierarchyUpdated = m_oldData.parentObject != m_updatedData.parentObject;
 	tool->Notify(false,true,hierarchyUpdated);
 }

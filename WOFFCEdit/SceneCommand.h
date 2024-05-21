@@ -2,6 +2,8 @@
 
 
 class ToolMain;
+
+//A base class that alter the scene in some way and can be reverted
 class SceneCommand
 {
 public:

@@ -1,12 +1,11 @@
 #pragma once
 #include "SceneCommand.h"
+//This include is neccesary
 #include "ToolMain.h"
 #include "DisplayObject.h"
 
 class UpdateObjectCommand : public SceneCommand
 {
-
-	
 public:
 	UpdateObjectCommand(DisplayObject* old);
 	void FinishUpdate();
@@ -15,8 +14,8 @@ public:
 	void Revert(ToolMain* tool) override;
 private:
 	//Pointer useful to 
-	DisplayObject* ptrToUnfinished;
-	DisplayObject oldData;
-	DisplayObject updatedData;
+	DisplayObject* m_ptrToUnfinished;
+	DisplayObject m_oldData;
+	DisplayObject m_updatedData;
 };
 

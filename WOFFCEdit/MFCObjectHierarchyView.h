@@ -26,7 +26,7 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX); // DDX/DDV support
 
 	//Update method invoked on when tool notifies change
-	void Update(const Subject<ToolMainChanges>* subject, const ToolMainChanges& data) override;
+	void Update(const m_Subject<ToolMainChanges>* subject, const ToolMainChanges& data) override;
 
 	//Selective update methods to invoke only part of the visuals
 	void UpdateTreeSelections(std::vector<DisplayObject*> selected);
